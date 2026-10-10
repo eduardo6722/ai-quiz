@@ -1,0 +1,17 @@
+# Local Compose development image (watch mode). Not a production runtime.
+FROM node:24-bookworm-slim
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends openssl ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN corepack enable && corepack prepare pnpm@12.5.1 --activate
+
+WORKDIR /app
+
+COPY docker-entrypoint.dev.sh /usr/local/bin/dev-entrypoint
+RUN chmod +x /usr/local/bin/dev-entrypoint
+
+EXPOSE 3000 3001
+
+ENTRYPOINT ["dev-entrypoint"]

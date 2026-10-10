@@ -1,6 +1,6 @@
-# AI Quiz Generator — Harness-Agnostic Planning Kit
+# AI Quiz Generator
 
-This package contains **planning and agent configuration**, not an implemented application. The source of truth for product behavior remains `roadmap.md`. It is designed for **Cursor, OpenAI Codex and Claude Code**, with shared policies and skills plus minimal platform adapters.
+The source of truth for product behavior remains `roadmap.md`. This repository also contains harness-agnostic **planning and agent configuration** for Cursor, OpenAI Codex and Claude Code, plus the Phase 0 local workspace (monorepo, NestJS API shell, Next.js web shell, and PostgreSQL).
 
 ## Canonical files
 
@@ -58,3 +58,41 @@ There is **no single guaranteed interoperable native subagent or path-scoped rul
 ## Scoring contract note
 
 The supplied task leaves multi-answer partial scoring underspecified. The roadmap records a provisional policy (one point per correctly selected option, without adding an unspecified penalty). Confirm this during the interview or in a project ADR before presenting it as an authoritative requirement.
+
+## Local development (Phase 0)
+
+Requires **Node.js 24** (Active LTS), **pnpm 12**, and Docker. Do **not** run `specify init --force` or regenerate the Constitution.
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+This starts PostgreSQL, the NestJS API (`nest start --watch` on port 3001), and the Next.js web shell (`next dev` on port 3000). Compose points the API at the `db` hostname; `.env` `localhost` values stay for host-side `pnpm dev`.
+
+Host-only alternative (Postgres in Compose, apps on the host):
+
+```bash
+pnpm install
+docker compose up -d db
+pnpm db:generate
+pnpm db:migrate   # optional; schema has no product tables
+pnpm dev
+```
+
+- Web: http://localhost:3000
+- API liveness: http://localhost:3001/health
+- API readiness (database): http://localhost:3001/ready
+
+Startup does **not** require `OPENAI_API_KEY` or Langfuse keys.
+
+### Quality commands
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+```
+
+These four succeed without PostgreSQL. Live `/ready` against Compose is a manual check: stop `db` and expect `/health` 200 and `/ready` 503.

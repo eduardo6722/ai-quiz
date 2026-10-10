@@ -1,0 +1,51 @@
+import { config } from "dotenv";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
+import { z } from "zod";
+
+const apiEnvSchema = z.object({
+  DATABASE_URL: z
+    .string({ error: "DATABASE_URL is required" })
+    .min(1, "DATABASE_URL is required")
+    .url("DATABASE_URL must be a valid URL"),
+  PORT: z.coerce.number().int().positive().default(3001),
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  DIRECT_URL: z.string().url().optional().or(z.literal("")),
+});
+
+export type ApiEnv = z.infer<typeof apiEnvSchema>;
+
+export function loadDotenvFiles(): void {
+  for (const candidate of [resolve(process.cwd(), ".env"), resolve(process.cwd(), "../../.env")]) {
+    if (existsSync(candidate)) {
+      config({ path: candidate });
+      return;
+    }
+  }
+}
+
+function formatEnvError(error: z.ZodError): string {
+  const issue = error.issues[0];
+  const key = issue?.path[0]?.toString() ?? "configuration";
+  return `Invalid configuration: ${key} — ${issue?.message ?? "failed validation"}`;
+}
+
+export function parseApiEnv(input: Record<string, string | undefined>): ApiEnv {
+  const result = apiEnvSchema.safeParse({
+    DATABASE_URL: input.DATABASE_URL,
+    PORT: input.PORT,
+    NODE_ENV: input.NODE_ENV,
+    DIRECT_URL: input.DIRECT_URL,
+  });
+
+  if (!result.success) {
+    throw new Error(formatEnvError(result.error));
+  }
+
+  return result.data;
+}
+
+export function loadApiEnv(): ApiEnv {
+  loadDotenvFiles();
+  return parseApiEnv(process.env);
+}

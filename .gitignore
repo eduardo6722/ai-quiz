@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment (keep .env.example)
+.env
+.env.local
+.env.*.local
+
+# Builds
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# Turbo / test / logs
+.turbo/
+coverage/
+*.log
+.compose-pnpm.lock
+
+# Prisma generated client
+apps/api/src/generated/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/

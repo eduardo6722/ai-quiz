@@ -1,0 +1,18 @@
+{
+  "extends": "@ai-quiz/config/tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "preserve",
+    "noEmit": true,
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "allowJs": true,
+    "incremental": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "next-env.d.ts", ".next/types/**/*.ts", "jest.setup.ts"],
+  "exclude": ["node_modules"]
+}

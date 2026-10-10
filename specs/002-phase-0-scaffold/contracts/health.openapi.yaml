@@ -1,0 +1,83 @@
+openapi: 3.1.0
+info:
+  title: AI Quiz Generator — Phase 0 Health
+  version: 0.0.0
+  description: >
+    Liveness and readiness only. Quiz resources are not part of this contract.
+servers:
+  - url: http://localhost:3001
+    description: Local API shell
+paths:
+  /health:
+    get:
+      operationId: getLiveness
+      summary: Process liveness
+      description: >
+        Returns 200 when the API process is running. MUST NOT query PostgreSQL.
+        A stopped database is not a liveness failure.
+      responses:
+        "200":
+          description: Process is up
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LivenessResponse"
+              example:
+                status: ok
+  /ready:
+    get:
+      operationId: getReadiness
+      summary: Dependency readiness
+      description: >
+        Prisma/PostgreSQL ping. 200 when the database is reachable, 503 when it
+        is not. Invalid configuration fails at process start instead of this route.
+      responses:
+        "200":
+          description: Database reachable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadinessResponse"
+              example:
+                status: ok
+                details:
+                  database: up
+        "503":
+          description: Database not reachable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadinessResponse"
+              example:
+                status: error
+                details:
+                  database: down
+components:
+  schemas:
+    LivenessResponse:
+      type: object
+      additionalProperties: true
+      required: [status]
+      properties:
+        status:
+          type: string
+          const: ok
+    ReadinessResponse:
+      type: object
+      additionalProperties: true
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        details:
+          type: object
+          properties:
+            database:
+              type: string
+              enum: [up, down]
+      description: >
+        Nest Terminus may wrap this in its standard `status` / `info` / `error`
+        envelope. Clients MUST treat HTTP 200 as ready and HTTP 503 as not ready.
+        The `details.database` shape is informative; Terminus `info.database.status`
+        is an acceptable equivalent.

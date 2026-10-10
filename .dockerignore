@@ -1,0 +1,16 @@
+node_modules
+.git
+.specify
+.next
+dist
+coverage
+.turbo
+.env
+.env.*
+!.env.example
+*.log
+*.log*
+Dockerfile*
+.dockerignore
+README.md
+specs

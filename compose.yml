@@ -1,0 +1,90 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ai-quiz-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ai_quiz
+    volumes:
+      - ai_quiz_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ai_quiz"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: ai-quiz-api
+    working_dir: /app
+    command: pnpm --filter @ai-quiz/api dev
+    init: true
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+    environment:
+      NODE_ENV: development
+      PORT: "3001"
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/ai_quiz?schema=public
+      DIRECT_URL: postgresql://postgres:postgres@db:5432/ai_quiz?schema=public
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 120s
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: ai-quiz-web
+    working_dir: /app
+    command: pnpm --filter @ai-quiz/web dev
+    init: true
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 120s
+
+volumes:
+  ai_quiz_pgdata:

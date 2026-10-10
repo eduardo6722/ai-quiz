@@ -1,0 +1,11 @@
+node_modules
+dist
+.next
+coverage
+.turbo
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+apps/api/src/generated
+.specify
+*.md

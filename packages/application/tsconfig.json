@@ -1,0 +1,10 @@
+{
+  "extends": "@ai-quiz/config/tsconfig.base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "types": ["jest"]
+  },
+  "include": ["src/**/*.ts"]
+}

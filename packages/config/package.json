@@ -1,0 +1,29 @@
+{
+  "name": "@ai-quiz/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./eslint.config.js": "./eslint.config.js",
+    "./prettier.config.js": "./prettier.config.js",
+    "./jest.preset.cjs": "./jest.preset.cjs"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --config jest.config.cjs",
+    "build": "node -e \"process.exit(0)\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^24.5.2",
+    "eslint": "^9.36.0",
+    "eslint-plugin-boundaries": "^5.0.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.4",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.44.0"
+  }
+}
