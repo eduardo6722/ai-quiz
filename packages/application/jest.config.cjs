@@ -8,5 +8,6 @@ module.exports = {
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
     "^@ai-quiz/domain$": "<rootDir>/../domain/src/index.ts",
+    "^@ai-quiz/contracts$": "<rootDir>/../contracts/src/index.ts",
   },
 };

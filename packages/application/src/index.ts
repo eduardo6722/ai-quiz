@@ -1,4 +1,3 @@
-import { domainReady } from "@ai-quiz/domain";
-
-/** Phase 0 shell. Use cases arrive in later phases. */
-export const applicationReady = domainReady;
+export { gradeAttempt } from "./grade-attempt.js";
+export type { GradeAttemptInput, GradeAttemptOutput } from "./grade-attempt.js";
+export { toPublicQuizView, toPublicResult } from "./map-public.js";

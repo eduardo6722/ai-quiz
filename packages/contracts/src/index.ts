@@ -1,2 +1,10 @@
-/** Phase 0 public-contract shell. Quiz DTOs and answer-key isolation come later. */
-export const contractsReady = true;
+export { ContractError, ErrorCodes } from "./error-codes.js";
+export type { ErrorCode } from "./error-codes.js";
+export { createQuizRequestSchema, parseCreateQuizRequest } from "./create-quiz.js";
+export type { CreateQuizRequest } from "./create-quiz.js";
+export { parseSubmitAnswersRequest, submitAnswersRequestSchema } from "./submit-answers.js";
+export type { SubmitAnswersRequest } from "./submit-answers.js";
+export { publicQuizViewSchema } from "./public-quiz.js";
+export type { PublicQuizView } from "./public-quiz.js";
+export { publicResultSchema } from "./public-result.js";
+export type { PublicResult } from "./public-result.js";

@@ -345,6 +345,9 @@ importers:
 
   packages/application:
     dependencies:
+      '@ai-quiz/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       '@ai-quiz/domain':
         specifier: workspace:*
         version: link:../domain
@@ -399,6 +402,10 @@ importers:
         version: 8.71.1(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
 
   packages/contracts:
+    dependencies:
+      zod:
+        specifier: ^4.1.11
+        version: 4.6.5
     devDependencies:
       '@ai-quiz/config':
         specifier: workspace:*

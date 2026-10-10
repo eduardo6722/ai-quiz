@@ -110,14 +110,14 @@ to later cycles. Do not create quiz endpoints, scoring or generation adapters.
 
 ### Scope checklist
 
-- [ ] Create pnpm workspaces and configure Turborepo scripts (`dev`, `build`, `lint`, `typecheck`, `test`).
-- [ ] Create `apps/api` (NestJS) and `apps/web` (Next.js App Router).
-- [ ] Create `packages/domain`, `application`, `contracts`, `ui` and `config`.
-- [ ] Enable strict TS, ESLint, Prettier, project import boundaries and environment validation.
-- [ ] Add Docker Compose for **local PostgreSQL** with health check and persistent volume.
-- [ ] Bootstrap Prisma configuration and database connectivity; add only a minimal baseline migration if needed for the scaffold, a simple health endpoint and `.env.example`. Defer full quiz models and their migrations to Phase 2.
-- [ ] Configure Jest for domain/API and Jest + React Testing Library for web components.
-- [ ] Install Tailwind/shadcn/ui, load design tokens from `.agents/skills/design-system/SKILL.md`.
+- [x] Create pnpm workspaces and configure Turborepo scripts (`dev`, `build`, `lint`, `typecheck`, `test`).
+- [x] Create `apps/api` (NestJS) and `apps/web` (Next.js App Router).
+- [x] Create `packages/domain`, `application`, `contracts`, `ui` and `config`.
+- [x] Enable strict TS, ESLint, Prettier, project import boundaries and environment validation.
+- [x] Add Docker Compose for **local PostgreSQL** with health check and persistent volume.
+- [x] Bootstrap Prisma configuration and database connectivity; add only a minimal baseline migration if needed for the scaffold, a simple health endpoint and `.env.example`. Defer full quiz models and their migrations to Phase 2.
+- [x] Configure Jest for domain/API and Jest + React Testing Library for web components.
+- [x] Install Tailwind/shadcn/ui, load design tokens from `.agents/skills/design-system/SKILL.md`.
 
 **Definition of done:** A fresh clone can install dependencies, start PostgreSQL and both apps; Prisma connectivity and any scaffold migration are verified; `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` pass.
 

@@ -59,6 +59,8 @@ There is **no single guaranteed interoperable native subagent or path-scoped rul
 
 The supplied task leaves multi-answer partial scoring underspecified. The roadmap records a provisional policy (one point per correctly selected option, without adding an unspecified penalty). Confirm this during the interview or in a project ADR before presenting it as an authoritative requirement.
 
+Phase 1 scoring lives in `@ai-quiz/domain` (`scoreSingleChoice`, isolated `scoreMultipleChoice`, `calculateWeightedScore`). It is deterministic and does not need PostgreSQL or a model key — `pnpm --filter @ai-quiz/domain test` is enough to demonstrate grading. Persistence, quiz REST, Markdown fetch and the player UI are later phases.
+
 ## Local development (Phase 0)
 
 Requires **Node.js 24** (Active LTS), **pnpm 12**, and Docker. Do **not** run `specify init --force` or regenerate the Constitution.

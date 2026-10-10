@@ -13,6 +13,7 @@
     "build": "tsc --noEmit"
   },
   "dependencies": {
+    "@ai-quiz/contracts": "workspace:*",
     "@ai-quiz/domain": "workspace:*"
   },
   "devDependencies": {
