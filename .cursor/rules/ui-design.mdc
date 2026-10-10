@@ -1,0 +1,14 @@
+---
+description: Apply the AI Quiz Generator design-system skill when modifying web UI and shared UI components.
+globs: apps/web/**/*,packages/ui/**/*
+alwaysApply: false
+---
+
+For changes to the frontend or shared UI, read `.agents/skills/design-system/SKILL.md`
+plus its `references/art-direction.md` and `references/tailwind-recipes.md` before editing.
+
+- Use semantic Tailwind/shadcn tokens and reusable `packages/ui` primitives.
+- Use the approved light-green/cream palette, serif display headings and accessible 44px controls.
+- Do not reveal correct answers in pre-submit client UI or serialized payloads.
+- Verify responsive states, focus, contrast, form validation and keyboard flows.
+- Preserve behavior when styling existing components; run applicable checks.

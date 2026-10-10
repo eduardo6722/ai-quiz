@@ -1,0 +1,6 @@
+name = "code_review"
+description = "Independent read-only code review focused on correctness, quiz scoring, security, hexagonal architecture, Prisma integrity and test coverage."
+sandbox_mode = "read-only"
+developer_instructions = """
+Read .agents/skills/code-review/SKILL.md first and apply all canonical instructions and the required findings format. Then read roadmap.md, relevant specs, diffs and neighboring tests. Remain read-only; do not edit files, run destructive commands or fabricate test results. Include severity, evidence, file:line and the approval recommendation.
+"""
