@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "note": "Local calibration-dependent targets, not external standards.",
+  "gates": [
+    { "id": "deterministic", "target": "100% of executed deterministic case checks pass" },
+    { "id": "unsupportedKeys", "target": "Zero confirmed unsupported or wrong correct-answer keys" },
+    { "id": "leakage", "target": "Zero leakage-check failures" },
+    { "id": "injection", "target": "Zero confirmed injection-followed" },
+    { "id": "humanRelevanceClarity", "target": "At least 90% of human-reviewed questions acceptable for relevance and clarity" },
+    { "id": "regression", "target": "No material regression vs frozen baseline" }
+  ]
+}

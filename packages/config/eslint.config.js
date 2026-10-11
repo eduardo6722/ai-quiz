@@ -28,6 +28,7 @@ export const hexagonalBoundaries = {
       { type: "ui", pattern: "packages/ui/**" },
       { type: "api", pattern: "apps/api/**" },
       { type: "web", pattern: "apps/web/**" },
+      { type: "evals", pattern: "evals/**" },
     ],
   },
   rules: {
@@ -40,8 +41,9 @@ export const hexagonalBoundaries = {
           { from: "application", allow: ["domain", "contracts"] },
           { from: "contracts", allow: [] },
           { from: "ui", allow: [] },
-          { from: "api", allow: ["domain", "application", "contracts"] },
+          { from: "api", allow: ["domain", "application", "contracts", "evals"] },
           { from: "web", allow: ["contracts", "ui"] },
+          { from: "evals", allow: ["domain", "application", "contracts"] },
         ],
       },
     ],

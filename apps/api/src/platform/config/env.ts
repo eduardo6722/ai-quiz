@@ -17,6 +17,7 @@ const apiEnvSchema = z.object({
   LANGFUSE_SECRET_KEY: z.string().optional(),
   LANGFUSE_BASE_URL: z.string().optional(),
   PROMPT_VERSION: z.string().optional(),
+  EVAL_JUDGE_MODEL: z.string().optional(),
   WEB_ORIGIN: z.string().url("WEB_ORIGIN must be a valid absolute URL").default("http://localhost:3000"),
 });
 
@@ -49,6 +50,7 @@ export function parseApiEnv(input: Record<string, string | undefined>): ApiEnv {
     LANGFUSE_SECRET_KEY: input.LANGFUSE_SECRET_KEY,
     LANGFUSE_BASE_URL: input.LANGFUSE_BASE_URL,
     PROMPT_VERSION: input.PROMPT_VERSION,
+    EVAL_JUDGE_MODEL: input.EVAL_JUDGE_MODEL,
     WEB_ORIGIN: input.WEB_ORIGIN === "" ? undefined : input.WEB_ORIGIN,
   });
 

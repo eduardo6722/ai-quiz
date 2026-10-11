@@ -26,5 +26,6 @@ module.exports = {
     "^@ai-quiz/domain$": "<rootDir>/../../packages/domain/src/index.ts",
     "^@ai-quiz/application$": "<rootDir>/../../packages/application/src/index.ts",
     "^@ai-quiz/contracts$": "<rootDir>/../../packages/contracts/src/index.ts",
+    "^@ai-quiz/evals$": "<rootDir>/../../evals/src/index.ts",
   },
 };

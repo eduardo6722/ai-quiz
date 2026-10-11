@@ -239,3 +239,17 @@ curl -sS -D - -X POST http://localhost:3001/v1/quizzes \
 
 Expect the echoed header and a Langfuse trace for `demo-trace-0001` with the four stages and **no** API keys, attempt tokens, or answer keys. Default `pnpm test` does not require PostgreSQL, `OPENAI_API_KEY`, or Langfuse keys.
 
+## Phase 7 golden evaluation
+
+`pnpm eval:golden` is **not** part of `pnpm test`. It runs pinned snapshots through `QuizGenerationPort` and writes `docs/evals/phase-7-report.md`.
+
+```bash
+pnpm eval:golden --mocked
+pnpm eval:golden --live --repeat
+```
+
+`--mocked` needs no model key and labels the report mocked. `--live` requires `OPENAI_API_KEY` and `OPENAI_MODEL`; missing keys exit non-zero and mark live work **not run** (no silent mock). Optional `EVAL_JUDGE_MODEL` defaults to `OPENAI_MODEL`. Langfuse Datasets/Experiments/Scores export when both Langfuse keys are set; otherwise the destination is **not run** and the portable report still exists.
+
+Last live run (2026-10-11): Express and Fastify pins, 16 executed cases (two variability repeats). Deterministic, unsupported-keys, leakage and injection gates **passed**. Human relevance/clarity and regression vs a frozen baseline are **not run** until `evals/baselines/human-labels.v1.json` is filled and a reviewer passes `--accept-baseline`. Learner 0–4 scoring is unchanged. See `docs/evals/phase-7-report.md`.
+
+

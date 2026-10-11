@@ -19,6 +19,8 @@ apps/web/out/
 # Accidental tsc emit next to TypeScript sources
 packages/**/src/**/*.js
 packages/**/src/**/*.d.ts
+evals/**/src/**/*.js
+evals/**/src/**/*.d.ts
 
 # Turbo / test / logs
 .turbo/

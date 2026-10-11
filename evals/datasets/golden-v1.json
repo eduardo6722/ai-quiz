@@ -1,0 +1,244 @@
+{
+  "id": "golden-v1",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "express-routing-5",
+      "sourceUrl": "https://github.com/expressjs/express/blob/master/Readme.md",
+      "sourceFile": "sources/express-readme.md",
+      "sourceChecksum": "sha256:f27fc1b597cc99e752f4e114c7429a04fe34889889c24603374b3c4b727fc12a",
+      "topic": "Express routing",
+      "questionCount": 5,
+      "referenceFacts": [
+        {
+          "id": "ex-get",
+          "claim": "The example registers a GET route handler with app.get.",
+          "evidenceSection": "Routing",
+          "evidenceExcerpt": "The following example registers a GET route handler with `app.get`."
+        }
+      ],
+      "expectedBehavior": "valid-grounded-quiz",
+      "tags": ["express", "single", "readme"],
+      "repeatForVariability": true
+    },
+    {
+      "id": "express-middleware-5",
+      "sourceUrl": "https://github.com/expressjs/express/blob/master/Readme.md",
+      "sourceFile": "sources/express-readme.md",
+      "sourceChecksum": "sha256:f27fc1b597cc99e752f4e114c7429a04fe34889889c24603374b3c4b727fc12a",
+      "topic": "Express middleware",
+      "questionCount": 5,
+      "referenceFacts": [
+        {
+          "id": "ex-next",
+          "claim": "If middleware does not end the cycle it must call next().",
+          "evidenceSection": "Middleware",
+          "evidenceExcerpt": "If the current middleware function does not end the request-response cycle, it must call `next()` to pass control to the next middleware function."
+        }
+      ],
+      "expectedBehavior": "valid-grounded-quiz",
+      "tags": ["express", "multiple", "readme"]
+    },
+    {
+      "id": "express-features-8",
+      "sourceUrl": "https://github.com/expressjs/express/blob/master/Readme.md",
+      "sourceFile": "sources/express-readme.md",
+      "sourceChecksum": "sha256:f27fc1b597cc99e752f4e114c7429a04fe34889889c24603374b3c4b727fc12a",
+      "topic": "Express features",
+      "questionCount": 8,
+      "referenceFacts": [
+        {
+          "id": "ex-features",
+          "claim": "Express lists robust routing and HTTP helpers among its features.",
+          "evidenceSection": "Features",
+          "evidenceExcerpt": "Robust routing"
+        }
+      ],
+      "expectedBehavior": "valid-grounded-quiz",
+      "tags": ["express", "single", "readme"]
+    },
+    {
+      "id": "fastify-plugins-5",
+      "sourceUrl": "https://github.com/fastify/fastify/blob/main/README.md",
+      "sourceFile": "sources/fastify-readme.md",
+      "sourceChecksum": "sha256:993552aacdefa203847607b208bfe8f824815edf2ff9159920da90d6d748b97b",
+      "topic": "Fastify plugins",
+      "questionCount": 5,
+      "referenceFacts": [
+        {
+          "id": "fa-ext",
+          "claim": "Fastify is fully extensible via hooks, plugins and decorators.",
+          "evidenceSection": "Plugins",
+          "evidenceExcerpt": "Fastify is fully extensible via its hooks, plugins and decorators."
+        }
+      ],
+      "expectedBehavior": "valid-grounded-quiz",
+      "tags": ["fastify", "single", "readme"],
+      "repeatForVariability": true
+    },
+    {
+      "id": "fastify-hooks-5",
+      "sourceUrl": "https://github.com/fastify/fastify/blob/main/README.md",
+      "sourceFile": "sources/fastify-readme.md",
+      "sourceChecksum": "sha256:993552aacdefa203847607b208bfe8f824815edf2ff9159920da90d6d748b97b",
+      "topic": "Fastify hooks",
+      "questionCount": 5,
+      "referenceFacts": [
+        {
+          "id": "fa-hooks",
+          "claim": "Hooks include onRequest, preHandler, onSend, and onResponse.",
+          "evidenceSection": "Hooks",
+          "evidenceExcerpt": "by using hooks such as `onRequest`, `preHandler`, `onSend`, and"
+        }
+      ],
+      "expectedBehavior": "valid-grounded-quiz",
+      "tags": ["fastify", "multiple", "readme"]
+    },
+    {
+      "id": "fastify-logging-5",
+      "sourceUrl": "https://github.com/fastify/fastify/blob/main/README.md",
+      "sourceFile": "sources/fastify-readme.md",
+      "sourceChecksum": "sha256:993552aacdefa203847607b208bfe8f824815edf2ff9159920da90d6d748b97b",
+      "topic": "Fastify logging",
+      "questionCount": 5,
+      "referenceFacts": [
+        {
+          "id": "fa-pino",
+          "claim": "Fastify uses Pino as its logger.",
+          "evidenceSection": "Core features",
+          "evidenceExcerpt": "we chose the best\n  logger to almost remove this cost, [Pino](https://getpino.io/)!"
+        }
+      ],
+      "expectedBehavior": "valid-grounded-quiz",
+      "tags": ["fastify", "single", "readme"]
+    },
+    {
+      "id": "express-install-5",
+      "sourceUrl": "https://github.com/expressjs/express/blob/master/Readme.md",
+      "sourceFile": "sources/express-readme.md",
+      "sourceChecksum": "sha256:f27fc1b597cc99e752f4e114c7429a04fe34889889c24603374b3c4b727fc12a",
+      "topic": "Installing Express",
+      "questionCount": 5,
+      "referenceFacts": [
+        {
+          "id": "ex-npm",
+          "claim": "Express is installed with npm install express.",
+          "evidenceSection": "Installation",
+          "evidenceExcerpt": "npm install express"
+        }
+      ],
+      "expectedBehavior": "valid-grounded-quiz",
+      "tags": ["express", "single", "readme"]
+    },
+    {
+      "id": "fastify-schema-5",
+      "sourceUrl": "https://github.com/fastify/fastify/blob/main/README.md",
+      "sourceFile": "sources/fastify-readme.md",
+      "sourceChecksum": "sha256:993552aacdefa203847607b208bfe8f824815edf2ff9159920da90d6d748b97b",
+      "topic": "Fastify JSON Schema",
+      "questionCount": 5,
+      "referenceFacts": [
+        {
+          "id": "fa-schema",
+          "claim": "Fastify recommends JSON Schema to validate routes and serialize outputs.",
+          "evidenceSection": "Core features",
+          "evidenceExcerpt": "we recommend using\n  [JSON Schema](https://json-schema.org/) to validate your routes and serialize your"
+        }
+      ],
+      "expectedBehavior": "valid-grounded-quiz",
+      "tags": ["fastify", "multiple", "readme"]
+    },
+    {
+      "id": "express-http-methods-6",
+      "sourceUrl": "https://github.com/expressjs/express/blob/master/Readme.md",
+      "sourceFile": "sources/express-readme.md",
+      "sourceChecksum": "sha256:f27fc1b597cc99e752f4e114c7429a04fe34889889c24603374b3c4b727fc12a",
+      "topic": "Express HTTP methods",
+      "questionCount": 6,
+      "referenceFacts": [
+        {
+          "id": "ex-post",
+          "claim": "Use app.post to handle POST requests.",
+          "evidenceSection": "Routing",
+          "evidenceExcerpt": "Use `app.post` to handle POST requests, `app.put` for PUT, and `app.delete` for DELETE."
+        }
+      ],
+      "expectedBehavior": "valid-grounded-quiz",
+      "tags": ["express", "multiple", "readme"]
+    },
+    {
+      "id": "fastify-getting-started-5",
+      "sourceUrl": "https://github.com/fastify/fastify/blob/main/README.md",
+      "sourceFile": "sources/fastify-readme.md",
+      "sourceChecksum": "sha256:993552aacdefa203847607b208bfe8f824815edf2ff9159920da90d6d748b97b",
+      "topic": "Getting started with Fastify",
+      "questionCount": 5,
+      "referenceFacts": [
+        {
+          "id": "fa-listen",
+          "claim": "The getting-started example listens on port 3000.",
+          "evidenceSection": "Getting Started",
+          "evidenceExcerpt": "fastify.listen({ port: 3000 })"
+        }
+      ],
+      "expectedBehavior": "valid-grounded-quiz",
+      "tags": ["fastify", "single", "readme"]
+    },
+    {
+      "id": "insufficient-weather-5",
+      "sourceFile": "sources/insufficient-source.md",
+      "sourceChecksum": "sha256:5edb21e3df3beea07727336b02193206b2657a45ddefdaf661f040a470b8d157",
+      "topic": "Kubernetes networking",
+      "questionCount": 5,
+      "referenceFacts": [],
+      "expectedBehavior": "refuse-unsupported",
+      "tags": ["insufficient", "single"]
+    },
+    {
+      "id": "adversarial-inject-5",
+      "sourceFile": "sources/adversarial-inject.md",
+      "sourceChecksum": "sha256:7573fb9ab2a6264d71403958493a7447ef26993ee4fa1e13ba45650d90043530",
+      "topic": "Safe quiz generation",
+      "questionCount": 5,
+      "referenceFacts": [],
+      "expectedBehavior": "resist-injection",
+      "tags": ["adversarial", "single"]
+    },
+    {
+      "id": "express-view-system-5",
+      "sourceUrl": "https://github.com/expressjs/express/blob/master/Readme.md",
+      "sourceFile": "sources/express-readme.md",
+      "sourceChecksum": "sha256:f27fc1b597cc99e752f4e114c7429a04fe34889889c24603374b3c4b727fc12a",
+      "topic": "Express view system",
+      "questionCount": 5,
+      "referenceFacts": [
+        {
+          "id": "ex-views",
+          "claim": "Express has a view system supporting 14+ template engines.",
+          "evidenceSection": "Features",
+          "evidenceExcerpt": "View system supporting 14+ template engines"
+        }
+      ],
+      "expectedBehavior": "valid-grounded-quiz",
+      "tags": ["express", "single", "readme"]
+    },
+    {
+      "id": "fastify-typescript-5",
+      "sourceUrl": "https://github.com/fastify/fastify/blob/main/README.md",
+      "sourceFile": "sources/fastify-readme.md",
+      "sourceChecksum": "sha256:993552aacdefa203847607b208bfe8f824815edf2ff9159920da90d6d748b97b",
+      "topic": "Fastify TypeScript",
+      "questionCount": 5,
+      "referenceFacts": [
+        {
+          "id": "fa-ts",
+          "claim": "Fastify maintains a TypeScript type declaration file.",
+          "evidenceSection": "Core features",
+          "evidenceExcerpt": "we work hard to maintain a TypeScript type declaration"
+        }
+      ],
+      "expectedBehavior": "valid-grounded-quiz",
+      "tags": ["fastify", "single", "readme"]
+    }
+  ]
+}

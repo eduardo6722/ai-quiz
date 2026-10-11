@@ -1,9 +1,12 @@
 # AI Quiz Generator — Implementation Roadmap
 
-> **Status:** Planning / ready for spec-driven implementation  
-> **Language:** English (product UI and technical documentation)  
-> **Target:** A small, demonstrably production-ready Node.js/TypeScript application for the AI Engineer second-interview task  
-> **Approach:** Vertical slices first; explicit hexagonal boundaries, SOLID design, deterministic scoring, and practical operational quality.
+> **Status:** Living product roadmap. See `implementation-roadmap.md` for phase-specific status and verification evidence; planned checkboxes below are not proof of completion.
+
+> **Language:** English (product UI and technical documentation)
+
+> **Target:** A small, demonstrably production-ready Node.js/TypeScript application for the AI Engineer second-interview task
+
+> **Approach:** Vertical slices first; explicit hexagonal boundaries, SOLID design, deterministic scoring, AI-quality evaluation and practical operational quality.
 
 ## 1. Product goal and assessment contract
 
@@ -30,6 +33,10 @@ Build an AI-powered quiz application that retrieves knowledge from a **user-conf
 - [ ] Instrument model generation with **Langfuse**.
 - [ ] Support an alternative question-generation strategy through a replaceable port.
 
+### Post-MVP engineering quality gate (P1)
+
+The assessment does **not** require an LLM evaluation platform, but this project treats **LLM Evaluation, Golden Dataset and Quality Regression** as an explicit **P1 quality gate before production delivery** (implementation **Phase 7**, main-roadmap **M6**). The functional interview MVP is complete at Phase 5; post-MVP evaluation measures whether generated questions and answer keys are supported by their Markdown sources. The LLM quality score must never alter deterministic user scoring.
+
 ### Definition of “production-ready” for this task
 
 A production-ready **small application**, not a broad SaaS platform: validated inputs, controlled source fetching, graceful failures, durable persistence, predictable business rules, essential tests, environment-driven configuration, repeatable builds, and a clear deployment path. Authentication, billing, rich analytics, queues, and microservices are **not required** for the interview MVP.
@@ -49,7 +56,9 @@ A production-ready **small application**, not a broad SaaS platform: validated i
 | Forms | React Hook Form + Zod resolver | Topic/URL input and quiz submission |
 | AI orchestration | Vercel AI SDK | Structured generation through `generateText` + `Output.object` |
 | Model provider | OpenAI API | Provider configured on the server; model ID via environment |
-| Observability | Langfuse | Trace LLM calls, prompts, errors and token usage |
+| Observability | Langfuse | Trace LLM calls, prompts, errors, usage and prompt/model versions |
+| LLM evaluations | Versioned golden dataset + deterministic evaluators + LLM-as-a-Judge + human review | Validate grounding, answer keys, ambiguity, topic relevance and regressions |
+| Evaluation experiments | Langfuse Datasets, Experiments and Scores | Compare prompt/model versions, latency, usage, costs and quality baselines |
 | Tests | Jest + Testing Library + Supertest | Unit, integration, NestJS API end-to-end |
 | Automation | GitHub Actions | Lint, types, tests, build and deployment gates |
 | Local containers | Docker Compose | PostgreSQL (and optionally API/web) in development |
@@ -57,7 +66,7 @@ A production-ready **small application**, not a broad SaaS platform: validated i
 | Architecture | Hexagonal + SOLID | Pure domain, ports, application use cases, adapters |
 | Code quality | ESLint + Prettier | Consistent rules for backend, frontend and packages |
 
-**Important boundaries:** AI proposes quiz content; deterministic TypeScript code computes scores. Never use an LLM to decide the final score. Do not expose correct choices in any pre-submission API response.
+**Important boundaries:** AI proposes quiz content; deterministic TypeScript code computes scores. Never use an LLM to decide the final score. Do not expose correct choices in any pre-submission API response. Golden-set evaluation judges the **quality of generated content**, not the user's quiz performance. Judge outputs are evidence to review, not unquestionable ground truth.
 
 ## 3. Proposed repository layout
 
@@ -90,6 +99,13 @@ ai-quiz/
 │   ├── contracts/src/{quiz,attempt,errors}/
 │   ├── ui/src/{components,lib}/      # shadcn primitives only
 │   └── config/                       # Shared ESLint, TypeScript and test configs
+├── evals/                              # Version-controlled LLM evaluation suite
+│   ├── src/                             # dataset, evaluators, judge, experiment
+│   ├── datasets/                        # Curated golden cases, human-verified facts
+│   ├── sources/                         # Pinned Markdown snapshots/checksums
+│   ├── rubrics/                         # Versioned LLM-as-a-Judge criteria
+│   └── baselines/                       # Frozen comparison metadata
+├── docs/evals/phase-7-report.md         # Human-readable experiment evidence
 ├── .agents/skills/folder-architecture/SKILL.md
 ├── .agents/skills/design-system/
 │   ├── SKILL.md
@@ -105,6 +121,7 @@ ai-quiz/
 ├── .specify/            # Generated by Spec Kit during initialization
 ├── specs/               # Generated per-feature specs/plans/tasks
 ├── .github/workflows/ci.yml
+├── .github/workflows/llm-evals.yml   # Explicitly gated live evaluations (Phase 8)
 ├── compose.yml
 ├── turbo.json
 ├── pnpm-workspace.yaml
@@ -116,10 +133,17 @@ ai-quiz/
 ### Hexagonal dependency rules
 
 1. `domain` knows **no** NestJS, Prisma, HTTP, OpenAI, React, or Langfuse types.
+
 2. `application` depends on domain models and interfaces (ports), not concrete providers.
+
 3. `api` provides inbound REST adapters and outbound fetch/LLM/Prisma adapters via NestJS dependency injection.
+
 4. `contracts` holds public Zod schemas/DTOs only. Keep grading keys in server-only domain/persistence models.
+
 5. `web` uses REST contracts and UI components, never imports server persistence, environment secrets or answer-key logic.
+
+5a. Evaluation runners belong outside the pure domain and scoring modules. Use existing generation ports/adapters; keep judges, rubrics and Langfuse integration separate from quiz-grading policy.
+
 6. Prefer dependency inversion, single responsibility, small use cases, and replaceable adapters. Avoid abstractions without a clear boundary.
 
 ### Core ports / use cases
@@ -132,14 +156,12 @@ Ports (interfaces):
   AttemptRepositoryPort.create/finalize(...)
   UnitOfWorkPort.transaction(...)
   TelemetryPort.trace(...) [optional; infrastructure may handle it]
-
 Use cases:
   CreateQuizUseCase
   GetQuizUseCase
   StartAttemptUseCase
   SubmitQuizUseCase
   GetQuizResultUseCase
-
 Pure domain services:
   ValidateQuizPolicy
   ScoreQuestion
@@ -194,6 +216,22 @@ const percentage = (weightedScore / 4) * 100; // Optional display conversion
 **Errors:** use stable error codes for invalid URLs, unsupported content type, oversized sources, fetch timeout, malformed LLM output, generation retries exhausted, invalid quiz answers, unauthorized attempts, and duplicate/non-finalized submissions. Do not leak provider stack traces, API keys or sensitive prompts.
 
 ## 6. Milestone roadmap
+
+**Relationship to `implementation-roadmap.md`:** The milestones below describe cross-cutting product deliveries; the phase-specific roadmap defines separate, spec-driven execution cycles. They are related, but not identical units of completion.
+
+| Implementation cycle | Main roadmap milestone(s) | Acceptance checkpoint |
+| --- | --- | --- |
+| Phase 0 | M0 | Development environment and app shells |
+| Phases 1–2 | M1 | Pure grading, persistence and deterministic REST flow |
+| Phase 3 | M2 | Real Markdown ingestion and OpenAI generation |
+| Phase 4 | M3 | Working browser quiz |
+| Phase 5 | M4 | Two-source acceptance evidence; **interview MVP ready** |
+| Phase 6 | M5 | Langfuse and operational controls |
+| **Phase 7** | **M6** | **Golden dataset, LLM evaluations and frozen quality baseline** |
+| Phase 8 | M7–M8 | GitHub Actions, containers, review and interview delivery |
+| After delivery | M9 | Optional product extensions |
+
+Quality evaluation is **P1** and does not retroactively block the assessment's P0 acceptance. It is a required checkpoint in this project's chosen *production-delivery plan* before Phase 8.
 
 ### M0 — Bootstrap, conventions and design foundations (P0)
 
@@ -262,7 +300,7 @@ const percentage = (weightedScore / 4) * 100; // Optional display conversion
 ### M5 — AI observability, security and operational controls (P1)
 
 - [ ] Add Langfuse traces/spans for fetching, source preparation, generation, validation and failure/retry paths.
-- [ ] Trace model name, prompt version, latency, usage/cost when available, `quizId`, strategy and outcome; redact secrets and avoid recording private attempt tokens/user answers by default.
+- [ ] Trace model name, prompt version, latency, usage/cost when available, source checksum, `quizId`, strategy, experiment/correlation ID and outcome; redact secrets and avoid recording private attempt tokens/user answers by default.
 - [ ] Add structured application logs, a request/correlation ID, health checks, and safe production error mapping.
 - [ ] Set request timeout, maximum remote file length, concurrency limit, generation retry limit, and lightweight rate limiting.
 - [ ] Keep secrets server-side (`OPENAI_API_KEY`, `DATABASE_URL`, Langfuse credentials); avoid secret values in build arguments/logs.
@@ -271,9 +309,28 @@ const percentage = (weightedScore / 4) * 100; // Optional display conversion
 
 **Exit criterion:** generation behavior is measurable, misuse is bounded, and failures can be investigated without exposing secrets.
 
-### M6 — CI/CD and Docker production delivery (P1)
+### M6 — LLM evaluation, golden dataset and quality regression (P1)
+
+**Goal:** Establish reproducible evidence that generated quizzes are faithful to the supplied Markdown and have correct answer keys, clear questions and useful distractors. This milestone corresponds to **implementation Phase 7**, after Langfuse and before production delivery.
+
+- [x] Build a **versioned golden dataset of 12–20 curated scenarios** covering at least two different README.md sources, multiple topics, single/multiple-answer questions, insufficient sources and adversarial/prompt-injection content.
+- [x] Pin the Markdown source snapshots and SHA-256 checksums; for each case store a stable case ID, source URL, topic, requested question count, manually verified reference facts, supporting excerpt/section and expected behavior. Do **not** require brittle verbatim question matches.
+- [x] Implement **deterministic evaluators** for schema validity, 5–8 questions, four unique options, correct-choice cardinality, distinct questions, no pre-submit answer-key leakage, and unchanged weighted-scoring invariants.
+- [x] Implement **LLM-as-a-Judge** with a versioned rubric for source grounding, factual/answer-key correctness, relevance, clarity, ambiguity, distractor quality and coverage. Require the judge to identify the supporting Markdown evidence and express uncertainty; never give the judge the generated key as established truth.
+- [ ] **Calibrate the judge against human review** for a representative sample, including multi-select keys and disagreements; record adjudicated labels and judge failure modes.
+- [x] Execute repeatable **live-model offline experiments** using pinned Markdown snapshots via the existing generation port; repeat a subset to measure generation variability. Keep paid runs separate from Jest tests using mocked models.
+- [x] Use **Langfuse Datasets, Experiments and Scores** for comparisons. Record dataset/prompt/model/rubric versions, source checksum, trace/experiment IDs, latency, token usage and approximate cost where available; export portable evidence.
+- [x] Evaluate unsupported/invented facts, wrong answer keys, misleading distractors, ambiguous choices, source instructions trying to override the agent, duplicate questions and topic drift.
+- [x] Add `pnpm eval:golden` (or equivalent explicit command) and document credential/environment requirements. Publish `docs/evals/phase-7-report.md` with per-case evidence, aggregates, prompt/model comparisons, costs, known failures and remediation.
+- [x] Document **provisional, calibration-dependent quality gates**, for example: 100% deterministic structural checks; zero confirmed unsupported correct answers, answer-key leakage or successful prompt injections; at least 90% human-reviewed relevance/clarity acceptability; no material regression from the frozen baseline. Report sample size, adjudications and uncertainty instead of assuming these are universal benchmarks.
+- [x] Run a read-only code review of the evaluators, golden cases and data-handling; resolve blockers while keeping domain scoring independent from judge opinions.
+
+**Exit criterion:** The versioned golden dataset, evaluation runner and human-reviewed rubric produce a repeatable baseline; live generation has been evaluated against at least two pinned README sources; Langfuse results and a portable report are inspectable; quality gates explicitly show passed, failed or **not run**. The user-facing `0–4` scoring formula is unchanged.
+
+### M7 — CI/CD and Docker production delivery (P1)
 
 - [ ] Implement `.github/workflows/ci.yml` with `pnpm install --frozen-lockfile`, ESLint, TypeScript, Jest unit tests, Jest/Supertest integration-E2E, and Turbo builds.
+- [ ] Add **a separate protected/explicitly gated LLM evaluation workflow** (`.github/workflows/llm-evals.yml`, or equivalent) for golden-set experiments against a frozen baseline. Run manually/scheduled or in trusted environments with secrets, publish quality reports, and report skipped live tests as **not run**, never as passed; do not make paid LLM calls on every PR.
 - [ ] Start disposable PostgreSQL in CI; run Prisma migrations before integration/E2E tests.
 - [ ] Cache pnpm and Turbo outputs appropriately; do not cache secrets.
 - [ ] Create development Compose services (at minimum PostgreSQL; optionally API/web with hot reload and bind mounts).
@@ -283,24 +340,24 @@ const percentage = (weightedScore / 4) * 100; // Optional display conversion
 - [ ] Apply `prisma migrate deploy` in a controlled deployment/release job; do not run destructive migration generation at runtime.
 - [ ] Document rollback procedure, backup expectations, environment setup and troubleshooting.
 
-**Exit criterion:** a clean pipeline builds/test images and offers a reproducible production deployment path.
+**Exit criterion:** a clean pipeline builds/test images, preserves the Phase 7 evaluation baseline, and offers a reproducible production deployment path.
 
-### M7 — Code review agent and engineering readiness (P1)
+### M8 — Code review agent and engineering readiness (P1)
 
 - [ ] Enable the portable code-review skill at `.agents/skills/code-review/SKILL.md` and the appropriate harness-native subagent adapter: Cursor `.cursor/agents/code-review.md` (read-only), Codex `.codex/agents/code-review.toml` (read-only) or Claude `.claude/agents/code-review.md` (read-only tool access where supported).
 - [ ] Make the agent review `git diff`/PR scope, correctness, scoring, hexagonal boundaries, SOLID, Zod, Prisma migrations, LLM safety, secret handling, test quality and UI consistency.
 - [ ] Require findings with severity, `file:line`, evidence, impact, suggested fix and blocking status; avoid imaginary findings and unrequested rewrites.
 - [ ] Add code-review invocation to the manual PR checklist; use CI for deterministic gates (never substitute an LLM review for tests).
-- [ ] Prepare an architecture diagram and a 5–10-minute walkthrough of data flow, persistence and trade-offs.
+- [ ] Prepare an architecture diagram and a 5–10-minute walkthrough of data flow, persistence, deterministic scoring, golden-set evaluation methodology, human calibration and trade-offs.
 - [ ] Document what was implemented before the meeting and what remains planned, with honest P0/P1/P2 labels.
 
 **Exit criterion:** reviewer catches regressions in a deliberately seeded scoring or answer-leak bug; interviewer can follow the architecture and data flow.
 
-### M8 — After core demo / optional extensions (P2)
+### M9 — After core demo / optional extensions (P2)
 
 - [ ] Add a preview of the source Markdown and an explanation of how each question is grounded in it.
 - [ ] Add question difficulty or generation strategy selection.
-- [ ] Add Langfuse evaluations / quality sampling, golden-set fixtures and regression benchmarks.
+- [ ] Expand the Phase 7 golden dataset, add ongoing human-review sampling and experiment-driven prompt optimization only after the initial eval baseline is established.
 - [ ] Add usage dashboards, historical quizzes and admin moderation only if product scope grows.
 - [ ] Add optional authenticated workspaces, rate-limit tiers, queued jobs or streaming **only after** core functionality is robust.
 
@@ -313,11 +370,16 @@ const percentage = (weightedScore / 4) * 100; // Optional display conversion
 | Frontend component/integration | Jest + React Testing Library | Zod/RHF validation, progress, selection UI, loading/error states | `apps/web/src/**/*.test.tsx` |
 | Persistence integration | Jest + real PostgreSQL | Prisma mapping, keys, transactions, idempotency | `apps/api/test/integration` |
 | API end-to-end | Jest + Supertest + real PostgreSQL + mocked LLM | REST flow, error responses, score persistence, no answer-key leakage | `apps/api/test/e2e` |
+| LLM evaluation — deterministic | Versioned golden set + code evaluators | Format, constraints, key cardinality, duplicates, no leakage and grading invariants | `evals/src/evaluators/` |
+| LLM evaluation — semantic | Live generation + LLM-as-a-Judge rubric + human adjudication | Grounding, factual correctness, answer keys, relevance, distractors and ambiguity | `evals/`, Langfuse and `docs/evals/` |
+| LLM regression experiments | Langfuse Datasets/Experiments/Scores + pinned sources | Compare prompts/models versus quality baseline, variability, latency, tokens and cost | `evals/baselines/` |
 | Optional browser E2E | Playwright | Real browser navigation, responsiveness and accessibility smoke | `apps/web/e2e` |
 
 **PR gates:** no ESLint errors; passing type checks; passing domain, backend and UI tests; passing build; any changed scoring behavior must include reference-calculation tests; schema changes need migrations and test coverage; security-sensitive changes must be reviewed.
 
-**Suggested scripts:** `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:integration`, `pnpm test:e2e`, `pnpm build`, `pnpm dev`, `pnpm db:migrate` (exact package scripts to be implemented during setup).
+**LLM quality gates (Phase 7 onward):** golden-set benchmarks run separately from deterministic Jest gates; use pinned snapshots and a versioned rubric, require manual review of ambiguous or high-risk findings, and compare against a documented baseline. A skipped live evaluation cannot count as a pass. Confirmed unsupported correct answers, answer leakage or successful Markdown prompt injection are blockers for the evaluation milestone. The judge may not change the user's quiz score.
+
+**Suggested scripts:** `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:integration`, `pnpm test:e2e`, `pnpm eval:golden`, `pnpm build`, `pnpm dev`, `pnpm db:migrate` (exact package scripts to be implemented during their respective phases). `pnpm eval:golden` requires explicitly configured model credentials and is not part of the default PR test command.
 
 ## 8. UI design baseline
 
@@ -349,17 +411,37 @@ The complete visual specification lives in [`.agents/skills/design-system/SKILL.
 - [ ] Add sample request/response payloads and an ER/data-flow diagram.
 - [ ] Publish a test matrix containing the **two actual README sources** demonstrated; do not mark this requirement complete until both have been run.
 - [ ] Include decisions/ADRs: remote Markdown fetch security, multi-select scoring assumption, answer-key storage and exposing results, LLM structured-output strategy, caching/snapshotting.
+- [ ] Add `docs/evals/phase-7-report.md` with golden dataset IDs/versions, pinned source hashes, rubric version, human-reviewed labels, per-case and aggregate results, experiment traces, cost/latency, baseline deltas, failures and confidence/limitations.
+- [ ] Document how to execute `pnpm eval:golden`, where Langfuse datasets/experiments can be inspected, which results used real models vs mocks, and how skipped/failed evaluation runs are represented.
 - [ ] Add an honest delivery-status checklist for the interview.
 
 ## 10. Prioritized execution order (the shortest working vertical slice)
 
 1. **First:** Bootstrap Turborepo + NestJS + Next.js + PostgreSQL/Prisma; define shared Zod contracts.
+
 2. **Then:** Build pure scoring and persistent domain models (with Jest tests).
+
 3. **Then:** Implement safe Markdown fetch → OpenAI structured quiz generation → persisted quiz; expose REST.
+
 4. **Then:** Implement the full player flow and score results in the web UI.
+
 5. **Then:** Demonstrate two different README.md sources and add API end-to-end coverage.
-6. **Next:** Langfuse, stronger security, Docker production builds and GitHub Actions CI/CD.
-7. **Throughout:** Apply the design-system skill, review meaningful diffs using the code-review agent, and update Spec Kit artifacts as decisions change.
+
+6. **After the P0 interview MVP:** Add Langfuse and stronger operational controls (implementation Phase 6).
+
+7. **Before production delivery:** Run LLM golden-set evaluations, calibrate LLM-as-a-Judge with human review, freeze a baseline and resolve blocking quality findings (implementation Phase 7).
+
+8. **Then:** Implement Docker production builds and GitHub Actions CI/CD with a separate credential-gated live evaluation workflow (implementation Phase 8).
+
+9. **Throughout:** Apply the design-system skill, review meaningful diffs using the code-review agent, and update Spec Kit artifacts as decisions change.
+
+**Post-MVP AI-quality acceptance checklist (Phase 7 / M6)**
+
+- [x] The versioned golden set covers 12–20 scenarios, at least two pinned README sources, reference facts and supporting evidence.
+- [x] Deterministic evaluators and an evidence-based judge rubric run reproducibly without changing the deterministic scoring engine.
+- [ ] A human-adjudicated sample documents judge accuracy/disagreements, especially on multi-select keys.
+- [ ] A Langfuse experiment and portable baseline report contain measured quality, failure cases, latency, tokens/cost and regression decisions.
+- [x] Live runs are separated from CI mocks; every skipped/unavailable run is explicitly recorded as **not run**.
 
 **Interview-ready acceptance checklist**
 
@@ -375,12 +457,13 @@ The complete visual specification lives in [`.agents/skills/design-system/SKILL.
 
 ## 11. Authoritative engineering references
 
-- **Original assessment:** *AI Engineer – 2nd interview task*, PDF supplied with the project request (the specific scoring and functional requirements in section 1 come from this document).
+- **Original assessment:** **AI Engineer – 2nd interview task**, PDF supplied with the project request (the specific scoring and functional requirements in section 1 come from this document).
 - [Spec Kit official repository](https://github.com/github/spec-kit) and [Spec Kit core CLI documentation](https://github.com/github/spec-kit/blob/main/docs/reference/core.md).
 - [Vercel AI SDK structured generation](https://ai-sdk.dev/docs/ai-sdk-core/generating-structured-data) — use current `Output.object` with `generateText`.
 - [NestJS documentation](https://docs.nestjs.com/).
 - [Prisma documentation](https://www.prisma.io/docs).
 - [Langfuse documentation](https://langfuse.com/docs).
+- [Langfuse evaluations](https://langfuse.com/docs/evaluation/core-concepts) and [offline experiments](https://langfuse.com/docs/evaluation/get-started/offline) — datasets, rubrics, experiments and scores.
 - [shadcn/ui documentation](https://ui.shadcn.com/docs).
 
-> **Scope note:** This file is a planned implementation roadmap, not a claim that the application or any CI/CD pipeline already exists. The project-specific grading nuance is intentionally explicit so it can be reviewed with the interviewers.
+> **Scope note:** This is the whole-product roadmap, not a claim that each milestone or its pipeline has been delivered. Refer to `implementation-roadmap.md` for phase-specific completion evidence. P0 assessment requirements and the post-MVP P1 quality gate are deliberately distinct; the multi-select scoring assumption remains explicitly subject to interviewer clarification.

@@ -1,0 +1,30 @@
+{
+  "name": "@ai-quiz/evals",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --config jest.config.cjs",
+    "build": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-quiz/application": "workspace:*",
+    "@ai-quiz/contracts": "workspace:*",
+    "@ai-quiz/domain": "workspace:*",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@ai-quiz/config": "workspace:*",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^24.5.2",
+    "eslint": "^9.36.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.4",
+    "typescript": "^5.9.2"
+  }
+}

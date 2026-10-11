@@ -43,6 +43,11 @@ apps/api/src/
   platform/      # Nest cross-cutting: config, http, logging, persistence
   quiz/          # quiz module, HTTP, generation, source, persistence, telemetry, fixture
   attempt/       # attempt HTTP and persistence
+  eval/          # live judge + Langfuse experiment adapters for golden eval (composition root)
+
+evals/           # evaluation context: golden dataset, pins, rubrics, runners — not domain scoring
+  src/           # dataset/, evaluators/, judge/, experiment/, testing/
+  datasets/, sources/, rubrics/, baselines/
 
 apps/api/test/
   e2e/<context>/ + e2e/support/
@@ -57,7 +62,7 @@ apps/web/src/
 
 ## Where new code goes
 
-1. Name the context (`quiz`, `attempt`, `scoring`, `health`, `platform`, or a **new** context folder if the feature is genuinely new).
+1. Name the context (`quiz`, `attempt`, `scoring`, `health`, `platform`, `eval`, or a **new** context folder if the feature is genuinely new). Offline golden evaluation lives in repo-root `evals/`; live adapters stay in `apps/api/src/eval/`.
 2. Put domain types, invariants, and ports in `packages/domain/src/<context>/`.
 3. Put use cases in `packages/application/src/<context>/` (`quiz/` vs `attempt/`). Package-level `errors.ts` is shared. `util/` is only for small pure helpers (e.g. `token-hash`); never put use cases there.
 4. Put public Zod schemas in `packages/contracts/src/<context>/`.

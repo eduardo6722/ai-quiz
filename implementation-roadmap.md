@@ -1,70 +1,115 @@
 # AI Quiz Generator — Phase-by-Phase Spec-Driven Implementation Roadmap
 
-> **Status:** Phase 3 verified; wait for an explicit request before starting Phase 4.  
-> **Audience:** Cursor Agent, Codex or Claude Code  
-> **Product source of truth:** `roadmap.md` and the supplied AI Engineer assessment  
-> **Engineering policy:** `AGENTS.md` and `.specify/memory/constitution.md`  
+> **Status:** Phase 7 implemented; human calibration and accepted baseline remain **not run**. Wait for an explicit request before starting Phase 8.
+
+> **Audience:** Cursor Agent, Codex or Claude Code
+
+> **Product source of truth:** `roadmap.md` and the supplied AI Engineer assessment
+
+> **Engineering policy:** `AGENTS.md` and `.specify/memory/constitution.md`
+
 > **Delivery strategy:** One phase = one spec-driven cycle = one independently verified delivery.
 
 ## Current cycle and starting point
 
-**Selected phase:** Phase 3 — Secure Markdown ingestion and OpenAI quiz generation (verified).  
-**Next action:** Stop. Start Phase 4 only when explicitly requested.  
-**Verified deliveries:** Phase 0 (`specs/002-phase-0-scaffold/`), Phase 1 (`specs/003-phase-1-domain-scoring/`), Phase 2 (`specs/004-phase-2-persistence-api/`), Phase 3 (`specs/005-phase-3-markdown-generation/`).  
-**Phases 4–7:** Backlog for separate future cycles.
+**Selected phase:** Phase 7 — LLM evaluation, golden dataset and quality regression (implemented; leftover gaps below).
+
+**Next action:** Stop. Start Phase 8 only when explicitly requested.
+
+**Verified deliveries:** Phase 0 (`specs/002-phase-0-scaffold/`), Phase 1 (`specs/003-phase-1-domain-scoring/`), Phase 2 (`specs/004-phase-2-persistence-api/`), Phase 3 (`specs/005-phase-3-markdown-generation/`). Phases 4–6 were delivered in earlier commits; this cycle did not re-open those gates. Phase 7: `specs/008-phase-7-llm-evals/` (T001–T078), command-verified 2026-10-11.
+
+**Phase 8:** Backlog for a separate future cycle.
 
 Reading this file or asking to update it does not start implementation. When
+
 starting a cycle, select one phase and use its specify prompt. If no phase is named
+
 and no delivery has been verified, start with the Phase 0 specification. After
+
 a cycle ends, wait for an explicit request to start the next phase; do not infer
+
 authorization from the remaining unchecked items.
 
 Update this status when a new cycle is explicitly selected or its verification
+
 evidence is recorded. A generated spec, plan or task list is not a verified
+
 delivery.
 
 ## Execution contract — one phase per cycle
 
 This file divides the product roadmap into sequential delivery phases. It is a
+
 backlog and execution guide, not a request to specify or implement the entire
+
 application. **Start with Phase 0 (project scaffolding).** Each following phase
+
 starts with its own specification. You run the remaining Spec Kit steps from
+
 that specification; this file does not predefine those commands or prompts.
 
 1. Read `roadmap.md` for the complete assessment contract, then select exactly
+
    one phase from this file. The remaining phases are future context only.
+
 2. Use the existing Constitution across cycles. Do not regenerate it for every
+
    phase; amend it only when an engineering principle actually changes.
+
 3. Create a separate `specs/<feature-id>/` directory and feature branch for the
+
    selected phase using the installed Spec Kit integration. Each directory owns
+
    its own `spec.md`, `plan.md` and `tasks.md`, plus supporting artifacts as needed.
+
 4. Every artifact must name the selected phase, its goal, prerequisites,
+
    in-scope work, explicit exclusions and verifiable acceptance criteria.
-   **Do not generate a shared Phase 0–7 task list or a whole-product spec for
+
+   **Do not generate a shared Phase 0–8 task list or a whole-product spec for
+
    implementation.** Spec Kit's internal task sections may use their own phase
+
    labels; they all belong to the single roadmap phase selected for this cycle.
+
 5. Plan against the verified output of previous cycles. Reuse their code and
+
    decisions; do not reimplement completed phases. If a missing prerequisite
+
    blocks the selected phase, record it and resolve the prerequisite before
+
    expanding the current phase's scope.
+
 6. Implement only tasks that belong to the selected phase. Requirements for
+
    later phases can be recorded as deferred context, never as current acceptance
+
    criteria or implementation tasks.
+
 7. Verify the phase's definition of done, perform a read-only review, address
+
    blocking findings, rerun affected checks and record the evidence. Mark only
+
    verified work complete and commit a coherent phase delivery.
+
 8. **Stop after the selected phase.** Do not automatically create the next spec
+
    or implement the next phase. Start the next cycle when explicitly requested.
 
 `roadmap.md` remains authoritative for product scope and acceptance. Its broader
+
 milestones are split into the phases below: bootstrap → domain/persistence →
-ingestion/generation → web → reliability → operations. These phase numbers are
+
+ingestion/generation → web → reliability → observability → LLM evaluation → operations. These phase numbers are
+
 not a renumbering of its milestones; completing a phase does not automatically
+
 complete an entire `roadmap.md` milestone.
 
 ### Cycle map
 
 Feature directory names below are examples. Let Spec Kit allocate the next
+
 available feature ID; the ID is separate from the roadmap phase number.
 
 | Roadmap phase | Example feature directory                | Prerequisite                                   | This cycle delivers                                     |
@@ -76,26 +121,37 @@ available feature ID; the ID is separate from the roadmap phase number.
 | 4             | `specs/005-phase-4-web-experience/`      | Phase 3 verified                               | Complete browser quiz flow                              |
 | 5             | `specs/006-phase-5-demo-reliability/`    | Phase 4 verified                               | Two-source demonstration and acceptance evidence        |
 | 6             | `specs/007-phase-6-observability/`       | Phase 5 verified                               | P1 observability and operational controls               |
-| 7             | `specs/008-phase-7-delivery/`            | Phase 6 verified, or explicitly deferred as P1 | P1 CI, production containers and walkthrough            |
+| 7             | `specs/008-phase-7-llm-evals/`          | Phase 6 verified                               | P1 golden dataset, quality evaluation and regression    |
+| 8             | `specs/009-phase-8-delivery/`           | Phase 7 verified                               | P1 CI, production containers and walkthrough            |
 
 ### Existing whole-product artifacts
 
 If a broad `specs/001-ai-quiz-generator/` or similar specification already exists,
+
 retain it as product context. Do not execute its entire task list as the current
+
 cycle. Create phase-specific artifacts and carry over only the requirements and
+
 decisions needed for the selected phase. Existing full data models and API
+
 contracts describe the target product; they do not require implementing all
+
 models or endpoints during Phase 0.
 
 ## How to use the phase prompts
 
 Invoke the specify command or skill installed for your harness with the prompt
+
 under the selected phase. This repository's Cursor integration names it
+
 `/speckit-specify`; use the equivalent name in other integrations.
 
 Each prompt creates one phase-specific specification and stops there. Continue
+
 with the remaining Spec Kit steps yourself, using that specification. The scope
+
 checklists below describe the roadmap requirements; they are not generated
+
 implementation task lists. Keep all later artifacts scoped to the same phase.
 
 ---
@@ -105,18 +161,27 @@ implementation task lists. Keep all later artifacts scoped to the same phase.
 **Goal:** Both minimal app shells start, PostgreSQL runs, and quality commands work.
 
 **Scope boundary:** Tooling, shared package shells, local infrastructure and design
+
 foundations only. Quiz business behavior and the complete product schema belong
+
 to later cycles. Do not create quiz endpoints, scoring or generation adapters.
 
 ### Scope checklist
 
 - [x] Create pnpm workspaces and configure Turborepo scripts (`dev`, `build`, `lint`, `typecheck`, `test`).
+
 - [x] Create `apps/api` (NestJS) and `apps/web` (Next.js App Router).
+
 - [x] Create `packages/domain`, `application`, `contracts`, `ui` and `config`.
+
 - [x] Enable strict TS, ESLint, Prettier, project import boundaries and environment validation.
+
 - [x] Add Docker Compose for **local PostgreSQL** with health check and persistent volume.
+
 - [x] Bootstrap Prisma configuration and database connectivity; add only a minimal baseline migration if needed for the scaffold, a simple health endpoint and `.env.example`. Defer full quiz models and their migrations to Phase 2.
+
 - [x] Configure Jest for domain/API and Jest + React Testing Library for web components.
+
 - [x] Install Tailwind/shadcn/ui, load design tokens from `.agents/skills/design-system/SKILL.md`.
 
 **Definition of done:** A fresh clone can install dependencies, start PostgreSQL and both apps; Prisma connectivity and any scaffold migration are verified; `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` pass.
@@ -130,11 +195,13 @@ cycles and the selected phase's scope checklist and definition of done.
 
 Create a new specification for Phase 0 only: project scaffolding, monorepo
 and local runtime. The existing Constitution and planning kit are prerequisites;
+
 reuse them without reinitializing or overwriting them.
 
 Describe a developer installing dependencies from a fresh clone, starting local
 PostgreSQL and minimal NestJS API/Next.js web shells, verifying /health and
 database connectivity, and running lint, strict typecheck, Jest tests and builds.
+
 Cover pnpm/Turborepo, shared domain/application/contracts/ui/config package
 shells, environment validation, .env.example, local PostgreSQL Compose, Prisma
 bootstrap, and Jest/RTL setup. Include minimal shared Tailwind/shadcn design
@@ -150,6 +217,7 @@ acceptance criteria. If a prerequisite is incomplete, record the blocker without
 expanding scope. Create a separate phase-specific specification using the
 installed Spec Kit integration. Stop after the specification; do not generate a
 plan or implementation task list, implement code or start another phase.
+
 ```
 
 ## Phase 1 — Domain, scoring rules and Jest unit tests (P0)
@@ -157,15 +225,21 @@ plan or implementation task list, implement code or start another phase.
 **Goal:** Explain and prove grading without invoking any LLM or database.
 
 **Excluded from this cycle:** Prisma product models/migrations, repository
+
 adapters, quiz REST endpoints, Markdown fetching, AI generation and quiz UI.
 
 ### Scope checklist
 
 - [x] Define quiz/question/choice/attempt domain types and invariants.
+
 - [x] Implement `scoreSingleChoice()` and isolated `scoreMultipleChoice()` policy.
+
 - [x] Implement `calculateWeightedScore(scores)` with `weight(i) = 1.1 ** i`.
+
 - [x] Add Zod contracts for topic, URL, count (5–8), answers and public result DTOs.
+
 - [x] Keep answer keys out of public DTOs.
+
 - [x] Add Jest cases for correct/wrong answers, multi-select boundaries, all-correct/all-wrong, floating-point weights, invalid choices and ordering.
 
 **Formula:** `weightedScore = Σ(questionScore[i] × 1.1^i) / Σ(1.1^i)`; calculate a percentage only for display with `(weightedScore / 4) × 100`.
@@ -181,6 +255,7 @@ cycles and the selected phase's scope checklist and definition of done.
 
 Create a new specification for Phase 1 only: pure quiz domain, deterministic
 scoring and public Zod contracts. Prerequisite: verified Phase 0 scaffolding.
+
 Reuse that delivery; this cycle must be testable without a database or LLM.
 
 Define quiz/question/choice/attempt invariants: 5–8 questions, exactly four
@@ -189,12 +264,14 @@ scoring is 4 for correct and 0 otherwise. Preserve roadmap.md's provisional
 multi-answer policy: one point per correctly selected option, bounded to 0–4,
 without invented penalties or normalization. Record the ambiguity and keep the
 policy replaceable. Weight by zero-based quiz position using 1.1 ** index;
+
 divide the weighted sum by the sum of weights. Round only for display.
 
 Cover Zod inputs for topic, HTTPS source URL, count and answers, plus public
 result contracts that keep answer keys private before submission. Define Jest
 acceptance cases for correct/wrong answers, mixed single/multiple questions,
 invalid/duplicate selections, ordering, boundaries and hand-calculated weights.
+
 Keep domain/application pure. Exclude Prisma product models/migrations,
 repositories, quiz REST endpoints, source fetching, AI generation and quiz UI.
 
@@ -203,6 +280,7 @@ acceptance criteria. If a prerequisite is incomplete, record the blocker without
 expanding scope. Create a separate phase-specific specification using the
 installed Spec Kit integration. Stop after the specification; do not generate a
 plan or implementation task list, implement code or start another phase.
+
 ```
 
 ## Phase 2 — Prisma model, repositories and deterministic API skeleton (P0)
@@ -210,17 +288,25 @@ plan or implementation task list, implement code or start another phase.
 **Goal:** Save and retrieve quiz state with real PostgreSQL, without AI dependency.
 
 **Excluded from this cycle:** Remote Markdown fetching, OpenAI/model calls, quiz
+
 UI, Langfuse and production delivery. Fixed source/question fixtures provide
+
 the inputs needed to verify persistence and the REST flow.
 
 ### Scope checklist
 
 - [x] Model `SourceDocument`, `Quiz`, `Question`, `QuestionOption`, `QuizAttempt`, `AttemptAnswer` and selected options with migrations and constraints.
+
 - [x] Implement repository **ports** in application/domain and Prisma **adapters** in API.
+
 - [x] Implement use cases: `CreateQuiz`, `GetQuiz`, `StartAttempt`, `SubmitAttempt`, `GetResult`.
+
 - [x] Add `POST /v1/quizzes`, `GET /v1/quizzes/:id`, `POST /v1/quizzes/:id/attempts`, `POST /v1/attempts/:id/submit`, `GET /v1/attempts/:id/result`.
+
 - [x] First use an **in-memory/fixed question-generation adapter** to complete the grading flow.
+
 - [x] Ensure transactions, question/choice ownership validation, unique answers, private attempt tokens and repeat-submission idempotency.
+
 - [x] Add Jest + PostgreSQL integration tests and Jest + Supertest API tests.
 
 **Definition of done:** Using fixed questions, REST clients can create a quiz, start an attempt, submit answers and fetch the correct persisted score. `GET quiz` never leaks answer keys.
@@ -250,7 +336,9 @@ Define acceptance scenarios for a complete persisted flow, ownership validation,
 unique answers, immutable playable quizzes, unauthorized access and duplicate/
 concurrent submission. Selections, per-question scores and the final weighted
 score must finalize atomically; repeated submission returns the existing result.
+
 Use Jest with real PostgreSQL and Supertest for integration/API evidence.
+
 Exclude remote Markdown fetching, OpenAI calls, quiz UI, Langfuse and production
 delivery.
 
@@ -259,6 +347,7 @@ acceptance criteria. If a prerequisite is incomplete, record the blocker without
 expanding scope. Create a separate phase-specific specification using the
 installed Spec Kit integration. Stop after the specification; do not generate a
 plan or implementation task list, implement code or start another phase.
+
 ```
 
 ## Phase 3 — Secure Markdown ingestion and OpenAI quiz generation (P0)
@@ -266,18 +355,27 @@ plan or implementation task list, implement code or start another phase.
 **Goal:** Replace the fixture adapter with generation grounded in a remote README.
 
 **Excluded from this cycle:** Quiz forms/player/results UI, the two-source demo
+
 acceptance package, Langfuse and production delivery. Reuse the verified scoring,
+
 persistence and REST flow from earlier cycles.
 
 ### Scope checklist
 
 - [x] Fetch configurable HTTPS Markdown URLs; normalize supported GitHub `blob` URLs to raw content.
+
 - [x] Add timeouts, max-size policy, controlled redirects and SSRF protection (public DNS/IP targets only).
+
 - [x] Treat Markdown as **untrusted content**, not instructions to the agent.
+
 - [x] Normalize/truncate source, store the snapshot and checksum, and reject empty/unusable content.
+
 - [x] Create an OpenAI-backed `QuizGenerationPort` adapter via Vercel AI SDK structured output and Zod.
+
 - [x] Validate 5–8 questions, exactly four unique choices per question, valid answer-key indices, and topic/source relevance; retry malformed output within limits.
+
 - [x] Handle upstream timeouts, invalid model output and generation failure without saving a partially playable quiz.
+
 - [x] Add mocked-LLM tests. Keep model calls and keys strictly server-side.
 
 **Definition of done:** A real README URL + topic generates a valid quiz via REST, and the sanitized retrieval endpoint returns it safely.
@@ -303,6 +401,7 @@ is untrusted data, never privileged instructions. Normalize and bound content,
 reject unusable sources, and persist the snapshot and checksum.
 
 Generate server-side via Vercel AI SDK/OpenAI with Zod-backed structured output.
+
 Require the requested 5–8 questions, exactly four unique choices, valid question
 types/answer keys and relevance to the topic and source. Define acceptance for a
 real README generating a retrievable quiz, mocked-model validation/error paths,
@@ -316,6 +415,7 @@ acceptance criteria. If a prerequisite is incomplete, record the blocker without
 expanding scope. Create a separate phase-specific specification using the
 installed Spec Kit integration. Stop after the specification; do not generate a
 plan or implementation task list, implement code or start another phase.
+
 ```
 
 ## Phase 4 — Complete web experience (P0)
@@ -323,19 +423,29 @@ plan or implementation task list, implement code or start another phase.
 **Goal:** An interviewer can complete the full quiz in the browser.
 
 **Excluded from this cycle:** New scoring policies, generation strategies,
+
 Langfuse, CI/CD and production containers. Use the verified API; record any
+
 backend defect needed to complete this flow and keep fixes limited to that
+
 acceptance blocker.
 
 ### Scope checklist
 
 - [x] Build an English-language landing/create form for topic, Markdown URL and count (5–8).
+
 - [x] Build a loading/generation/error state.
+
 - [x] Build quiz player: progress indicator, single choice (`RadioGroup`), multiple choice (`Checkbox`), previous/next, and submit.
+
 - [x] Build results view: weighted score (0–4), optional percentage, per-question feedback and source reference.
+
 - [x] Use React Hook Form + Zod, Tailwind + shadcn/ui, and `.agents/skills/design-system/SKILL.md` + its references.
+
 - [x] Apply light green palette, responsive layout, focus states, usable touch targets and accessible labels.
+
 - [x] Protect private attempt token lifecycle and never send correct answers to the browser before submission.
+
 - [x] Test form validation, choice selection, loading/error and submit behavior with Jest + React Testing Library.
 
 **Definition of done:** In the browser: enter README URL/topic → generate quiz → answer → submit → view persisted result. Layout works at phone and desktop widths.
@@ -359,8 +469,10 @@ validation, generation/submission errors and safe refresh/result access through
 the private attempt-token lifecycle. Never expose answer keys before submission.
 
 Use English UI copy, React Hook Form/Zod, Tailwind and shared shadcn/ui primitives.
+
 Read the design-system skill and references for semantic tokens, light greens,
 responsive layouts, labels, keyboard navigation, focus and usable touch targets.
+
 Define Jest/RTL scenarios for validation, selection, progress, errors and submit,
 plus phone/desktop acceptance of the full flow. Exclude new scoring policies,
 generation strategies, Langfuse, CI/CD and production containers; limit backend
@@ -371,6 +483,7 @@ acceptance criteria. If a prerequisite is incomplete, record the blocker without
 expanding scope. Create a separate phase-specific specification using the
 installed Spec Kit integration. Stop after the specification; do not generate a
 plan or implementation task list, implement code or start another phase.
+
 ```
 
 ## Phase 5 — Demonstration with two README sources and reliability (P0)
@@ -378,22 +491,30 @@ plan or implementation task list, implement code or start another phase.
 **Goal:** Meet every functional criterion from the assessment with evidence.
 
 **Excluded from this cycle:** New product features, optional generation
+
 strategies, Langfuse and production delivery. Limit implementation changes to
+
 defects exposed by the assessment acceptance and reliability checks.
 
 ### Scope checklist
 
 - [x] Test generation from **two different, reachable README.md URLs**, not two topics on the same source.
+
 - [x] Manually verify the questions reference the corresponding Markdown content.
+
 - [x] Check DB persistence for questions, correct choices, attempts, selected answers, individual scores and weighted final score.
+
 - [x] Run Jest + Supertest end-to-end flows using real PostgreSQL and a mocked deterministic model.
+
 - [x] Test malformed URL, bad Markdown, upstream failure, invalid option IDs, answer leakage, duplicate submission and unauthorized result access.
+
 - [x] Document the two sources, sample topics, demo steps, scores and known limitations in `README.md`.
+
 - [x] Run the **read-only code-review agent** over the completed vertical slice; fix high-severity findings.
 
 **Definition of done — INTERVIEW MVP:** Both README demonstrations work; API, web UI, database and scoring are demonstrably correct; all core tests pass. **At this point the assessment's must-haves are delivered.**
 
-### Specify prompt and use /speckit-coverge
+### Specify prompt and use /speckit-converge
 
 ```text
 Read roadmap.md, implementation-roadmap.md, AGENTS.md and the existing
@@ -406,6 +527,7 @@ flow. This cycle verifies the MVP and fixes acceptance defects.
 
 Require successful live generation and quiz completion using two different,
 reachable README.md URLs, with questions grounded in each corresponding source.
+
 Record the actual URLs, topics, demo steps, scores, source relevance evidence
 and limitations in README.md. Verify PostgreSQL records for questions, keys,
 attempts, selections, individual scores and the weighted final result.
@@ -414,8 +536,10 @@ Define repeatable Jest/Supertest E2E acceptance with real PostgreSQL and a mocke
 deterministic model, separately from the live demonstrations. Cover malformed
 URLs, unusable Markdown, upstream/model failures, incomplete/invalid answers,
 answer leakage, duplicate/concurrent submission and unauthorized result access.
+
 Include reference-calculation checks and a read-only review under the canonical
 code-review checklist, with blocking findings resolved before completion.
+
 Exclude new product features, optional generation strategies, Langfuse and
 production delivery. Require evidence before claiming the interview MVP done.
 
@@ -424,6 +548,7 @@ acceptance criteria. If a prerequisite is incomplete, record the blocker without
 expanding scope. Create a separate phase-specific specification using the
 installed Spec Kit integration. Stop after the specification; do not generate a
 plan or implementation task list, implement code or start another phase.
+
 ```
 
 ---
@@ -433,14 +558,19 @@ plan or implementation task list, implement code or start another phase.
 **Goal:** Add observability and operational controls to the verified MVP.
 
 **Excluded from this cycle:** CI/CD, production Dockerfiles, deployment
+
 automation and P2 product extensions. Essential fetch security and safe attempt
+
 handling must already be verified in the P0 cycles.
 
 ### Scope checklist
 
 - [x] Add Langfuse traces around fetch → preprocessing → generation → validation (redact secrets and private tokens).
+
 - [x] Add structured logs, consistent errors, correlation IDs, rate limits and bounded retry behavior.
+
 - [ ] Add a second question-generation strategy behind the same generation port (optional assessment bonus).
+
 - [x] Add health/readiness checks and configuration documentation.
 
 **Definition of done:** You can diagnose a failed generation and explain model behavior without exposing secrets.
@@ -458,15 +588,19 @@ prompt-injection, answer privacy and attempt protections must already work.
 
 Specify Langfuse tracing across fetching, preprocessing, generation, validation
 and failures/retries, with useful model/request/quiz context and latency/usage
-where available. Keep telemetry behind a replaceable boundary and redact secrets,
-private tokens and sensitive answers. Cover structured logs, correlation IDs,
+where available. Include non-sensitive source checksum, prompt version, model ID,
+and experiment/correlation ID where available so Phase 7 can compare runs. Keep
+telemetry behind a replaceable boundary; redact secrets, private tokens,
+and sensitive answers. Cover structured logs, correlation IDs,
 consistent safe errors, rate/concurrency limits, bounded retries, health/readiness
 and configuration documentation.
 
 Define acceptance scenarios proving a failed generation can be diagnosed, limits
 are enforced and telemetry/logs do not expose secrets. Keep domain/application
 independent of telemetry SDKs. Treat a second generation strategy as optional;
+
 record whether it is included or deferred and preserve the generation port.
+
 Exclude CI/CD, production Dockerfiles, deployment automation and P2 extensions.
 
 State this phase's prerequisites, in-scope behavior, exclusions and testable
@@ -474,24 +608,104 @@ acceptance criteria. If a prerequisite is incomplete, record the blocker without
 expanding scope. Create a separate phase-specific specification using the
 installed Spec Kit integration. Stop after the specification; do not generate a
 plan or implementation task list, implement code or start another phase.
+
 ```
 
-## Phase 7 — GitHub Actions, Docker production and interview walkthrough (P1)
+## Phase 7 — LLM evaluation, golden dataset and quality regression (P1)
 
-**Goal:** Make builds and delivery reproducible and prepare the walkthrough.
+**Goal:** Demonstrate that generated quiz questions are factually grounded in their
+Markdown source, useful for the requested topic, and consistently high quality —
+not merely valid JSON. Establish a reproducible quality baseline before delivery.
 
-**Excluded from this cycle:** New quiz features and P2 extensions. Deferred
-Phase 6 work remains explicitly deferred; it is not absorbed into this cycle.
+**Prerequisite:** Verified Phases 0–6, including the live two-README acceptance
+flow and Langfuse tracing. Reuse existing generation ports and telemetry. If an
+earlier phase is incomplete, record the blocker; do not silently substitute mocks
+for live quality evidence.
+
+**Excluded from this cycle:** New product features, redesigned quiz UI, alternative
+generation strategies, online prompt optimization, CI/CD pipelines, deployment
+and changes to the deterministic scoring rules. Targeted prompt/generation fixes
+are allowed only when supported by recorded evaluation failures.
 
 ### Scope checklist
 
-- [ ] Build GitHub Actions pipeline for pnpm install, lint, typecheck, Jest unit, PostgreSQL integration/API E2E, and production builds.
-- [ ] Create multi-stage Dockerfiles for NestJS and Next.js; use minimal, non-root runtime stages.
-- [ ] Confirm local Compose and production build instructions are reproducible.
-- [ ] Add architecture/data-flow diagram, Prisma ER model, API examples, environment documentation and known trade-offs.
-- [ ] Run code-review agent after meaningful changes and do a 5–10 minute mock walkthrough.
+- [x] Create a **version-controlled golden dataset** (initial target: 12–20 curated
+  generation scenarios, with at least two genuinely different README sources,
+  several topics, single/multiple-choice expectations, source edge cases and
+  adversarial Markdown). Prefer pinned source snapshots and checksums over
+  relying on mutable remote URLs for repeatable offline comparisons.
+- [x] Give every dataset item a stable ID, source URL, source checksum/snapshot,
+  requested topic/count, manually verified reference facts and supporting
+  excerpts/section locations, expected behavioral constraints, and tags for
+  difficulty/failure mode. Do not prescribe exact generated question wording.
+- [x] Implement **deterministic evaluators** for the full quiz contract:
+  5–8 questions; exactly four distinct options each; valid answer keys;
+  single/multiple-choice invariants; no duplicate questions/options; response
+  schema conformance; no pre-submit answer-key leakage; and deterministic
+  score/weight calculations. Keep these checks independent of the judge model.
+- [x] Implement a versioned **LLM-as-a-Judge rubric** for source faithfulness,
+  answer-key correctness, topical relevance, question clarity, ambiguity,
+  distractor plausibility/distinctness and question-set diversity. Score
+  individual questions and overall quizzes with anchored criteria; require the
+  judge to reference supporting Markdown evidence, explicitly mark uncertainty,
+  and flag unsupported answers. The generated answer key is a hypothesis to
+  verify, never the ground truth presented to the judge.
+- [ ] **Human-review and calibrate** a representative stratified sample of
+  questions, particularly multiple-answer keys and judge disagreements.
+  Maintain adjudicated labels and compare judge verdicts with human judgments;
+  record systematic errors rather than assuming LLM-as-a-Judge is objective.
+- [x] Run repeatable **offline experiments** through the existing production
+  generation path against pinned snapshots, including retries/repeated runs on
+  a small subset to measure output variability. Keep mocked deterministic
+  tests separate from paid live-model evaluation.
+- [x] Integrate with **Langfuse Datasets, Experiments and Scores** to compare
+  model/prompt revisions. Store prompt version, model ID, source checksum,
+  experiment run ID, evaluator version, latency, token usage and cost where
+  available. Maintain a local version-controlled dataset/export and report so
+  the evaluation can be reviewed without needing platform access.
+- [x] Explicitly evaluate prompt-injection resistance in Markdown, unsupported
+  or insufficient sources, invented facts, ambiguous answer keys, duplicated
+  questions, topic drift and overconfident answer selection. Do not pass source
+  instructions into privileged system/developer instruction slots.
+- [x] Publish a **baseline and regression report** in
+  `docs/evals/phase-7-report.md`, including per-case outcomes, aggregate metrics,
+  known failure examples, cost/latency, prompt/model versions, human-reviewed
+  findings and actionable remediation. Introduce `pnpm eval:golden` (or an
+  equivalent explicit script) with clear credential requirements and a readable
+  local summary.
+- [x] Set documented **quality gates** before comparing changes. Suggested
+  *initial targets to calibrate*, not external standards: 100% deterministic
+  structural/contract checks; zero confirmed unsupported correct answers,
+  zero confirmed answer-key leakage/prompt-injection successes; at least 90%
+  of reviewed questions rated acceptable for relevance and clarity; and no
+  material regression against the frozen baseline. Report the sample size,
+  thresholds, judge disagreement and uncertainty alongside any pass/fail.
+- [x] Run the **read-only code-review agent** on the evaluation harness,
+  graders, data handling and reports. Fix blocking findings and preserve the
+  existing Hexagonal Architecture/SOLID boundaries.
 
-**Definition of done:** CI is green, Docker images build, and you can explain source ingestion, generation, adapter boundaries, database design and weighted scoring live.
+**Evaluation principles:**
+
+1. A valid schema is necessary but does not demonstrate factual correctness.
+2. Grounding means the correct answer is supported by the supplied Markdown,
+   not merely plausible from a model's prior knowledge.
+3. Golden cases contain *reference facts and evidence*, not brittle exact-text
+   expected quizzes. Human-adjudicated labels outrank LLM judge assertions.
+4. No model-generated quality score may change the user's deterministic quiz
+   grading (0–4 question score and geometric weighting).
+5. Mark skipped, unaffordable, unavailable or unrun evaluations **not run**,
+   never **passed**. Record which checks used a mocked model versus a live one.
+6. Preserve reproducibility: dataset/snapshot versions, generation prompt,
+   model ID, judge version/rubric and experiment parameters.
+
+**Definition of done:** A versioned golden dataset and repeatable evaluators exist;
+real generation has been evaluated against at least two pinned README sources;
+structural, grounding and answer-key results are documented; the LLM judge has
+been checked against human labels; a Langfuse experiment and portable baseline
+report can be inspected; quality gates have explicit pass/fail/blocked outcomes;
+blocking defects have been addressed without changing deterministic quiz grading.
+
+**Verification evidence (2026-10-11):** Feature directory `specs/008-phase-7-llm-evals/` (tasks T001–T078). `@ai-quiz/evals` plus `apps/api/src/eval/` CLI. Ran `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm eval:golden --mocked`, and `pnpm eval:golden --live --repeat` — all passed. Live run: 16 executed cases (Express + Fastify pins, 2 variability repeats), destination recorded in `docs/evals/phase-7-report.md`. Gates: deterministic, unsupportedKeys, leakage, injection **passed**; `humanRelevanceClarity` and `regression` **not run** (empty `evals/baselines/human-labels.v1.json`, no `--accept-baseline`). Code review blockers (invalid judge counted as pass; human labels ignored in gate math; regression never loaded) were fixed and the affected Jest suites re-run. Learner 0–4 / `1.1 ** index` scoring unchanged. Deferred: human calibration, accepting `baseline-v1.json`, Phase 8 CI.
 
 ### Specify prompt
 
@@ -500,10 +714,90 @@ Read roadmap.md, implementation-roadmap.md, AGENTS.md and the existing
 .specify/memory/constitution.md. Read verified artifacts from prerequisite
 cycles and the selected phase's scope checklist and definition of done.
 
-Create a new specification for Phase 7 only: P1 CI/CD, production containers
-and interview delivery documentation. Prerequisite: verified Phases 0–5, plus
-Phase 6 verified or explicitly deferred as P1. Reuse earlier deliveries and keep
-any deferred Phase 6 work deferred.
+Create a new specification for Phase 7 only: LLM evaluation, golden dataset
+and question-generation quality regression. Prerequisite: verified Phases 0–6,
+including the two-source acceptance demo and Langfuse observability. Reuse the
+existing QuizGenerationPort, live generation path, source snapshots and traces.
+
+Specify a manually curated and version-controlled golden dataset with at least
+two different README sources, 12–20 varied cases, source snapshot/checksum,
+requested topic/count, supported reference facts, evidence locations, and
+expected behaviors. Do not make the generated questions match fixed wording.
+
+Separate deterministic code evaluators (schema, 5–8 questions, four unique
+options, valid indices, answer privacy, duplicate detection, weighted scoring)
+from semantic evaluation (grounding, correct answer key, topic relevance,
+clarity, distractor quality, ambiguity and coverage). Define a versioned
+LLM-as-a-Judge rubric requiring source evidence, plus human-reviewed labels
+and calibration of judge agreement/disagreements. Treat unsourced or wrong
+correct-answer keys as blocking failures, even if the JSON is valid.
+
+Specify repeatable offline evaluation runs against pinned Markdown snapshots,
+small repeated-run variability checks, model/prompt comparison and Langfuse
+Datasets/Experiments/Scores. Track evaluator versions, source checksum,
+model/prompt versions, experiment ID, latency, token usage, cost and concrete
+failures. Produce a portable report at docs/evals/phase-7-report.md and an
+explicit local evaluation command; live and mocked evaluations must be clearly
+separated. Set provisional thresholds and regression rules with human review,
+and document sample size and limitations rather than claiming statistical
+certainty from a small set.
+
+Cover malicious Markdown instructions, unsupported facts, misleading choices,
+ambiguous multi-select answer keys and data exposure. Keep telemetry behind
+ports/adapters, never expose private tokens/answer keys to users, and never
+replace the deterministic final quiz scoring with an LLM judgment. Allow only
+targeted quality fixes supported by evidence. Exclude new product features,
+alternative generation strategies, CI/CD, deployment and UI redesign.
+
+State this phase's prerequisites, in-scope behavior, exclusions and testable
+acceptance criteria. If a prerequisite is incomplete, record the blocker without
+expanding scope. Create a separate phase-specific specification using the
+installed Spec Kit integration. Stop after the specification; do not generate a
+plan or implementation task list, implement code or start another phase.
+```
+
+**Reference:** [Langfuse evaluation overview](https://langfuse.com/docs/evaluation/core-concepts)
+and [offline dataset experiments](https://langfuse.com/docs/evaluation/get-started/offline).
+
+---
+
+## Phase 8 — GitHub Actions, Docker production and interview walkthrough (P1)
+
+**Goal:** Make builds and delivery reproducible and prepare the walkthrough.
+
+**Excluded from this cycle:** New quiz features and P2 extensions. This cycle
+consumes the verified golden-set benchmark; it does not redesign evaluators,
+the scoring policy, or question-generation strategies.
+
+### Scope checklist
+
+- [ ] Build GitHub Actions pipeline for pnpm install, lint, typecheck, Jest unit, PostgreSQL integration/API E2E, and production builds.
+- [ ] Add a separate, explicitly gated LLM evaluation workflow (manual/scheduled or trusted environment with secrets) that runs Phase 7 golden-set experiments, compares baselines, and publishes the report; never silently treat skipped live runs as passing.
+
+- [ ] Create multi-stage Dockerfiles for NestJS and Next.js; use minimal, non-root runtime stages.
+
+- [ ] Confirm local Compose and production build instructions are reproducible.
+
+- [ ] Add architecture/data-flow diagram, Prisma ER model, API examples, environment documentation and known trade-offs.
+
+- [ ] Run code-review agent after meaningful changes and do a 5–10 minute mock walkthrough.
+
+**Definition of done:** CI is green, Docker images build, the evaluation baseline
+and any gated evaluation status are documented, and you can explain source ingestion,
+generation, grounded-question quality, adapter boundaries, database design,
+weighted scoring, and the evaluation methodology live.
+
+### Specify prompt
+
+```text
+Read roadmap.md, implementation-roadmap.md, AGENTS.md and the existing
+.specify/memory/constitution.md. Read verified artifacts from prerequisite
+cycles and the selected phase's scope checklist and definition of done.
+
+Create a new specification for Phase 8 only: P1 CI/CD, production containers
+and interview delivery documentation. Prerequisite: verified Phases 0–7,
+including the Phase 7 golden-set baseline. Reuse earlier deliveries and keep
+optional deferred product enhancements outside this delivery cycle.
 
 Specify GitHub Actions gates for reproducible dependency installation, lint,
 strict types, Jest unit/UI tests, real-PostgreSQL integration/Supertest E2E and
@@ -511,8 +805,9 @@ production builds. Cover multi-stage NestJS/Next.js Dockerfiles, minimal non-roo
 runtime images, runtime configuration, controlled release migrations and a
 configurable gated deployment path following roadmap.md.
 
-Define acceptance for passing CI, production image builds and reproducible
-local/container startup. Include architecture/data-flow and Prisma ER diagrams,
+Define acceptance for passing CI, optionally gated golden-set evaluation
+with protected secrets and a published comparison report (mark unrun as unrun),
+production image builds and reproducible local/container startup. Include architecture/data-flow and Prisma ER diagrams,
 API examples, environment/setup/deployment documentation, rollback and backup
 expectations, known trade-offs and honest delivery status. Include read-only
 review and a 5–10 minute walkthrough covering ingestion, generation, boundaries,
@@ -524,6 +819,7 @@ acceptance criteria. If a prerequisite is incomplete, record the blocker without
 expanding scope. Create a separate phase-specific specification using the
 installed Spec Kit integration. Stop after the specification; do not generate a
 plan or implementation task list, implement code or start another phase.
+
 ```
 
 ---
@@ -531,27 +827,41 @@ plan or implementation task list, implement code or start another phase.
 ## Completion evidence and handoff
 
 Record the following in the selected phase's artifacts before marking the
+
 cycle complete:
 
 - Phase number, feature directory and delivered scope.
+
 - Acceptance criteria checked, commands run and their results; include manual
+
   evidence when required. Distinguish passing, failed and unrun checks.
+
 - Review outcome, resolved blocking findings and any remaining blockers.
+
 - Deferred requirements and the prerequisite status for the next phase.
 
 Update the current-cycle status with a reference to that evidence. If acceptance
+
 is blocked, keep the phase incomplete. When it passes, stop with a verified
+
 handoff; the next specification belongs to a new, explicitly requested cycle.
 
 ## What not to start with
 
 - Authentication, roles, billing, Redis, event queues, microservices or analytics dashboards.
+
 - Multiple agent swarms. One replaceable quiz-generation adapter is sufficient initially.
+
 - Elaborate branding before the page can complete a quiz.
-- CI/CD and deployment optimizations **before** the core UI/API/scoring flow exists.
+
+- CI/CD and deployment optimizations **before** the core UI/API/scoring flow exists. LLM evaluation belongs after the stable generator and observability, not before the MVP.
 
 **First implementation checkpoint:** Complete **Phase 0** in its own cycle.
+
 **First product checkpoint:** Complete **Phase 2** with deterministic fixtures.
+
 **First interview-ready checkpoint:** Complete **Phase 5** with real OpenAI
+
 generation and two separate Markdown sources. Each checkpoint depends on
+
 separately verified preceding phase cycles.

@@ -43,8 +43,10 @@ describe("API environment validation", () => {
       LANGFUSE_SECRET_KEY: undefined,
       LANGFUSE_BASE_URL: undefined,
       PROMPT_VERSION: undefined,
+      EVAL_JUDGE_MODEL: undefined,
     });
     expect(env.OPENAI_API_KEY).toBeUndefined();
+    expect(env.EVAL_JUDGE_MODEL).toBeUndefined();
     expect(env.OPENAI_MODEL).toBeUndefined();
     expect(env.LANGFUSE_PUBLIC_KEY).toBeUndefined();
     expect(env.LANGFUSE_SECRET_KEY).toBeUndefined();
