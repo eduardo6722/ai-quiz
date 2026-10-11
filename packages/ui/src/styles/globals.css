@@ -1,6 +1,4 @@
-@import "tailwindcss";
-
-@source "../../../apps/web/src/**/*.{ts,tsx}";
+@source "../../../../apps/web/src/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 
 :root {
@@ -57,6 +55,6 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --radius-lg: var(--radius);
-  --font-sans: "Avenir Next", "Segoe UI", Arial, sans-serif;
-  --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --font-sans: 'Avenir Next', 'Segoe UI', Arial, sans-serif;
+  --font-display: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
 }

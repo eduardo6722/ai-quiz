@@ -1,1 +1,2 @@
-@import "@ai-quiz/ui/globals.css";
+@import 'tailwindcss';
+@import '@ai-quiz/ui/globals.css';

@@ -62,7 +62,7 @@ export class CreateQuizUseCase {
         return { id: record.quiz.id, status: "ready" };
       } catch (error) {
         if (isApplicationError(error) && error.code === "GENERATION_UPSTREAM_FAILED") {
-          if (/not configured/i.test(error.message) || attempt === MAX_GENERATION_ATTEMPTS) {
+          if (isImmediateUpstreamFailure(error.message) || attempt === MAX_GENERATION_ATTEMPTS) {
             throw error;
           }
           lastInvalid = error;
@@ -85,4 +85,8 @@ export class CreateQuizUseCase {
     }
     throw new ApplicationError("GENERATION_RETRIES_EXHAUSTED", "generation retries exhausted");
   }
+}
+
+function isImmediateUpstreamFailure(message: string): boolean {
+  return /not configured|quota exceeded|rejected credentials/i.test(message);
 }

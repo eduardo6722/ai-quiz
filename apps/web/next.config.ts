@@ -12,6 +12,14 @@ for (const candidate of [resolve(process.cwd(), ".env"), resolve(process.cwd(), 
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@ai-quiz/ui", "@ai-quiz/contracts"],
+  // Contracts uses NodeNext `.js` specifiers that point at TypeScript sources.
+  webpack: (config) => {
+    config.resolve.extensionAlias = {
+      ".js": [".ts", ".tsx", ".js"],
+      ".mjs": [".mts", ".mjs"],
+    };
+    return config;
+  },
 };
 
 export default nextConfig;

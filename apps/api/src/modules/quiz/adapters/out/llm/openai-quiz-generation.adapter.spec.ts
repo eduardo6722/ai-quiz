@@ -1,4 +1,3 @@
-import { Logger } from "@nestjs/common";
 import { OpenAiQuizGenerationAdapter } from "./openai-quiz-generation.adapter";
 
 jest.mock("@ai-sdk/openai", () => ({
@@ -40,44 +39,46 @@ const input = {
   strategy: "balanced" as const,
 };
 
+function logger() {
+  return { log: jest.fn(), warn: jest.fn() };
+}
+
 describe("OpenAiQuizGenerationAdapter", () => {
-  beforeEach(() => {
-    jest.spyOn(Logger.prototype, "error").mockImplementation();
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it("returns minted questions and the configured model id", async () => {
     const generateTextFn = jest.fn(async () => ({ output: payload() }));
     const adapter = new OpenAiQuizGenerationAdapter({
       apiKey: "sk-test",
       modelId: "gpt-4o-mini",
       generateTextFn,
+      logger: logger(),
     });
     const result = await adapter.generate(input);
     expect(result.modelId).toBe("gpt-4o-mini");
     expect(result.questions).toHaveLength(5);
     expect(result.questions[0]?.options).toHaveLength(4);
     expect(generateTextFn).toHaveBeenCalledTimes(1);
+    expect(generateTextFn).toHaveBeenCalledWith(expect.objectContaining({ maxRetries: 0 }));
   });
 
   it("fails immediately when the API key is missing without calling generateText", async () => {
     const generateTextFn = jest.fn();
+    const logs = logger();
     const adapter = new OpenAiQuizGenerationAdapter({
       apiKey: "",
       modelId: "gpt-4o-mini",
       generateTextFn,
+      logger: logs,
     });
     await expect(adapter.generate(input)).rejects.toMatchObject({
       code: "GENERATION_UPSTREAM_FAILED",
       message: expect.stringMatching(/not configured/i),
     });
     expect(generateTextFn).not.toHaveBeenCalled();
+    expect(logs.warn).toHaveBeenCalledWith(expect.stringMatching(/api key missing/i));
   });
 
   it("maps NoObjectGeneratedError to GENERATION_INVALID without leaking output text", async () => {
+    const logs = logger();
     const generateTextFn = jest.fn(async () => {
       throw Object.assign(new Error("No object generated."), {
         name: "AI_NoObjectGeneratedError",
@@ -88,6 +89,7 @@ describe("OpenAiQuizGenerationAdapter", () => {
       apiKey: "sk-test",
       modelId: "gpt-4o-mini",
       generateTextFn,
+      logger: logs,
     });
     const error = await adapter.generate(input).catch((caught: unknown) => caught);
     expect(error).toMatchObject({
@@ -95,9 +97,12 @@ describe("OpenAiQuizGenerationAdapter", () => {
       message: "model output failed schema validation",
     });
     expect(JSON.stringify(error)).not.toContain("sk-secret");
+    expect(JSON.stringify(logs.warn.mock.calls)).not.toContain("sk-secret");
+    expect(JSON.stringify(logs.warn.mock.calls)).not.toContain("Ignore previous");
   });
 
   it("maps timeout and network failures to GENERATION_UPSTREAM_FAILED without SDK cause", async () => {
+    const logs = logger();
     const generateTextFn = jest.fn(async () => {
       throw Object.assign(new Error("fetch failed"), { cause: "sk-live-secret" });
     });
@@ -105,6 +110,7 @@ describe("OpenAiQuizGenerationAdapter", () => {
       apiKey: "sk-test",
       modelId: "gpt-4o-mini",
       generateTextFn,
+      logger: logs,
     });
     const error = await adapter.generate(input).catch((caught: unknown) => caught);
     expect(error).toMatchObject({
@@ -113,6 +119,38 @@ describe("OpenAiQuizGenerationAdapter", () => {
     });
     expect(JSON.stringify(error)).not.toContain("sk-live-secret");
     expect(JSON.stringify(error)).not.toContain("sk-test");
-    expect(Logger.prototype.error).not.toHaveBeenCalled();
+    expect(JSON.stringify(logs.warn.mock.calls)).toContain("fetch failed");
+    expect(JSON.stringify(logs.warn.mock.calls)).not.toContain("sk-live-secret");
+  });
+
+  it("maps exhausted provider credits to quota exceeded without retrying inside the SDK", async () => {
+    const logs = logger();
+    const generateTextFn = jest.fn(async () => {
+      throw Object.assign(
+        new Error("Failed after 3 attempts. Last error: You have no credits remaining."),
+        {
+          name: "AI_RetryError",
+          lastError: Object.assign(new Error("You have no credits remaining."), {
+            name: "AI_APICallError",
+            statusCode: 429,
+            cause: "sk-live-secret",
+          }),
+        },
+      );
+    });
+    const adapter = new OpenAiQuizGenerationAdapter({
+      apiKey: "sk-test",
+      modelId: "gpt-5.4-mini",
+      generateTextFn,
+      logger: logs,
+    });
+    const error = await adapter.generate(input).catch((caught: unknown) => caught);
+    expect(error).toMatchObject({
+      code: "GENERATION_UPSTREAM_FAILED",
+      message: "model provider quota exceeded",
+    });
+    expect(JSON.stringify(logs.warn.mock.calls)).toMatch(/kind=quota/);
+    expect(JSON.stringify(logs.warn.mock.calls)).toContain("credits remaining");
+    expect(JSON.stringify(logs.warn.mock.calls)).not.toContain("sk-live-secret");
   });
 });

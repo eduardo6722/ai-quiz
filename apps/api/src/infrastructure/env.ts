@@ -13,6 +13,7 @@ const apiEnvSchema = z.object({
   DIRECT_URL: z.string().url().optional().or(z.literal("")),
   OPENAI_API_KEY: z.string().optional(),
   OPENAI_MODEL: z.string().optional(),
+  WEB_ORIGIN: z.string().url("WEB_ORIGIN must be a valid absolute URL").default("http://localhost:3000"),
 });
 
 export type ApiEnv = z.infer<typeof apiEnvSchema>;
@@ -40,6 +41,7 @@ export function parseApiEnv(input: Record<string, string | undefined>): ApiEnv {
     DIRECT_URL: input.DIRECT_URL,
     OPENAI_API_KEY: input.OPENAI_API_KEY,
     OPENAI_MODEL: input.OPENAI_MODEL,
+    WEB_ORIGIN: input.WEB_ORIGIN === "" ? undefined : input.WEB_ORIGIN,
   });
 
   if (!result.success) {

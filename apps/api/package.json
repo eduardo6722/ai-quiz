@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "nest start --watch",
+    "dev": "NODE_OPTIONS='--experimental-transform-types --import ./js-to-ts-register.mjs' nest start --watch",
     "build": "nest build",
-    "start": "node dist/main.js",
+    "start": "node --experimental-transform-types --import ./js-to-ts-register.mjs dist/main.js",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.cjs",

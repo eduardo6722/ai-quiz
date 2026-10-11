@@ -8,11 +8,13 @@ const hexagonal = require("./hexagonal.cjs");
 
 const ignores = [
   "**/dist/**",
+  "**/build/**",
   "**/.next/**",
   "**/coverage/**",
   "**/generated/**",
   "**/node_modules/**",
   "**/*.cjs",
+  "**/*.min.js",
 ];
 
 /** Hexagonal import gates for domain and application shells. */

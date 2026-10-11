@@ -16,6 +16,24 @@ describe("HttpErrorFilter", () => {
 
   beforeEach(() => {
     jest.spyOn(Logger.prototype, "error").mockImplementation();
+    jest.spyOn(Logger.prototype, "warn").mockImplementation();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("logs contract 5xx codes without forwarding SDK cause text", () => {
+    const json = jest.fn();
+    const status = jest.fn();
+    filter.catch(
+      new ApplicationError("GENERATION_UPSTREAM_FAILED", "model provider quota exceeded"),
+      hostWith(json, status),
+    );
+    expect(Logger.prototype.error).toHaveBeenCalledWith(
+      expect.stringContaining("GENERATION_UPSTREAM_FAILED"),
+    );
+    expect(JSON.stringify((Logger.prototype.error as jest.Mock).mock.calls)).not.toContain("sk-");
   });
 
   it("maps allowlisted contract codes", () => {

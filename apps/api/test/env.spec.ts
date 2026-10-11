@@ -45,6 +45,13 @@ describe("API environment validation", () => {
     expect(env.OPENAI_MODEL).toBeUndefined();
   });
 
+  it("defaults WEB_ORIGIN to the local web app and rejects an invalid URL", () => {
+    const env = parseApiEnv({ ...valid, WEB_ORIGIN: undefined });
+    expect(env.WEB_ORIGIN).toBe("http://localhost:3000");
+    expect(parseApiEnv({ ...valid, WEB_ORIGIN: "" }).WEB_ORIGIN).toBe("http://localhost:3000");
+    expect(() => parseApiEnv({ ...valid, WEB_ORIGIN: "not-a-url" })).toThrow(/WEB_ORIGIN/);
+  });
+
   it("accepts empty OpenAI fields at parse time without printing secrets", () => {
     const env = parseApiEnv({
       ...valid,

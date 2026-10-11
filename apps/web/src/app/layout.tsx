@@ -5,7 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "AI Quiz Generator",
-  description: "Local workspace for generating quizzes from Markdown sources.",
+  description: "Generate a quiz from a topic and a Markdown source, then review your weighted score.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

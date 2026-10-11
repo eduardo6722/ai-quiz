@@ -329,14 +329,14 @@ acceptance blocker.
 
 ### Scope checklist
 
-- [ ] Build an English-language landing/create form for topic, Markdown URL and count (5–8).
-- [ ] Build a loading/generation/error state.
-- [ ] Build quiz player: progress indicator, single choice (`RadioGroup`), multiple choice (`Checkbox`), previous/next, and submit.
-- [ ] Build results view: weighted score (0–4), optional percentage, per-question feedback and source reference.
-- [ ] Use React Hook Form + Zod, Tailwind + shadcn/ui, and `.agents/skills/design-system/SKILL.md` + its references.
-- [ ] Apply light green palette, responsive layout, focus states, usable touch targets and accessible labels.
-- [ ] Protect private attempt token lifecycle and never send correct answers to the browser before submission.
-- [ ] Test form validation, choice selection, loading/error and submit behavior with Jest + React Testing Library.
+- [x] Build an English-language landing/create form for topic, Markdown URL and count (5–8).
+- [x] Build a loading/generation/error state.
+- [x] Build quiz player: progress indicator, single choice (`RadioGroup`), multiple choice (`Checkbox`), previous/next, and submit.
+- [x] Build results view: weighted score (0–4), optional percentage, per-question feedback and source reference.
+- [x] Use React Hook Form + Zod, Tailwind + shadcn/ui, and `.agents/skills/design-system/SKILL.md` + its references.
+- [x] Apply light green palette, responsive layout, focus states, usable touch targets and accessible labels.
+- [x] Protect private attempt token lifecycle and never send correct answers to the browser before submission.
+- [x] Test form validation, choice selection, loading/error and submit behavior with Jest + React Testing Library.
 
 **Definition of done:** In the browser: enter README URL/topic → generate quiz → answer → submit → view persisted result. Layout works at phone and desktop widths.
 

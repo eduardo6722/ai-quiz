@@ -149,6 +149,20 @@ describe("CreateQuizUseCase", () => {
     expect(generation.generate).toHaveBeenCalledTimes(1);
   });
 
+  it("does not retry a quota-exceeded upstream failure", async () => {
+    const ports = memoryPorts();
+    const generation: QuizGenerationPort = {
+      generate: jest.fn(async () => {
+        throw new ApplicationError("GENERATION_UPSTREAM_FAILED", "model provider quota exceeded");
+      }),
+    };
+    await expect(execute(sourcePort(), generation, ports.uow)).rejects.toMatchObject({
+      code: "GENERATION_UPSTREAM_FAILED",
+      message: "model provider quota exceeded",
+    });
+    expect(generation.generate).toHaveBeenCalledTimes(1);
+  });
+
   it("rejects excerpts that are not in the snapshot", async () => {
     const ports = memoryPorts();
     const quiz = sampleQuiz();

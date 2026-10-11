@@ -80,9 +80,21 @@ pnpm db:migrate
 pnpm dev
 ```
 
-- Web: http://localhost:3000
+- Web quiz: http://localhost:3000 (see **Run the web quiz** below)
 - API liveness: http://localhost:3001/health
 - API readiness (database): http://localhost:3001/ready
+
+### Run the web quiz
+
+| Route | Screen |
+| --- | --- |
+| `/` | Setup — topic, HTTPS Markdown URL, question count 5–8 |
+| `/quiz/{id}` | Player — one question at a time |
+| `/quiz/{id}/results` | Results — stored 0–4 weighted score |
+
+The API allowlists the web origin via optional `WEB_ORIGIN` (default `http://localhost:3000`) so the browser can call `/v1`. Attempt tokens stay in `sessionStorage`, never in the URL.
+
+Live **Generate quiz** needs `OPENAI_API_KEY` and a reachable HTTPS README on the API. Missing those is an environment blocker — the UI must not fall back to the Phase 2 fixture bank. Jest UI tests mock the API and do not need a model key.
 
 Startup does **not** require `OPENAI_API_KEY` or Langfuse keys.
 

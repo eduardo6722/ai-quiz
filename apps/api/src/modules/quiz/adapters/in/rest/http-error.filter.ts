@@ -8,6 +8,7 @@ import {
 } from "@nestjs/common";
 import type { Response } from "express";
 import { ErrorCodes, type ErrorCode } from "@ai-quiz/contracts";
+import { sanitizeLogText } from "../../../../../infrastructure/sanitize-log";
 
 const STATUS_BY_CODE: Record<ErrorCode, number> = {
   [ErrorCodes.CREATE_QUIZ_INVALID]: HttpStatus.BAD_REQUEST,
@@ -69,7 +70,14 @@ export class HttpErrorFilter implements ExceptionFilter {
     const contractCode = allowlistedCode(coded.code);
 
     if (contractCode !== undefined) {
-      response.status(STATUS_BY_CODE[contractCode]).json({
+      const status = STATUS_BY_CODE[contractCode];
+      const line = sanitizeLogText(`${contractCode} ${coded.message ?? "Request failed"}`);
+      if (status >= 500) {
+        this.logger.error(line);
+      } else {
+        this.logger.warn(line);
+      }
+      response.status(status).json({
         code: contractCode,
         message: coded.message ?? "Request failed",
       });
@@ -83,13 +91,14 @@ export class HttpErrorFilter implements ExceptionFilter {
         message: httpExceptionMessage(exception, status),
       };
       if (status >= 500) {
-        this.logger.error("Unhandled error");
+        this.logger.error(sanitizeLogText(`Unhandled HttpException ${status}`));
       }
       response.status(status).json(body);
       return;
     }
 
-    this.logger.error("Unhandled error");
+    const detail = exception instanceof Error ? `${exception.name}: ${exception.message}` : "unknown";
+    this.logger.error(sanitizeLogText(`Unhandled error ${detail}`));
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       code: "INTERNAL_ERROR",
       message: "Internal server error",
