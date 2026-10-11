@@ -26,6 +26,24 @@ describe("HttpErrorFilter", () => {
     expect(json).toHaveBeenCalledWith({ code: "QUIZ_NOT_FOUND", message: "Quiz not found" });
   });
 
+  it.each([
+    ["SOURCE_UNSAFE_DESTINATION", HttpStatus.BAD_REQUEST],
+    ["SOURCE_TOO_LARGE", HttpStatus.PAYLOAD_TOO_LARGE],
+    ["SOURCE_UNSUPPORTED_TYPE", HttpStatus.UNSUPPORTED_MEDIA_TYPE],
+    ["SOURCE_UNUSABLE", HttpStatus.UNPROCESSABLE_ENTITY],
+    ["GENERATION_INVALID", HttpStatus.UNPROCESSABLE_ENTITY],
+    ["GENERATION_RETRIES_EXHAUSTED", HttpStatus.UNPROCESSABLE_ENTITY],
+    ["SOURCE_FETCH_FAILED", HttpStatus.BAD_GATEWAY],
+    ["GENERATION_UPSTREAM_FAILED", HttpStatus.BAD_GATEWAY],
+    ["SOURCE_TIMEOUT", HttpStatus.GATEWAY_TIMEOUT],
+  ] as const)("maps %s to HTTP %s", (code, httpStatus) => {
+    const json = jest.fn();
+    const status = jest.fn();
+    filter.catch(new ApplicationError(code, "closed"), hostWith(json, status));
+    expect(status).toHaveBeenCalledWith(httpStatus);
+    expect(json).toHaveBeenCalledWith({ code, message: "closed" });
+  });
+
   it("does not echo Prisma or other provider codes", () => {
     const json = jest.fn();
     const status = jest.fn();

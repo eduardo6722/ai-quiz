@@ -1,5 +1,5 @@
-import { DomainError, type QuizGenerationPort } from "@ai-quiz/domain";
-import { CreateQuizUseCase, gradeAttempt } from "@ai-quiz/application";
+import type { QuizGenerationPort } from "@ai-quiz/domain";
+import { ApplicationError, CreateQuizUseCase, gradeAttempt } from "@ai-quiz/application";
 import { FixedSourceAdapter } from "../../src/modules/quiz/adapters/out/fixture/fixed-source.adapter";
 import { PrismaUnitOfWork } from "../../src/modules/quiz/adapters/out/prisma/prisma-unit-of-work";
 import { QuizPrismaRepository } from "../../src/modules/quiz/adapters/out/prisma/quiz.prisma-repository";
@@ -44,7 +44,7 @@ describe("playable quiz immutability", () => {
   it("leaves no playable quiz when create fails validation", async () => {
     const prisma = testPrisma();
     const generation: QuizGenerationPort = {
-      generate: async () => [],
+      generate: async () => ({ questions: [] }),
     };
     await expect(
       new CreateQuizUseCase(
@@ -52,7 +52,7 @@ describe("playable quiz immutability", () => {
         generation,
         PrismaUnitOfWork.fromClient(prisma),
       ).execute(CREATE_BODY),
-    ).rejects.toBeInstanceOf(DomainError);
+    ).rejects.toBeInstanceOf(ApplicationError);
     expect(await prisma.quiz.count({ where: { status: "ready" } })).toBe(0);
   });
 

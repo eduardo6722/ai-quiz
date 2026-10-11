@@ -1,6 +1,6 @@
 import { ErrorCodes } from "./error-codes.js";
 
-const PHASE_2_CODES = [
+const CONTRACT_CODES = [
   "CREATE_QUIZ_INVALID",
   "SUBMIT_ANSWERS_INVALID",
   "QUIZ_INVALID",
@@ -11,10 +11,19 @@ const PHASE_2_CODES = [
   "ATTEMPT_NOT_FOUND",
   "UNAUTHORIZED_ATTEMPT",
   "QUIZ_NOT_PLAYABLE",
+  "SOURCE_UNSAFE_DESTINATION",
+  "SOURCE_UNSUPPORTED_TYPE",
+  "SOURCE_TOO_LARGE",
+  "SOURCE_TIMEOUT",
+  "SOURCE_UNUSABLE",
+  "SOURCE_FETCH_FAILED",
+  "GENERATION_INVALID",
+  "GENERATION_RETRIES_EXHAUSTED",
+  "GENERATION_UPSTREAM_FAILED",
 ] as const;
 
 describe("ErrorCodes", () => {
-  it("matches the Phase 2 contract codes", () => {
-    expect(Object.values(ErrorCodes).sort()).toEqual([...PHASE_2_CODES].sort());
+  it("matches the Phase 2 and Phase 3 contract codes", () => {
+    expect(Object.values(ErrorCodes).sort()).toEqual([...CONTRACT_CODES].sort());
   });
 });

@@ -15,6 +15,7 @@ export type Question = {
   prompt: string;
   type: QuestionType;
   options: Option[];
+  sourceExcerpt?: string;
 };
 
 export type Quiz = {

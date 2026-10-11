@@ -8,6 +8,7 @@ export {
   isApplicationError,
 } from "./errors.js";
 export type { ApplicationErrorCode } from "./errors.js";
+export { assertGrounded } from "./grounding.js";
 export { CreateQuizUseCase } from "./create-quiz.js";
 export { GetQuizUseCase } from "./get-quiz.js";
 export { StartAttemptUseCase } from "./start-attempt.js";

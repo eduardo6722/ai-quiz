@@ -3,7 +3,11 @@ module.exports = {
   testEnvironment: "jsdom",
   setupFiles: ["<rootDir>/jest.env.cjs"],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-  testMatch: ["<rootDir>/src/**/*.test.ts", "<rootDir>/src/**/*.test.tsx"],
+  testMatch: [
+    "<rootDir>/src/**/*.test.ts",
+    "<rootDir>/src/**/*.test.tsx",
+    "<rootDir>/src/**/*.spec.ts",
+  ],
   transform: {
     "^.+\\.tsx?$": [
       "ts-jest",

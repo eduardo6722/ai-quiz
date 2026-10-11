@@ -17,7 +17,7 @@ module.exports = {
       },
     ],
   },
-  transformIgnorePatterns: ["node_modules/(?!.*@nestjs/)"],
+  transformIgnorePatterns: ["node_modules/(?!.*(@nestjs/|ai/|@ai-sdk/|@workflow/))"],
   setupFiles: ["<rootDir>/test/jest.setup.ts"],
   testMatch: ["<rootDir>/test/**/*.spec.ts", "<rootDir>/src/**/*.spec.ts"],
   testPathIgnorePatterns: ["<rootDir>/test/integration/", "<rootDir>/test/e2e/"],

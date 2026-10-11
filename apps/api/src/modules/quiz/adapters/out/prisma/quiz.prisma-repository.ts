@@ -14,7 +14,7 @@ export class QuizPrismaRepository implements QuizRepositoryPort {
         topic: input.quiz.topic,
         strategy: input.strategy,
         status: input.status,
-        modelId: null,
+        modelId: input.modelId ?? null,
         sourceDocument: {
           create: {
             id: sourceId,
@@ -32,6 +32,7 @@ export class QuizPrismaRepository implements QuizRepositoryPort {
             position: question.position,
             type: question.type,
             prompt: question.prompt,
+            sourceExcerpt: question.sourceExcerpt,
             options: {
               create: question.options.map((option) => ({
                 id: option.id,

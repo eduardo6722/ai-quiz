@@ -46,6 +46,12 @@ describe("validateQuiz", () => {
     expect(() => validateQuiz(validQuiz(8))).not.toThrow();
   });
 
+  it("does not require sourceExcerpt", () => {
+    const quiz = validQuiz(5);
+    expect(quiz.questions.every((question) => question.sourceExcerpt === undefined)).toBe(true);
+    expect(() => validateQuiz(quiz)).not.toThrow();
+  });
+
   it("rejects fewer than 5 or more than 8 questions", () => {
     expectCode(() => validateQuiz(validQuiz(4)), "QUIZ_INVALID");
     expectCode(() => validateQuiz(validQuiz(9)), "QUIZ_INVALID");

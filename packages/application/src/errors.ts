@@ -2,7 +2,16 @@ export type ApplicationErrorCode =
   | "QUIZ_NOT_FOUND"
   | "ATTEMPT_NOT_FOUND"
   | "UNAUTHORIZED_ATTEMPT"
-  | "QUIZ_NOT_PLAYABLE";
+  | "QUIZ_NOT_PLAYABLE"
+  | "SOURCE_UNSAFE_DESTINATION"
+  | "SOURCE_UNSUPPORTED_TYPE"
+  | "SOURCE_TOO_LARGE"
+  | "SOURCE_TIMEOUT"
+  | "SOURCE_UNUSABLE"
+  | "SOURCE_FETCH_FAILED"
+  | "GENERATION_INVALID"
+  | "GENERATION_RETRIES_EXHAUSTED"
+  | "GENERATION_UPSTREAM_FAILED";
 
 export class ApplicationError extends Error {
   readonly code: ApplicationErrorCode;

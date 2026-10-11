@@ -30,9 +30,21 @@ function completeAnswers() {
 }
 
 describe("toPublicQuizView", () => {
-  it("omits correctness flags and passes the public quiz schema", () => {
-    const view = toPublicQuizView(quiz());
+  it("omits correctness flags, excerpts, and model fields", () => {
+    const model = quiz();
+    model.questions = model.questions.map((question) => ({
+      ...question,
+      sourceExcerpt: "Ports are interfaces the core depends on",
+    }));
+    const view = toPublicQuizView(model);
     expect(JSON.stringify(view)).not.toContain("isCorrect");
+    expect(JSON.stringify(view)).not.toContain("sourceExcerpt");
+    expect(JSON.stringify(view)).not.toContain("modelId");
+    expect(view.questions[0]?.options[0]).toEqual({
+      id: model.questions[0]?.options[0]?.id,
+      position: 0,
+      label: "Label 0",
+    });
     expect(publicQuizViewSchema.parse(view).questions).toHaveLength(5);
   });
 });

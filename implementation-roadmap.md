@@ -1,6 +1,6 @@
 # AI Quiz Generator — Phase-by-Phase Spec-Driven Implementation Roadmap
 
-> **Status:** Phase 2 verified; wait for an explicit request before starting Phase 3.  
+> **Status:** Phase 3 verified; wait for an explicit request before starting Phase 4.  
 > **Audience:** Cursor Agent, Codex or Claude Code  
 > **Product source of truth:** `roadmap.md` and the supplied AI Engineer assessment  
 > **Engineering policy:** `AGENTS.md` and `.specify/memory/constitution.md`  
@@ -8,10 +8,10 @@
 
 ## Current cycle and starting point
 
-**Selected phase:** Phase 2 — Prisma model, repositories and deterministic API skeleton (verified).  
-**Next action:** Stop. Start Phase 3 only when explicitly requested.  
-**Verified deliveries:** Phase 0 (`specs/002-phase-0-scaffold/`), Phase 1 (`specs/003-phase-1-domain-scoring/`), Phase 2 (`specs/004-phase-2-persistence-api/`).  
-**Phases 3–7:** Backlog for separate future cycles.
+**Selected phase:** Phase 3 — Secure Markdown ingestion and OpenAI quiz generation (verified).  
+**Next action:** Stop. Start Phase 4 only when explicitly requested.  
+**Verified deliveries:** Phase 0 (`specs/002-phase-0-scaffold/`), Phase 1 (`specs/003-phase-1-domain-scoring/`), Phase 2 (`specs/004-phase-2-persistence-api/`), Phase 3 (`specs/005-phase-3-markdown-generation/`).  
+**Phases 4–7:** Backlog for separate future cycles.
 
 Reading this file or asking to update it does not start implementation. When
 starting a cycle, select one phase and use its specify prompt. If no phase is named
@@ -271,16 +271,18 @@ persistence and REST flow from earlier cycles.
 
 ### Scope checklist
 
-- [ ] Fetch configurable HTTPS Markdown URLs; normalize supported GitHub `blob` URLs to raw content.
-- [ ] Add timeouts, max-size policy, controlled redirects and SSRF protection (public DNS/IP targets only).
-- [ ] Treat Markdown as **untrusted content**, not instructions to the agent.
-- [ ] Normalize/truncate source, store the snapshot and checksum, and reject empty/unusable content.
-- [ ] Create an OpenAI-backed `QuizGenerationPort` adapter via Vercel AI SDK structured output and Zod.
-- [ ] Validate 5–8 questions, exactly four unique choices per question, valid answer-key indices, and topic/source relevance; retry malformed output within limits.
-- [ ] Handle upstream timeouts, invalid model output and generation failure without saving a partially playable quiz.
-- [ ] Add mocked-LLM tests. Keep model calls and keys strictly server-side.
+- [x] Fetch configurable HTTPS Markdown URLs; normalize supported GitHub `blob` URLs to raw content.
+- [x] Add timeouts, max-size policy, controlled redirects and SSRF protection (public DNS/IP targets only).
+- [x] Treat Markdown as **untrusted content**, not instructions to the agent.
+- [x] Normalize/truncate source, store the snapshot and checksum, and reject empty/unusable content.
+- [x] Create an OpenAI-backed `QuizGenerationPort` adapter via Vercel AI SDK structured output and Zod.
+- [x] Validate 5–8 questions, exactly four unique choices per question, valid answer-key indices, and topic/source relevance; retry malformed output within limits.
+- [x] Handle upstream timeouts, invalid model output and generation failure without saving a partially playable quiz.
+- [x] Add mocked-LLM tests. Keep model calls and keys strictly server-side.
 
 **Definition of done:** A real README URL + topic generates a valid quiz via REST, and the sanitized retrieval endpoint returns it safely.
+
+**Verification evidence (2026-10-10):** Feature directory `specs/005-phase-3-markdown-generation/` (tasks T001–T062 complete). Product `QuizModule` wires `HttpsMarkdownSourceAdapter` and `OpenAiQuizGenerationAdapter`; default e2e overrides stay fixture/offline. Ran `pnpm lint`, `pnpm typecheck`, `pnpm test` (no PostgreSQL, no model key), `pnpm test:integration`, `pnpm test:e2e` (overridden; gated live README skipped), and `pnpm build` — all passed. Code review found hex IPv4-mapped IPv6 (`::ffff:7f00:1`) classified as public; public-IP unwrapping and IPv6 URL bracket stripping were applied and the affected suites re-run. Blocking SSRF finding resolved. Gated live Express README (`PHASE3_LIVE_README=1` + `OPENAI_API_KEY`) remains an environment blocker, not a fixture fallback. Deferred to later cycles: quiz UI, two-source demo, Langfuse, production delivery.
 
 ### Specify prompt
 

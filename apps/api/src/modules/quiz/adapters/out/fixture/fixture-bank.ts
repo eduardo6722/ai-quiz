@@ -9,7 +9,11 @@ export const FIXTURE_SNAPSHOT = `# Hexagonal architecture
 
 Ports are interfaces the core depends on. Adapters implement those ports.
 A quiz has 5 to 8 questions. Scoring is deterministic and never decided by a model.
+The application core stays free of HTTP clients, databases, and provider SDKs.
+This fixture snapshot is long enough to pass the usable-length policy for tests.
 `;
+
+export const FIXTURE_EXCERPT = "Ports are interfaces the core depends on";
 
 /** For each question position, which of the four option positions are correct. */
 export const FIXTURE_CORRECT: boolean[][] = [
@@ -106,6 +110,7 @@ export function buildFixtureQuestions(count: number): Question[] {
     position,
     prompt: item.prompt,
     type: item.type,
+    sourceExcerpt: FIXTURE_EXCERPT,
     options: optionsFor(position, item.labels),
   }));
 }

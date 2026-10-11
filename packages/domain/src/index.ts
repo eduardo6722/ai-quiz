@@ -24,7 +24,11 @@ export type {
   ScoredResult,
 } from "./attempt.js";
 export type { MarkdownSourcePort, SourceSnapshot } from "./ports/markdown-source-port.js";
-export type { GenerateQuizInput, QuizGenerationPort } from "./ports/quiz-generation-port.js";
+export type {
+  GenerateQuizInput,
+  GeneratedQuiz,
+  QuizGenerationPort,
+} from "./ports/quiz-generation-port.js";
 export type {
   InsertQuizInput,
   QuizRecord,

@@ -7,6 +7,11 @@ export type GenerateQuizInput = {
   strategy: "balanced";
 };
 
+export type GeneratedQuiz = {
+  questions: Question[];
+  modelId?: string;
+};
+
 export type QuizGenerationPort = {
-  generate(input: GenerateQuizInput): Promise<Question[]>;
+  generate(input: GenerateQuizInput): Promise<GeneratedQuiz>;
 };

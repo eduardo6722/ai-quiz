@@ -34,13 +34,25 @@ describe("API environment validation", () => {
     }
   });
 
-  it("does not require OPENAI_API_KEY or Langfuse keys", () => {
-    expect(() =>
-      parseApiEnv({
-        ...valid,
-        OPENAI_API_KEY: undefined,
-        LANGFUSE_SECRET_KEY: undefined,
-      }),
-    ).not.toThrow();
+  it("does not require OPENAI_API_KEY, OPENAI_MODEL, or Langfuse keys to boot", () => {
+    const env = parseApiEnv({
+      ...valid,
+      OPENAI_API_KEY: undefined,
+      OPENAI_MODEL: undefined,
+      LANGFUSE_SECRET_KEY: undefined,
+    });
+    expect(env.OPENAI_API_KEY).toBeUndefined();
+    expect(env.OPENAI_MODEL).toBeUndefined();
+  });
+
+  it("accepts empty OpenAI fields at parse time without printing secrets", () => {
+    const env = parseApiEnv({
+      ...valid,
+      OPENAI_API_KEY: "",
+      OPENAI_MODEL: "gpt-4o-mini",
+    });
+    expect(env.OPENAI_API_KEY).toBe("");
+    expect(env.OPENAI_MODEL).toBe("gpt-4o-mini");
+    expect(JSON.stringify(env)).not.toMatch(/sk-/);
   });
 });

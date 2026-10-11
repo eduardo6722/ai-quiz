@@ -11,6 +11,8 @@ const apiEnvSchema = z.object({
   PORT: z.coerce.number().int().positive().default(3001),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   DIRECT_URL: z.string().url().optional().or(z.literal("")),
+  OPENAI_API_KEY: z.string().optional(),
+  OPENAI_MODEL: z.string().optional(),
 });
 
 export type ApiEnv = z.infer<typeof apiEnvSchema>;
@@ -36,6 +38,8 @@ export function parseApiEnv(input: Record<string, string | undefined>): ApiEnv {
     PORT: input.PORT,
     NODE_ENV: input.NODE_ENV,
     DIRECT_URL: input.DIRECT_URL,
+    OPENAI_API_KEY: input.OPENAI_API_KEY,
+    OPENAI_MODEL: input.OPENAI_MODEL,
   });
 
   if (!result.success) {

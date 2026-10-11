@@ -15,6 +15,7 @@ export type InsertQuizInput = {
   quiz: Quiz;
   strategy: string;
   status: "ready";
+  modelId?: string | null;
 };
 
 export type QuizRepositoryPort = {

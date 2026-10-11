@@ -129,3 +129,25 @@ curl -sS -X POST http://localhost:3001/v1/quizzes \
 ```
 
 Then `GET /v1/quizzes/:quizId`, `POST /v1/quizzes/:quizId/attempts`, `POST /v1/attempts/:attemptId/submit` with `Authorization: Bearer <token>`, and `GET /v1/attempts/:attemptId/result`. Create returns `{ id, status: "ready" }`. GET quiz has no answer keys. Submit/result scores match Phase 1 for the fixture.
+
+## Phase 3 Markdown ingestion and OpenAI generation
+
+Product `POST /v1/quizzes` fetches HTTPS Markdown (SSRF-safe, GitHub blob → raw) and generates a 5–8 question quiz with the Vercel AI SDK / OpenAI adapter. Scoring stays in `@ai-quiz/domain`. This phase does **not** add a quiz player UI, a second live README package, Langfuse, or production delivery.
+
+`OPENAI_API_KEY` and `OPENAI_MODEL` (example `gpt-4o-mini`) are required for **product create** and gated live evidence. They are **not** required to boot the API. Default `pnpm test` and `pnpm test:e2e` override source/generation ports so they stay offline and key-free.
+
+Unsafe destination smoke (expect `SOURCE_UNSAFE_DESTINATION`; full steps in `specs/005-phase-3-markdown-generation/quickstart.md`):
+
+```bash
+curl -sS -X POST http://localhost:3001/v1/quizzes \
+  -H 'content-type: application/json' \
+  -d '{"topic":"Nope","sourceUrl":"https://127.0.0.1/README.md"}'
+```
+
+Gated live README (needs `OPENAI_API_KEY`, `OPENAI_MODEL`, and `PHASE3_LIVE_README=1` for the automated file):
+
+```bash
+curl -sS -X POST http://localhost:3001/v1/quizzes \
+  -H 'content-type: application/json' \
+  -d '{"topic":"Express routing","sourceUrl":"https://github.com/expressjs/express/blob/master/Readme.md","questionCount":5}'
+```

@@ -28,6 +28,9 @@ describe("quiz key privacy", () => {
     expect(created.status).toBe(201);
     expect(created.body.questions).toBeUndefined();
     assertNoKeys(created.body);
+    expect(JSON.stringify(created.body)).not.toContain("sourceExcerpt");
+    expect(JSON.stringify(created.body)).not.toContain("modelId");
+    expect(JSON.stringify(created.body)).not.toContain("sk-");
 
     const got = await request(server)
       .get(`/v1/quizzes/${created.body.id}`)
@@ -35,6 +38,8 @@ describe("quiz key privacy", () => {
     expect(got.status).toBe(200);
     const quiz = publicQuizViewSchema.parse(got.body);
     assertNoKeys(got.body);
+    expect(JSON.stringify(got.body)).not.toContain("sourceExcerpt");
+    expect(JSON.stringify(got.body)).not.toContain("modelId");
 
     const started = await request(server).post(`/v1/quizzes/${created.body.id}/attempts`);
     const openResult = await request(server)
@@ -56,5 +61,6 @@ describe("quiz key privacy", () => {
 
     const failedCreate = await request(server).post("/v1/quizzes").send({ topic: "", sourceUrl: "https://x.com/a.md" });
     expect(JSON.stringify(failedCreate.body)).not.toContain("isCorrect");
+    expect(JSON.stringify(failedCreate.body)).not.toContain("sk-");
   });
 });

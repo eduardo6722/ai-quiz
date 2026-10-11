@@ -12,6 +12,7 @@ type QuestionRow = {
   position: number;
   type: "single" | "multiple";
   prompt: string;
+  sourceExcerpt?: string | null;
   options: OptionRow[];
 };
 
@@ -43,6 +44,7 @@ export function toDomainQuiz(row: QuizRow): Quiz {
       position: question.position,
       type: question.type,
       prompt: question.prompt,
+      sourceExcerpt: question.sourceExcerpt ?? undefined,
       options: [...question.options]
         .sort((a, b) => a.position - b.position)
         .map((option) => ({

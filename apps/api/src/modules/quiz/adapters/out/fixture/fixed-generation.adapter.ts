@@ -2,7 +2,7 @@ import { validateQuiz, type QuizGenerationPort, type GenerateQuizInput, type Que
 import { buildFixtureQuestions } from "./fixture-bank";
 
 export class FixedGenerationAdapter implements QuizGenerationPort {
-  async generate(input: GenerateQuizInput): Promise<Question[]> {
+  async generate(input: GenerateQuizInput): Promise<{ questions: Question[] }> {
     const questions = buildFixtureQuestions(input.count);
     validateQuiz({
       id: "fixture",
@@ -10,6 +10,6 @@ export class FixedGenerationAdapter implements QuizGenerationPort {
       sourceUrl: "https://example.com/fixture.md",
       questions,
     });
-    return questions;
+    return { questions };
   }
 }

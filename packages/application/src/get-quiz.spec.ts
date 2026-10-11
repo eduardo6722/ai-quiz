@@ -28,6 +28,8 @@ describe("GetQuizUseCase", () => {
       label: "Label 0",
     });
     expect(JSON.stringify(view)).not.toContain("isCorrect");
+    expect(JSON.stringify(view)).not.toContain("sourceExcerpt");
+    expect(JSON.stringify(view)).not.toContain("modelId");
   });
 
   it("throws QUIZ_NOT_FOUND when missing", async () => {

@@ -37,4 +37,11 @@ describe("publicQuizViewSchema", () => {
   it("rejects scoring fields on the quiz view", () => {
     expect(() => publicQuizViewSchema.parse({ ...view(), weightedScore: 4 })).toThrow();
   });
+
+  it("rejects sourceExcerpt and modelId on the public quiz view", () => {
+    expect(() => publicQuizViewSchema.parse({ ...view(), modelId: "gpt-4o-mini" })).toThrow();
+    const payload = view();
+    (payload.questions[0] as { sourceExcerpt?: string }).sourceExcerpt = "Ports are interfaces";
+    expect(() => publicQuizViewSchema.parse(payload)).toThrow();
+  });
 });
