@@ -1,9 +1,9 @@
 import type { AttemptRepositoryPort, QuizRepositoryPort } from "@ai-quiz/domain";
 import { DomainError } from "@ai-quiz/domain";
 import type { PublicResult } from "@ai-quiz/contracts";
-import { toPublicResult } from "./map-public.js";
-import { ApplicationError } from "./errors.js";
-import { tokenHashesMatch } from "./token-hash.js";
+import { toPublicResult } from "../mapping/map-public.js";
+import { ApplicationError } from "../errors.js";
+import { tokenHashesMatch } from "../security/token-hash.js";
 
 export class GetQuizResultUseCase {
   constructor(

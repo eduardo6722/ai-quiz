@@ -6,10 +6,10 @@ import type {
   UnitOfWorkRepos,
 } from "@ai-quiz/domain";
 import type { PublicResult } from "@ai-quiz/contracts";
-import { gradeAttempt } from "./grade-attempt.js";
-import { toPublicResult } from "./map-public.js";
-import { ApplicationError, isAlreadyScoredConflictError } from "./errors.js";
-import { tokenHashesMatch } from "./token-hash.js";
+import { gradeAttempt } from "../grading/grade-attempt.js";
+import { toPublicResult } from "../mapping/map-public.js";
+import { ApplicationError, isAlreadyScoredConflictError } from "../errors.js";
+import { tokenHashesMatch } from "../security/token-hash.js";
 
 export class SubmitQuizUseCase {
   constructor(private readonly uow: UnitOfWorkPort) {}

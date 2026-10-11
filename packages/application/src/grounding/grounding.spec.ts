@@ -1,6 +1,6 @@
-import { ApplicationError } from "./errors.js";
+import { ApplicationError } from "../errors.js";
 import { assertGrounded } from "./grounding.js";
-import { SAMPLE_EXCERPT, SAMPLE_SNAPSHOT, sampleQuiz } from "./quiz-fixture.js";
+import { SAMPLE_EXCERPT, SAMPLE_SNAPSHOT, sampleQuiz } from "../testing/quiz-fixture.js";
 
 describe("assertGrounded", () => {
   it("accepts excerpts that appear in the snapshot", () => {

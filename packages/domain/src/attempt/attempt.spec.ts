@@ -1,8 +1,8 @@
 import { applySelections, assertAttemptMatchesQuiz, scoreAttempt } from "./attempt.js";
-import { DomainError } from "./errors.js";
-import type { Option, Question, Quiz } from "./quiz.js";
-import { calculateWeightedScore } from "./weighted-score.js";
-import { scoreQuestion } from "./scoring-policy.js";
+import { DomainError } from "../errors.js";
+import type { Option, Question, Quiz } from "../quiz/quiz.js";
+import { calculateWeightedScore } from "../scoring/weighted-score.js";
+import { scoreQuestion } from "../scoring/scoring-policy.js";
 
 function fourOptions(correct: number | number[], prefix: string): Option[] {
   const correctSet = new Set(Array.isArray(correct) ? correct : [correct]);

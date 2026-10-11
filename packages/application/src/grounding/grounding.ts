@@ -1,5 +1,5 @@
 import type { Question } from "@ai-quiz/domain";
-import { ApplicationError } from "./errors.js";
+import { ApplicationError } from "../errors.js";
 
 export function assertGrounded(questions: Question[], snapshotText: string): void {
   for (const question of questions) {

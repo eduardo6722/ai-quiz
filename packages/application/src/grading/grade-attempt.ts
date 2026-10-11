@@ -1,7 +1,7 @@
 import type { AnswerSelection, Attempt, Quiz } from "@ai-quiz/domain";
 import { assertAttemptMatchesQuiz, scoreAttempt, validateQuiz } from "@ai-quiz/domain";
 import type { PublicResult } from "@ai-quiz/contracts";
-import { toPublicResult } from "./map-public.js";
+import { toPublicResult } from "../mapping/map-public.js";
 
 export type GradeAttemptInput = {
   quiz: Quiz;

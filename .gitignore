@@ -13,6 +13,12 @@ build/
 /out/
 apps/web/out/
 *.tsbuildinfo
+*.js.map
+*.d.ts.map
+
+# Accidental tsc emit next to TypeScript sources
+packages/**/src/**/*.js
+packages/**/src/**/*.d.ts
 
 # Turbo / test / logs
 .turbo/
@@ -28,7 +34,8 @@ apps/api/src/generated/
 Thumbs.db
 *.tmp
 *.swp
-.vscode/
+.vscode/*
+!.vscode/settings.json
 .idea/
 
 .pnpm-store

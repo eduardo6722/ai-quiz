@@ -1,4 +1,4 @@
-import { DomainError } from "./errors.js";
+import { DomainError } from "../errors.js";
 import type { Option, Question, Quiz } from "./quiz.js";
 import { validateQuiz } from "./quiz.js";
 

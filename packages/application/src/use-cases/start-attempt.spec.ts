@@ -1,6 +1,6 @@
 import { StartAttemptUseCase } from "./start-attempt.js";
-import { memoryPorts } from "./test-memory-ports.js";
-import { sampleQuiz } from "./quiz-fixture.js";
+import { memoryPorts } from "../testing/test-memory-ports.js";
+import { sampleQuiz } from "../testing/quiz-fixture.js";
 
 describe("StartAttemptUseCase", () => {
   it("creates an open attempt with the token hash only", async () => {

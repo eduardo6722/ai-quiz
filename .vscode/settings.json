@@ -1,0 +1,14 @@
+{
+  "jest.runMode": {
+    "type": "watch"
+  },
+  "jest.jestCommandLine": "pnpm exec jest --config jest.config.cjs",
+  "jest.virtualFolders": [
+    { "name": "api", "rootPath": "apps/api" },
+    { "name": "web", "rootPath": "apps/web" },
+    { "name": "application", "rootPath": "packages/application" },
+    { "name": "config", "rootPath": "packages/config" },
+    { "name": "contracts", "rootPath": "packages/contracts" },
+    { "name": "domain", "rootPath": "packages/domain" }
+  ]
+}

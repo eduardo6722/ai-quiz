@@ -1,5 +1,5 @@
-import { DomainError } from "./errors.js";
-import type { Option, Question } from "./quiz.js";
+import { DomainError } from "../errors.js";
+import type { Option, Question } from "../quiz/quiz.js";
 import {
   MULTIPLE_CHOICE_POLICY_NOTE,
   scoreMultipleChoice,

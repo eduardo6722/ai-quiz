@@ -7,8 +7,8 @@ import {
   type UnitOfWorkPort,
 } from "@ai-quiz/domain";
 import type { CreateQuizRequest, CreateQuizResponse } from "@ai-quiz/contracts";
-import { ApplicationError, isApplicationError } from "./errors.js";
-import { assertGrounded } from "./grounding.js";
+import { ApplicationError, isApplicationError } from "../errors.js";
+import { assertGrounded } from "../grounding/grounding.js";
 
 const MAX_SNAPSHOT_BYTES = 512 * 1024;
 const MIN_USABLE_CHARS = 200;

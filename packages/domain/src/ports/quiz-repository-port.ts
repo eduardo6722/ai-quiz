@@ -1,4 +1,4 @@
-import type { Quiz } from "../quiz.js";
+import type { Quiz } from "../quiz/quiz.js";
 import type { SourceSnapshot } from "./markdown-source-port.js";
 
 export type QuizStatus = "generating" | "ready" | "failed";

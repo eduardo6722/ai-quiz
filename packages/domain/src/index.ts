@@ -1,20 +1,20 @@
 export { DomainError, isDomainError } from "./errors.js";
 export type { DomainErrorCode } from "./errors.js";
-export { validateQuiz } from "./quiz.js";
-export type { Option, Question, QuestionType, Quiz } from "./quiz.js";
+export { validateQuiz } from "./quiz/quiz.js";
+export type { Option, Question, QuestionType, Quiz } from "./quiz/quiz.js";
 export {
   MULTIPLE_CHOICE_POLICY_NOTE,
   scoreMultipleChoice,
   scoreQuestion,
   scoreSingleChoice,
-} from "./scoring-policy.js";
+} from "./scoring/scoring-policy.js";
 export {
   calculateWeightedScore,
   roundForDisplay,
   toPercentage,
   toPercentageDisplay,
-} from "./weighted-score.js";
-export { applySelections, assertAttemptMatchesQuiz, scoreAttempt } from "./attempt.js";
+} from "./scoring/weighted-score.js";
+export { applySelections, assertAttemptMatchesQuiz, scoreAttempt } from "./attempt/attempt.js";
 export type {
   AnswerSelection,
   Attempt,
@@ -22,7 +22,7 @@ export type {
   ScoredOption,
   ScoredQuestion,
   ScoredResult,
-} from "./attempt.js";
+} from "./attempt/attempt.js";
 export type { MarkdownSourcePort, SourceSnapshot } from "./ports/markdown-source-port.js";
 export type {
   GenerateQuizInput,

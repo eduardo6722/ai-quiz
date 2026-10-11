@@ -1,8 +1,12 @@
-import { DomainError } from "./errors.js";
-import type { QuestionType, Quiz } from "./quiz.js";
-import { validateQuiz } from "./quiz.js";
-import { scoreQuestion } from "./scoring-policy.js";
-import { calculateWeightedScore, roundForDisplay, toPercentageDisplay } from "./weighted-score.js";
+import { DomainError } from "../errors.js";
+import type { QuestionType, Quiz } from "../quiz/quiz.js";
+import { validateQuiz } from "../quiz/quiz.js";
+import { scoreQuestion } from "../scoring/scoring-policy.js";
+import {
+  calculateWeightedScore,
+  roundForDisplay,
+  toPercentageDisplay,
+} from "../scoring/weighted-score.js";
 
 export type AnswerSelection = {
   questionId: string;

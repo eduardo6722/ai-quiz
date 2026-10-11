@@ -1,6 +1,6 @@
 import { GetQuizResultUseCase } from "./get-quiz-result.js";
-import { memoryPorts } from "./test-memory-ports.js";
-import { correctAnswers, sampleQuiz } from "./quiz-fixture.js";
+import { memoryPorts } from "../testing/test-memory-ports.js";
+import { correctAnswers, sampleQuiz } from "../testing/quiz-fixture.js";
 import { SubmitQuizUseCase } from "./submit-quiz.js";
 import { createHash } from "node:crypto";
 

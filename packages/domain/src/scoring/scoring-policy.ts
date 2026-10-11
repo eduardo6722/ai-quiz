@@ -1,5 +1,5 @@
-import { DomainError } from "./errors.js";
-import type { Question } from "./quiz.js";
+import { DomainError } from "../errors.js";
+import type { Question } from "../quiz/quiz.js";
 
 export const MULTIPLE_CHOICE_POLICY_NOTE = [
   "Provisional multiple-answer policy from roadmap.md:",

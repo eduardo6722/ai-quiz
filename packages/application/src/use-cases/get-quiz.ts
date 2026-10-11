@@ -1,6 +1,6 @@
 import type { QuizRepositoryPort } from "@ai-quiz/domain";
-import { toPublicQuizView } from "./map-public.js";
-import { ApplicationError } from "./errors.js";
+import { toPublicQuizView } from "../mapping/map-public.js";
+import { ApplicationError } from "../errors.js";
 import type { PublicQuizView } from "@ai-quiz/contracts";
 
 export class GetQuizUseCase {

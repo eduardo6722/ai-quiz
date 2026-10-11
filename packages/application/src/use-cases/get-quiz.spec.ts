@@ -1,8 +1,8 @@
 import { GetQuizUseCase } from "./get-quiz.js";
-import { ApplicationError } from "./errors.js";
-import { memoryPorts } from "./test-memory-ports.js";
-import { sampleQuiz } from "./quiz-fixture.js";
-import { toPublicQuizView } from "./map-public.js";
+import { ApplicationError } from "../errors.js";
+import { memoryPorts } from "../testing/test-memory-ports.js";
+import { sampleQuiz } from "../testing/quiz-fixture.js";
+import { toPublicQuizView } from "../mapping/map-public.js";
 
 describe("GetQuizUseCase", () => {
   it("returns a public view with option id, position and label only", async () => {

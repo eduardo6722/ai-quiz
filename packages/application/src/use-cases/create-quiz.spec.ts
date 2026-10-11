@@ -1,10 +1,10 @@
 import { parseCreateQuizRequest } from "@ai-quiz/contracts";
 import type { MarkdownSourcePort, QuizGenerationPort, Question } from "@ai-quiz/domain";
-import { ApplicationError } from "./errors.js";
-import { gradeAttempt } from "./grade-attempt.js";
+import { ApplicationError } from "../errors.js";
+import { gradeAttempt } from "../grading/grade-attempt.js";
 import { CreateQuizUseCase } from "./create-quiz.js";
-import { memoryPorts } from "./test-memory-ports.js";
-import { SAMPLE_SNAPSHOT, sampleQuiz } from "./quiz-fixture.js";
+import { memoryPorts } from "../testing/test-memory-ports.js";
+import { SAMPLE_SNAPSHOT, sampleQuiz } from "../testing/quiz-fixture.js";
 
 const snapshot = {
   originalUrl: "https://example.com/README.md",

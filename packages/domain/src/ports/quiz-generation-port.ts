@@ -1,4 +1,4 @@
-import type { Question } from "../quiz.js";
+import type { Question } from "../quiz/quiz.js";
 
 export type GenerateQuizInput = {
   topic: string;

@@ -1,10 +1,10 @@
 import { createHash } from "node:crypto";
-import { AlreadyScoredConflictError } from "./errors.js";
+import { AlreadyScoredConflictError } from "../errors.js";
 import { SubmitQuizUseCase } from "./submit-quiz.js";
-import { memoryPorts } from "./test-memory-ports.js";
-import { correctAnswers, sampleQuiz } from "./quiz-fixture.js";
-import { gradeAttempt } from "./grade-attempt.js";
-import * as Grade from "./grade-attempt.js";
+import { memoryPorts } from "../testing/test-memory-ports.js";
+import { correctAnswers, sampleQuiz } from "../testing/quiz-fixture.js";
+import { gradeAttempt } from "../grading/grade-attempt.js";
+import * as Grade from "../grading/grade-attempt.js";
 
 function hashFrom(token: string): string {
   return createHash("sha256").update(token, "utf8").digest("hex");

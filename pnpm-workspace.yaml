@@ -7,3 +7,7 @@ allowBuilds:
   '@swc/core': true
   prisma: true
   unrs-resolver: true
+nodeLinker: isolated
+# Compose bind-mounts node_modules with a container store path. Default
+# `install` then tries to rebuild them on every `pnpm run` and fails as the host user.
+verifyDepsBeforeRun: false

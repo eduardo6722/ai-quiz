@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { QuizRepositoryPort, UnitOfWorkPort } from "@ai-quiz/domain";
-import { ApplicationError } from "./errors.js";
+import { ApplicationError } from "../errors.js";
 
 export class StartAttemptUseCase {
   constructor(

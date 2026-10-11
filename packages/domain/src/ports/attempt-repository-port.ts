@@ -1,4 +1,4 @@
-import type { ScoredResult } from "../attempt.js";
+import type { ScoredResult } from "../attempt/attempt.js";
 
 export type AttemptStatus = "open" | "scored";
 
