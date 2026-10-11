@@ -194,5 +194,42 @@ Every stored `sourceExcerpt` was a contiguous substring of that source’s snaps
 
 - Multi-answer scoring is the roadmap’s provisional reading (no invented penalties). Confirm with the interviewer.
 - Live questions vary by model; the gated file asserts shape, grounding, persistence, and scoring, not a golden prompt list.
-- Langfuse, production Dockerfiles, and GitHub Actions remain P1 / later phases.
+- Production Dockerfiles and GitHub Actions remain later phases.
+
+## Phase 6 observability and operational controls
+
+Create-quiz records fetch → preprocessing → generation → validation stages on a replaceable telemetry port. When **both** `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` are set, the API adapter exports traces to Langfuse. Missing or incomplete tracing keys are an **environment blocker for live inspection**, not a create-quiz failure: the API still boots, `/health` and `/ready` do not call the tracer or the model, and quizzes persist with no-op telemetry.
+
+Optional `LANGFUSE_BASE_URL` and `PROMPT_VERSION` (a trace label, not a secret) are documented in `.env.example`. Leave the key values empty in that file.
+
+Operational bounds (unchanged fetch/size/retry rules plus create-quiz gates):
+
+| Control | Value |
+| --- | --- |
+| Markdown fetch timeout | 10 seconds |
+| Snapshot max | 512 KiB |
+| Generation attempts | 3 |
+| Create-quiz rate | 5 attempted creates / 60 seconds (per client IP) |
+| Create-quiz concurrency | 2 in-flight generations per process |
+
+`POST /v1/quizzes` returns `REQUEST_RATE_LIMITED` (429) or `GENERATION_CONCURRENCY_LIMIT` (503) without starting fetch or generation. Start-attempt and submit are not under that cap.
+
+Every response, including `/health` and `/ready`, echoes `x-request-id`. Well-formed incoming ids (visible ASCII, 8–128 characters, no whitespace) are reused; malformed values are replaced. Request logs are one JSON object with `timestamp`, `level`, `requestId`, `method`, `path`, `status`, `durationMs`, and `code` on errors. Secrets, attempt tokens, and answer keys are redacted.
+
+Gated live Langfuse inspection (needs tracing keys, a model key, and migrated Postgres):
+
+```bash
+PHASE6_LIVE_LANGFUSE=1 pnpm --filter @ai-quiz/api exec jest --config jest.e2e.config.cjs test/e2e/quiz-live-langfuse.spec.ts
+```
+
+Manual check with `pnpm --filter @ai-quiz/api dev`:
+
+```bash
+curl -sS -D - -X POST http://localhost:3001/v1/quizzes \
+  -H 'content-type: application/json' \
+  -H 'x-request-id: demo-trace-0001' \
+  -d '{"topic":"Express routing","sourceUrl":"https://github.com/expressjs/express/blob/master/Readme.md","questionCount":5}'
+```
+
+Expect the echoed header and a Langfuse trace for `demo-trace-0001` with the four stages and **no** API keys, attempt tokens, or answer keys. Default `pnpm test` does not require PostgreSQL, `OPENAI_API_KEY`, or Langfuse keys.
 

@@ -54,6 +54,8 @@ describe("HttpErrorFilter", () => {
     ["SOURCE_FETCH_FAILED", HttpStatus.BAD_GATEWAY],
     ["GENERATION_UPSTREAM_FAILED", HttpStatus.BAD_GATEWAY],
     ["SOURCE_TIMEOUT", HttpStatus.GATEWAY_TIMEOUT],
+    ["REQUEST_RATE_LIMITED", HttpStatus.TOO_MANY_REQUESTS],
+    ["GENERATION_CONCURRENCY_LIMIT", HttpStatus.SERVICE_UNAVAILABLE],
   ] as const)("maps %s to HTTP %s", (code, httpStatus) => {
     const json = jest.fn();
     const status = jest.fn();

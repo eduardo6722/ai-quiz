@@ -60,6 +60,29 @@ describe("OpenAiQuizGenerationAdapter", () => {
     expect(generateTextFn).toHaveBeenCalledWith(expect.objectContaining({ maxRetries: 0 }));
   });
 
+  it("returns usage tokens when the SDK reports them and logs counts not prompts", async () => {
+    const logs = logger();
+    const generateTextFn = jest.fn(async () => ({
+      output: payload(),
+      usage: { inputTokens: 11, outputTokens: 22 },
+    }));
+    const adapter = new OpenAiQuizGenerationAdapter({
+      apiKey: "sk-test",
+      modelId: "gpt-4o-mini",
+      generateTextFn,
+      logger: logs,
+    });
+    const result = await adapter.generate(input);
+    expect(result.usage).toEqual({ inputTokens: 11, outputTokens: 22 });
+    const logged = JSON.stringify(logs.log.mock.calls);
+    expect(logged).toContain("topicChars=");
+    expect(logged).toContain("sourceChars=");
+    expect(logged).toContain("gpt-4o-mini");
+    expect(logged).not.toContain(input.sourceText);
+    expect(logged).not.toContain("sk-test");
+    expect(logged).not.toContain("Ignore previous");
+  });
+
   it("fails immediately when the API key is missing without calling generateText", async () => {
     const generateTextFn = jest.fn();
     const logs = logger();

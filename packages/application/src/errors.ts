@@ -11,7 +11,9 @@ export type ApplicationErrorCode =
   | "SOURCE_FETCH_FAILED"
   | "GENERATION_INVALID"
   | "GENERATION_RETRIES_EXHAUSTED"
-  | "GENERATION_UPSTREAM_FAILED";
+  | "GENERATION_UPSTREAM_FAILED"
+  | "REQUEST_RATE_LIMITED"
+  | "GENERATION_CONCURRENCY_LIMIT";
 
 export class ApplicationError extends Error {
   readonly code: ApplicationErrorCode;

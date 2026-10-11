@@ -30,6 +30,8 @@ const STATUS_BY_CODE: Record<ErrorCode, number> = {
   [ErrorCodes.SOURCE_FETCH_FAILED]: HttpStatus.BAD_GATEWAY,
   [ErrorCodes.GENERATION_UPSTREAM_FAILED]: HttpStatus.BAD_GATEWAY,
   [ErrorCodes.SOURCE_TIMEOUT]: HttpStatus.GATEWAY_TIMEOUT,
+  [ErrorCodes.REQUEST_RATE_LIMITED]: HttpStatus.TOO_MANY_REQUESTS,
+  [ErrorCodes.GENERATION_CONCURRENCY_LIMIT]: HttpStatus.SERVICE_UNAVAILABLE,
 };
 
 const ALLOWED_CODES = new Set<string>(Object.values(ErrorCodes));

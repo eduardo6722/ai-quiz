@@ -32,7 +32,16 @@ module.exports = {
   ],
   restrictedPatterns: [
     {
-      group: ["@nestjs/*", "@prisma/*", "next/*", "openai", "ai", "@langfuse/*", "@ai-quiz/ui"],
+      group: [
+        "@nestjs/*",
+        "@prisma/*",
+        "next/*",
+        "openai",
+        "ai",
+        "@langfuse/*",
+        "@opentelemetry/*",
+        "@ai-quiz/ui",
+      ],
       message: "Hexagonal boundary: core packages stay framework-free",
     },
   ],

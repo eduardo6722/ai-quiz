@@ -39,10 +39,37 @@ describe("API environment validation", () => {
       ...valid,
       OPENAI_API_KEY: undefined,
       OPENAI_MODEL: undefined,
+      LANGFUSE_PUBLIC_KEY: undefined,
       LANGFUSE_SECRET_KEY: undefined,
+      LANGFUSE_BASE_URL: undefined,
+      PROMPT_VERSION: undefined,
     });
     expect(env.OPENAI_API_KEY).toBeUndefined();
     expect(env.OPENAI_MODEL).toBeUndefined();
+    expect(env.LANGFUSE_PUBLIC_KEY).toBeUndefined();
+    expect(env.LANGFUSE_SECRET_KEY).toBeUndefined();
+  });
+
+  it("accepts optional Langfuse keys when present and still boots with public-only keys", () => {
+    const withBoth = parseApiEnv({
+      ...valid,
+      LANGFUSE_PUBLIC_KEY: "pk-lf-example",
+      LANGFUSE_SECRET_KEY: "sk-lf-example",
+      LANGFUSE_BASE_URL: "https://cloud.langfuse.com",
+      PROMPT_VERSION: "quiz-v1",
+    });
+    expect(withBoth.LANGFUSE_PUBLIC_KEY).toBe("pk-lf-example");
+    expect(withBoth.PROMPT_VERSION).toBe("quiz-v1");
+    expect(withBoth.LANGFUSE_SECRET_KEY).toBe("sk-lf-example");
+
+    const publicOnly = parseApiEnv({
+      ...valid,
+      LANGFUSE_PUBLIC_KEY: "pk-lf-example",
+      LANGFUSE_SECRET_KEY: undefined,
+    });
+    expect(publicOnly.LANGFUSE_PUBLIC_KEY).toBe("pk-lf-example");
+    expect(publicOnly.LANGFUSE_SECRET_KEY).toBeUndefined();
+    expect(JSON.stringify(publicOnly)).not.toMatch(/sk-/);
   });
 
   it("defaults WEB_ORIGIN to the local web app and rejects an invalid URL", () => {

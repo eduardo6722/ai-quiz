@@ -383,13 +383,13 @@ defects exposed by the assessment acceptance and reliability checks.
 
 ### Scope checklist
 
-- [ ] Test generation from **two different, reachable README.md URLs**, not two topics on the same source.
-- [ ] Manually verify the questions reference the corresponding Markdown content.
-- [ ] Check DB persistence for questions, correct choices, attempts, selected answers, individual scores and weighted final score.
-- [ ] Run Jest + Supertest end-to-end flows using real PostgreSQL and a mocked deterministic model.
-- [ ] Test malformed URL, bad Markdown, upstream failure, invalid option IDs, answer leakage, duplicate submission and unauthorized result access.
-- [ ] Document the two sources, sample topics, demo steps, scores and known limitations in `README.md`.
-- [ ] Run the **read-only code-review agent** over the completed vertical slice; fix high-severity findings.
+- [x] Test generation from **two different, reachable README.md URLs**, not two topics on the same source.
+- [x] Manually verify the questions reference the corresponding Markdown content.
+- [x] Check DB persistence for questions, correct choices, attempts, selected answers, individual scores and weighted final score.
+- [x] Run Jest + Supertest end-to-end flows using real PostgreSQL and a mocked deterministic model.
+- [x] Test malformed URL, bad Markdown, upstream failure, invalid option IDs, answer leakage, duplicate submission and unauthorized result access.
+- [x] Document the two sources, sample topics, demo steps, scores and known limitations in `README.md`.
+- [x] Run the **read-only code-review agent** over the completed vertical slice; fix high-severity findings.
 
 **Definition of done — INTERVIEW MVP:** Both README demonstrations work; API, web UI, database and scoring are demonstrably correct; all core tests pass. **At this point the assessment's must-haves are delivered.**
 
@@ -438,10 +438,10 @@ handling must already be verified in the P0 cycles.
 
 ### Scope checklist
 
-- [ ] Add Langfuse traces around fetch → preprocessing → generation → validation (redact secrets and private tokens).
-- [ ] Add structured logs, consistent errors, correlation IDs, rate limits and bounded retry behavior.
+- [x] Add Langfuse traces around fetch → preprocessing → generation → validation (redact secrets and private tokens).
+- [x] Add structured logs, consistent errors, correlation IDs, rate limits and bounded retry behavior.
 - [ ] Add a second question-generation strategy behind the same generation port (optional assessment bonus).
-- [ ] Add health/readiness checks and configuration documentation.
+- [x] Add health/readiness checks and configuration documentation.
 
 **Definition of done:** You can diagnose a failed generation and explain model behavior without exposing secrets.
 

@@ -10,6 +10,7 @@ export type GenerateQuizInput = {
 export type GeneratedQuiz = {
   questions: Question[];
   modelId?: string;
+  usage?: { inputTokens?: number; outputTokens?: number };
 };
 
 export type QuizGenerationPort = {

@@ -14,7 +14,10 @@ export type QuizGenerateTextFn = (options: {
   maxRetries: number;
   system: string;
   prompt: string;
-}) => Promise<{ output?: GeneratedQuizPayload }>;
+}) => Promise<{
+  output?: GeneratedQuizPayload;
+  usage?: { inputTokens?: number; outputTokens?: number };
+}>;
 
 type GenerationLogger = {
   log(message: string): void;
@@ -79,6 +82,10 @@ export class OpenAiQuizGenerationAdapter implements QuizGenerationPort {
       return {
         modelId,
         questions: this.toQuestions(payload),
+        usage:
+          result.usage !== undefined
+            ? { inputTokens: result.usage.inputTokens, outputTokens: result.usage.outputTokens }
+            : undefined,
       };
     } catch (error) {
       if (isApplicationErrorCode(error)) {

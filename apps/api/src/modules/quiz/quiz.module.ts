@@ -12,11 +12,13 @@ import type {
   MarkdownSourcePort,
   QuizGenerationPort,
   QuizRepositoryPort,
+  TelemetryPort,
   UnitOfWorkPort,
 } from "@ai-quiz/domain";
 import { parseApiEnv } from "../../infrastructure/env";
 import { PrismaService } from "../../infrastructure/prisma.service";
 import { AttemptController } from "./adapters/in/rest/attempt.controller";
+import { CreateQuizLimiter } from "./adapters/in/rest/create-quiz-limiter";
 import { HttpErrorFilter } from "./adapters/in/rest/http-error.filter";
 import { QuizController } from "./adapters/in/rest/quiz.controller";
 import { OpenAiQuizGenerationAdapter } from "./adapters/out/llm/openai-quiz-generation.adapter";
@@ -25,19 +27,38 @@ import { AttemptPrismaRepository } from "./adapters/out/prisma/attempt.prisma-re
 import { QuizPrismaRepository } from "./adapters/out/prisma/quiz.prisma-repository";
 import { defaultFetchTransport, type FetchTransport } from "./adapters/out/source-fetch/fetch-transport";
 import { HttpsMarkdownSourceAdapter } from "./adapters/out/source-fetch/https-markdown-source.adapter";
+import { LangfuseTelemetryAdapter } from "./adapters/out/telemetry/langfuse-telemetry.adapter";
+import { NoOpTelemetryPort } from "./adapters/out/telemetry/noop-telemetry.adapter";
 import {
   ATTEMPT_REPOSITORY_PORT,
   FETCH_TRANSPORT,
   MARKDOWN_SOURCE_PORT,
   QUIZ_GENERATION_PORT,
   QUIZ_REPOSITORY_PORT,
+  TELEMETRY_PORT,
   UNIT_OF_WORK_PORT,
 } from "./quiz.tokens";
+
+function telemetryFromEnv(): TelemetryPort {
+  const env = parseApiEnv(process.env);
+  const publicKey = env.LANGFUSE_PUBLIC_KEY?.trim() ?? "";
+  const secretKey = env.LANGFUSE_SECRET_KEY?.trim() ?? "";
+  if (publicKey.length === 0 || secretKey.length === 0) {
+    return new NoOpTelemetryPort();
+  }
+  return new LangfuseTelemetryAdapter({
+    publicKey,
+    secretKey,
+    baseUrl: env.LANGFUSE_BASE_URL?.trim() || undefined,
+    promptVersion: env.PROMPT_VERSION?.trim() || undefined,
+  });
+}
 
 @Module({
   controllers: [QuizController, AttemptController],
   providers: [
     { provide: APP_FILTER, useClass: HttpErrorFilter },
+    { provide: CreateQuizLimiter, useFactory: () => new CreateQuizLimiter() },
     { provide: FETCH_TRANSPORT, useFactory: () => defaultFetchTransport() },
     {
       provide: MARKDOWN_SOURCE_PORT,
@@ -54,6 +75,7 @@ import {
         });
       },
     },
+    { provide: TELEMETRY_PORT, useFactory: telemetryFromEnv },
     {
       provide: QUIZ_REPOSITORY_PORT,
       useFactory: (prisma: PrismaService) => new QuizPrismaRepository(prisma),
@@ -71,8 +93,9 @@ import {
         source: MarkdownSourcePort,
         generation: QuizGenerationPort,
         uow: UnitOfWorkPort,
-      ) => new CreateQuizUseCase(source, generation, uow),
-      inject: [MARKDOWN_SOURCE_PORT, QUIZ_GENERATION_PORT, UNIT_OF_WORK_PORT],
+        telemetry: TelemetryPort,
+      ) => new CreateQuizUseCase(source, generation, uow, telemetry),
+      inject: [MARKDOWN_SOURCE_PORT, QUIZ_GENERATION_PORT, UNIT_OF_WORK_PORT, TELEMETRY_PORT],
     },
     {
       provide: GetQuizUseCase,

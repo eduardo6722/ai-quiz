@@ -6,6 +6,7 @@ allowBuilds:
   '@prisma/engines': true
   '@swc/core': true
   prisma: true
+  protobufjs: false
   unrs-resolver: true
 nodeLinker: isolated
 # Compose bind-mounts node_modules with a container store path. Default

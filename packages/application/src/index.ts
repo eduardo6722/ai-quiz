@@ -15,3 +15,5 @@ export { StartAttemptUseCase } from "./use-cases/start-attempt.js";
 export { SubmitQuizUseCase } from "./use-cases/submit-quiz.js";
 export { GetQuizResultUseCase } from "./use-cases/get-quiz-result.js";
 export { tokenHashesMatch } from "./security/token-hash.js";
+export { RecordingTelemetryPort } from "./testing/recording-telemetry.js";
+export type { RecordedEvent, RecordedStage } from "./testing/recording-telemetry.js";

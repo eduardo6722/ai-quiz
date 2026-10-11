@@ -3,6 +3,7 @@ import type { MarkdownSourcePort, QuizGenerationPort, Question } from "@ai-quiz/
 import { ApplicationError } from "../errors.js";
 import { gradeAttempt } from "../grading/grade-attempt.js";
 import { CreateQuizUseCase } from "./create-quiz.js";
+import { RecordingTelemetryPort } from "../testing/recording-telemetry.js";
 import { memoryPorts } from "../testing/test-memory-ports.js";
 import { SAMPLE_SNAPSHOT, sampleQuiz } from "../testing/quiz-fixture.js";
 
@@ -23,8 +24,9 @@ function execute(
   generation: QuizGenerationPort,
   uow: ReturnType<typeof memoryPorts>["uow"],
   questionCount = 5,
+  telemetry = new RecordingTelemetryPort(),
 ) {
-  return new CreateQuizUseCase(source, generation, uow).execute({
+  return new CreateQuizUseCase(source, generation, uow, telemetry).execute({
     topic: "Hexagonal architecture",
     sourceUrl: snapshot.originalUrl,
     questionCount,
@@ -61,7 +63,12 @@ describe("CreateQuizUseCase", () => {
       topic: "Hexagonal architecture",
       sourceUrl: snapshot.originalUrl,
     });
-    const result = await new CreateQuizUseCase(sourcePort(), generation, ports.uow).execute(parsed);
+    const result = await new CreateQuizUseCase(
+      sourcePort(),
+      generation,
+      ports.uow,
+      new RecordingTelemetryPort(),
+    ).execute(parsed);
     expect(ports.store.quizzes.get(result.id)?.quiz.questions).toHaveLength(5);
   });
 
@@ -234,5 +241,124 @@ describe("CreateQuizUseCase", () => {
     const graded = gradeAttempt({ quiz: stored, answers });
     expect(graded.result.questions.map((question) => question.rawScore)).toEqual([4, 2, 4, 4, 4]);
     expect(graded.result.weightedScore).toBeGreaterThan(0);
+  });
+
+  it("records fetch error without a generation stage", async () => {
+    const telemetry = new RecordingTelemetryPort();
+    const source: MarkdownSourcePort = {
+      fetch: async () => {
+        throw new ApplicationError("SOURCE_FETCH_FAILED", "dns failed");
+      },
+    };
+    const generation: QuizGenerationPort = { generate: jest.fn() };
+    await expect(execute(source, generation, memoryPorts().uow, 5, telemetry)).rejects.toMatchObject({
+      code: "SOURCE_FETCH_FAILED",
+    });
+    expect(telemetry.stages.filter((stage) => stage.name === "generation")).toHaveLength(0);
+    expect(telemetry.stages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "fetch", outcome: "error", errorCode: "SOURCE_FETCH_FAILED" }),
+      ]),
+    );
+    expect(generation.generate).not.toHaveBeenCalled();
+  });
+
+  it("records a failed generation attempt then a successful retry", async () => {
+    const telemetry = new RecordingTelemetryPort();
+    const ports = memoryPorts();
+    const generation: QuizGenerationPort = {
+      generate: jest
+        .fn()
+        .mockRejectedValueOnce(new ApplicationError("GENERATION_INVALID", "bad shape"))
+        .mockResolvedValueOnce({ questions: sampleQuiz("ok").questions, modelId: "gpt-4o-mini" }),
+    };
+    const result = await execute(sourcePort(), generation, ports.uow, 5, telemetry);
+    expect(result.status).toBe("ready");
+    const generations = telemetry.stages.filter((stage) => stage.name === "generation");
+    expect(generations).toEqual([
+      expect.objectContaining({ outcome: "error", attributes: expect.objectContaining({ attempt: 1 }) }),
+      expect.objectContaining({
+        outcome: "ok",
+        attributes: expect.objectContaining({ attempt: 2, modelId: "gpt-4o-mini" }),
+      }),
+    ]);
+    expect(telemetry.stages.filter((stage) => stage.name === "preprocessing")[0]?.outcome).toBe("ok");
+    expect(telemetry.stages.filter((stage) => stage.name === "validation")[0]?.outcome).toBe("ok");
+    expect(telemetry.events).toEqual([expect.objectContaining({ name: "quiz-ready", attributes: { quizId: result.id } })]);
+  });
+
+  it("records three generation errors when retries exhaust", async () => {
+    const telemetry = new RecordingTelemetryPort();
+    const generation: QuizGenerationPort = {
+      generate: jest.fn(async () => ({ questions: [] })),
+    };
+    await expect(execute(sourcePort(), generation, memoryPorts().uow, 5, telemetry)).rejects.toMatchObject({
+      code: "GENERATION_RETRIES_EXHAUSTED",
+    });
+    expect(telemetry.stages.filter((stage) => stage.name === "generation")).toHaveLength(3);
+    expect(telemetry.stages.filter((stage) => stage.name === "generation").every((stage) => stage.outcome === "error")).toBe(
+      true,
+    );
+  });
+
+  it("records create-quiz fetch preprocessing generation validation on success", async () => {
+    const telemetry = new RecordingTelemetryPort();
+    const result = await execute(
+      sourcePort(),
+      {
+        generate: async ({ count }) => ({
+          questions: sampleQuiz("g", count).questions,
+          modelId: "gpt-4o-mini",
+          usage: { inputTokens: 10, outputTokens: 20 },
+        }),
+      },
+      memoryPorts().uow,
+      5,
+      telemetry,
+    );
+    expect(telemetry.stages.map((stage) => stage.name)).toEqual([
+      "fetch",
+      "preprocessing",
+      "generation",
+      "validation",
+      "create-quiz",
+    ]);
+    expect(telemetry.stages.every((stage) => stage.outcome === "ok")).toBe(true);
+    expect(telemetry.stages.find((stage) => stage.name === "generation")?.attributes).toEqual(
+      expect.objectContaining({ attempt: 1, modelId: "gpt-4o-mini", inputTokens: 10, outputTokens: 20 }),
+    );
+    expect(telemetry.events[0]?.attributes?.quizId).toBe(result.id);
+  });
+
+  it("persists with default NoOp telemetry", async () => {
+    const ports = memoryPorts();
+    const generation: QuizGenerationPort = {
+      generate: async ({ count }) => ({ questions: sampleQuiz("g", count).questions }),
+    };
+    const result = await new CreateQuizUseCase(sourcePort(), generation, ports.uow).execute({
+      topic: "Hexagonal architecture",
+      sourceUrl: snapshot.originalUrl,
+      questionCount: 5,
+      strategy: "balanced",
+    });
+    expect(result.status).toBe("ready");
+  });
+
+  it("does not put snapshot text, isCorrect, or option ids on telemetry attributes", async () => {
+    const telemetry = new RecordingTelemetryPort();
+    await execute(
+      sourcePort(),
+      {
+        generate: async ({ count }) => ({ questions: sampleQuiz("g", count).questions }),
+      },
+      memoryPorts().uow,
+      5,
+      telemetry,
+    );
+    const blob = JSON.stringify({ stages: telemetry.stages, events: telemetry.events });
+    expect(blob).not.toContain("isCorrect");
+    expect(blob).not.toContain(SAMPLE_SNAPSHOT.slice(0, 40));
+    expect(blob).not.toContain("selectedOptionIds");
+    expect(telemetry.stages.find((stage) => stage.name === "preprocessing")?.attributes?.sourceHash).toBe("abc");
   });
 });

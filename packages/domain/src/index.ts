@@ -43,3 +43,8 @@ export type {
   FinalizeAttemptInput,
 } from "./ports/attempt-repository-port.js";
 export type { UnitOfWorkPort, UnitOfWorkRepos } from "./ports/unit-of-work-port.js";
+export type {
+  TelemetryAttributes,
+  TelemetryPort,
+  TelemetryStageName,
+} from "./ports/telemetry-port.js";

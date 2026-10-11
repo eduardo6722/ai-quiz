@@ -19,7 +19,7 @@ module.exports = {
       },
     ],
   },
-  transformIgnorePatterns: ["node_modules/(?!.*(@nestjs/|ai/|@ai-sdk/|@workflow/))"],
+  transformIgnorePatterns: ["node_modules/(?!.*(@nestjs/|ai/|@ai-sdk/|@workflow/|@langfuse/|@opentelemetry/))"],
   setupFiles: ["<rootDir>/test/jest.setup.ts", "<rootDir>/test/integration/set-test-env.ts"],
   setupFilesAfterEnv: ["<rootDir>/test/integration/postgres.setup.ts"],
   testMatch: ["<rootDir>/test/e2e/**/*.spec.ts"],

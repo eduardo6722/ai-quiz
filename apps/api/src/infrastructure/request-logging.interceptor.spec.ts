@@ -6,13 +6,14 @@ describe("RequestLoggingInterceptor", () => {
   beforeEach(() => {
     jest.spyOn(Logger.prototype, "log").mockImplementation();
     jest.spyOn(Logger.prototype, "warn").mockImplementation();
+    jest.spyOn(Logger.prototype, "error").mockImplementation();
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  it("logs successful HTTP method, path, and status", (done) => {
+  it("logs successful HTTP method, path, and status as JSON", (done) => {
     new RequestLoggingInterceptor()
       .intercept(
         {
@@ -25,14 +26,23 @@ describe("RequestLoggingInterceptor", () => {
       )
       .subscribe({
         next: () => {
-          expect(Logger.prototype.log).toHaveBeenCalledWith(expect.stringMatching(/^POST \/v1\/quizzes 201 \d+ms$/));
+          const line = (Logger.prototype.log as jest.Mock).mock.calls[0]?.[0] as string;
+          const record = JSON.parse(line) as { method: string; path: string; status: number; requestId: string };
+          expect(record).toEqual(
+            expect.objectContaining({
+              method: "POST",
+              path: "/v1/quizzes",
+              status: 201,
+              requestId: "unassigned",
+            }),
+          );
           done();
         },
         error: done,
       });
   });
 
-  it("logs failed requests with the contract code", (done) => {
+  it("logs failed requests with the contract code as JSON", (done) => {
     new RequestLoggingInterceptor()
       .intercept(
         {
@@ -47,8 +57,14 @@ describe("RequestLoggingInterceptor", () => {
       )
       .subscribe({
         error: () => {
-          expect(Logger.prototype.warn).toHaveBeenCalledWith(
-            expect.stringMatching(/^POST \/v1\/quizzes failed GENERATION_UPSTREAM_FAILED \d+ms$/),
+          const line = (Logger.prototype.error as jest.Mock).mock.calls[0]?.[0] as string;
+          const record = JSON.parse(line) as { code: string; level: string; status: number };
+          expect(record).toEqual(
+            expect.objectContaining({
+              code: "GENERATION_UPSTREAM_FAILED",
+              status: 502,
+              level: "error",
+            }),
           );
           done();
         },

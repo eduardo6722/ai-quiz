@@ -18,6 +18,8 @@ const LEARNER_COPY: Record<string, string> = {
   SUBMIT_ANSWERS_INVALID: "Check your answers and try submitting again.",
   SELECTION_ILLEGAL: "Check your answers and try submitting again.",
   ATTEMPT_INCOMPLETE: "Answer every question before submitting.",
+  REQUEST_RATE_LIMITED: "Too many quizzes right now. Wait a minute and try again.",
+  GENERATION_CONCURRENCY_LIMIT: "The quiz service is busy. Try again in a moment.",
   NETWORK: "Could not reach the quiz service. Try again.",
   INTERNAL_ERROR: "Something went wrong. Try again.",
 };
