@@ -1,7 +1,7 @@
 import { cn, PageShell } from '@ai-quiz/ui';
 import { ArrowDown, ArrowUpRight, BookOpen, FileText, ListChecks, Sprout } from 'lucide-react';
-import { LearningIllustration } from '../features/quiz/learning-illustration';
-import { SetupForm } from '../features/quiz/setup-form';
+import { LearningIllustration } from '../features/quiz/setup/learning-illustration';
+import { SetupForm } from '../features/quiz/setup/setup-form';
 
 const steps = [
   {

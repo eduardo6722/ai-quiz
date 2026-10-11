@@ -17,8 +17,8 @@ import { ArrowRight, ChevronDown, Link, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { createQuiz, isQuizApiError } from './api-client';
-import { learnerMessageForCode } from './error-copy';
+import { createQuiz, isQuizApiError } from '../shared/api-client';
+import { learnerMessageForCode } from '../shared/error-copy';
 import { GeneratingStatus } from './generating-status';
 
 const setupFormSchema = z.object({

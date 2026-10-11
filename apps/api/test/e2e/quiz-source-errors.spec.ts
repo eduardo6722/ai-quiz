@@ -74,4 +74,17 @@ describe("quiz source errors", () => {
     expect(response.body).toMatchObject({ code: "SOURCE_TIMEOUT" });
     expect(await testPrisma().quiz.count({ where: { status: "ready" } })).toBe(0);
   });
+
+  it("maps unusable Markdown to 422 SOURCE_UNUSABLE and stores no ready quiz", async () => {
+    const response = await postWith(
+      transport(async () => ({
+        status: 200,
+        headers: { "content-type": "text/plain; charset=utf-8" },
+        body: Buffer.from("   too short   ", "utf8"),
+      })),
+    );
+    expect(response.status).toBe(422);
+    expect(response.body).toMatchObject({ code: "SOURCE_UNUSABLE" });
+    expect(await testPrisma().quiz.count({ where: { status: "ready" } })).toBe(0);
+  });
 });

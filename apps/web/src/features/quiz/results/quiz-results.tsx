@@ -14,11 +14,11 @@ import {
   X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { getQuiz, getResult, isQuizApiError } from './api-client';
-import { loadSitting } from './attempt-session';
-import { learnerMessageForCode } from './error-copy';
+import { getQuiz, getResult, isQuizApiError } from '../shared/api-client';
+import { loadSitting } from '../shared/attempt-session';
+import { learnerMessageForCode } from '../shared/error-copy';
 import { isFullyCorrectQuestion } from './question-outcome';
-import { QuizErrorState, QuizLoading } from './quiz-screen';
+import { QuizErrorState, QuizLoading } from '../layout/quiz-screen';
 
 function messageFromUnknown(error: unknown): string {
   if (isQuizApiError(error)) {

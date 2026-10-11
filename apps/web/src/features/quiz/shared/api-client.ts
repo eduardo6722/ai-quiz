@@ -12,7 +12,7 @@ import {
   type SubmitAnswersRequest,
 } from "@ai-quiz/contracts";
 import type { z } from "zod";
-import { env } from "../../env";
+import { env } from "../../../env";
 
 type CreateQuizBody = z.input<typeof createQuizRequestSchema>;
 

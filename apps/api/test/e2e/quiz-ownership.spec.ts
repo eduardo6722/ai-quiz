@@ -51,4 +51,24 @@ describe("answer ownership", () => {
     expect(wrong.status).toBe(200);
     expect(wrong.body.questions[0].rawScore).toBe(0);
   });
+
+  it("rejects an incomplete answer set without scoring", async () => {
+    const server = app.getHttpServer();
+    const created = await request(server).post("/v1/quizzes").send({ ...CREATE_BODY, questionCount: 6 });
+    const quiz = publicQuizViewSchema.parse(
+      (await request(server).get(`/v1/quizzes/${created.body.id}`)).body,
+    );
+    expect(quiz.questions).toHaveLength(6);
+    const started = await request(server).post(`/v1/quizzes/${created.body.id}/attempts`);
+    const answers = correctAnswersFromPublicQuiz(quiz).slice(0, 5);
+    const incomplete = await request(server)
+      .post(`/v1/attempts/${started.body.attemptId}/submit`)
+      .set(bearer(started.body.token))
+      .send({ answers });
+    expect(incomplete.status).toBe(400);
+    expect(incomplete.body).toMatchObject({ code: "ATTEMPT_INCOMPLETE" });
+    const attempt = await testPrisma().quizAttempt.findUnique({ where: { id: started.body.attemptId } });
+    expect(attempt?.status).toBe("open");
+    expect(attempt?.weightedScore).toBeNull();
+  });
 });

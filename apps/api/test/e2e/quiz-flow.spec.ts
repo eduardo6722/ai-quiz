@@ -71,6 +71,24 @@ describe("quiz REST flow", () => {
     expect(await testPrisma().quiz.count({ where: { status: "ready" } })).toBe(0);
   });
 
+  it("rejects http and malformed source URLs as CREATE_QUIZ_INVALID", async () => {
+    const server = app.getHttpServer();
+    const httpUrl = await request(server).post("/v1/quizzes").send({
+      topic: "Hexagonal architecture",
+      sourceUrl: "http://example.com/README.md",
+    });
+    expect(httpUrl.status).toBe(400);
+    expect(httpUrl.body).toMatchObject({ code: "CREATE_QUIZ_INVALID" });
+
+    const malformed = await request(server).post("/v1/quizzes").send({
+      topic: "Hexagonal architecture",
+      sourceUrl: "not-a-url",
+    });
+    expect(malformed.status).toBe(400);
+    expect(malformed.body).toMatchObject({ code: "CREATE_QUIZ_INVALID" });
+    expect(await testPrisma().quiz.count({ where: { status: "ready" } })).toBe(0);
+  });
+
   it("maps unknown ids to not-found codes", async () => {
     const server = app.getHttpServer();
     const missingQuiz = await request(server).get("/v1/quizzes/00000000-0000-4000-8000-000000000000");

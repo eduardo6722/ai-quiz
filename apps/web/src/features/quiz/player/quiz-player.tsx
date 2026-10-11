@@ -16,16 +16,16 @@ import {
 import { ArrowLeft, ArrowRight, Check, CircleDot, ListChecks } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getQuiz, isQuizApiError, startAttempt, submitAttempt } from './api-client';
+import { getQuiz, isQuizApiError, startAttempt, submitAttempt } from '../shared/api-client';
 import {
   ensureOpenSitting,
   loadSitting,
   resultsPath,
   saveSitting,
   type AttemptSitting,
-} from './attempt-session';
-import { learnerMessageForCode } from './error-copy';
-import { QuizErrorState, QuizLoading } from './quiz-screen';
+} from '../shared/attempt-session';
+import { learnerMessageForCode } from '../shared/error-copy';
+import { QuizErrorState, QuizLoading } from '../layout/quiz-screen';
 
 function isLegalSelection(type: 'single' | 'multiple', ids: string[] | undefined): boolean {
   const selected = ids ?? [];

@@ -1,8 +1,8 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { QuizPlayer } from '../../../features/quiz/quiz-player';
-import { QuizLoading } from '../../../features/quiz/quiz-screen';
+import { QuizLoading } from '../../../features/quiz/layout/quiz-screen';
+import { QuizPlayer } from '../../../features/quiz/player/quiz-player';
 
 export default function QuizPage() {
   const params = useParams<{ quizId: string }>();

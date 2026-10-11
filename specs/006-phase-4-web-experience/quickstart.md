@@ -72,6 +72,17 @@ Reviewer pass (not Playwright):
 
 Keyboard: tab through fields, choose options, Next/Submit, results CTA, visible focus.
 
+### Recorded 2026-10-11
+
+Live generate is **not** an environment blocker in this workspace (`OPENAI_API_KEY` present). Two-source REST evidence is in the repository `README.md` (Express + Fastify).
+
+Google Chrome (`--headless=new`) reviewed setup, player, and no-token results at **320×900** and **1280×800**:
+
+- ~320px: one-column setup and player; option labels fully readable; Next is full-width; no horizontal clip on the player card.
+- ≥1024px: setup shows editorial artwork beside the form; player stays a single centered ~720px column with no art beside answers.
+- Direct `/quiz/{id}/results` without a session token shows English “This result cannot be shown from this browser sitting.” and **Create another quiz**, with no scores or keys.
+- Player DOM dump contained **no** `isCorrect`, `rawScore`, or `token=` query. Progress text included “Question 1 of 5”.
+
 ## Scope check
 
 A diff review MUST find **zero** new scoring functions in `apps/web`, **zero** Langfuse, **zero** production Dockerfiles or GitHub Actions, **zero** new `/v1` routes, and CORS limited to `WEB_ORIGIN`.

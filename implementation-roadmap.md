@@ -393,7 +393,7 @@ defects exposed by the assessment acceptance and reliability checks.
 
 **Definition of done — INTERVIEW MVP:** Both README demonstrations work; API, web UI, database and scoring are demonstrably correct; all core tests pass. **At this point the assessment's must-haves are delivered.**
 
-### Specify prompt
+### Specify prompt and use /speckit-coverge
 
 ```text
 Read roadmap.md, implementation-roadmap.md, AGENTS.md and the existing

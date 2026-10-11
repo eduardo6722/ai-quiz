@@ -1,9 +1,9 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { QuizApiError, getQuiz, startAttempt, submitAttempt } from './api-client';
-import { saveSitting } from './attempt-session';
+import { QuizApiError, getQuiz, startAttempt, submitAttempt } from '../shared/api-client';
+import { saveSitting } from '../shared/attempt-session';
 import { QuizPlayer } from './quiz-player';
-import { makePublicQuiz } from './test-fixtures';
+import { makePublicQuiz } from '../shared/test-fixtures';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
@@ -20,8 +20,8 @@ jest.mock('next/link', () => ({
   ),
 }));
 
-jest.mock('./api-client', () => {
-  const actual = jest.requireActual('./api-client') as typeof import('./api-client');
+jest.mock('../shared/api-client', () => {
+  const actual = jest.requireActual('../shared/api-client') as typeof import('../shared/api-client');
   return {
     ...actual,
     getQuiz: jest.fn(),

@@ -358,3 +358,16 @@ After Foundational:
 - Stop at checkpoints to validate the story independently
 - Missing `OPENAI_API_KEY` at live browser verification is an **environment blocker**, not a reason to restore product fixtures in the UI
 - Avoid: new scoring policies, generation strategies, Langfuse, CI/CD, production containers, Playwright, putting the attempt token in the URL, importing domain scoring into web
+
+---
+
+## Phase 12: Convergence
+
+Remaining work against Phase 4 evidence gaps and Phase 5 / interview-MVP acceptance (`roadmap.md` assessment must-haves and `implementation-roadmap.md` Phase 5). Do not rewrite earlier tasks.
+
+- [X] T059 CRITICAL Demonstrate live generation and full quiz completion (create → play → submit → persisted result) against two different reachable README.md URLs, not two topics on the same source, and record reviewer evidence that questions are grounded in each corresponding Markdown per roadmap assessment two-README must-have, implementation-roadmap Phase 5, and FR-013 (missing)
+- [X] T060 Document the two sources, sample topics, demo steps, scores, source-relevance evidence, and known limitations in `README.md` per implementation-roadmap Phase 5 (missing)
+- [X] T061 Add Jest + Supertest E2E (real PostgreSQL, mocked deterministic generator) that runs create → get → start → submit → result against two distinct Markdown bodies, asserts source-specific grounded questions, inspects Prisma rows for questions, `isCorrect`, attempts, selections, `rawScore`, and `weightedScore`, and matches a hand-calculated `1.1 ** index` reference per implementation-roadmap Phase 5 and roadmap M4 (missing)
+- [X] T062 Extend API E2E reliability coverage for unusable/bad Markdown (`SOURCE_UNUSABLE`), `http`/malformed source URLs (`CREATE_QUIZ_INVALID`), and incomplete submits (`ATTEMPT_INCOMPLETE`) without regressing existing leakage, idempotency, unauthorized-result, and invalid-option cases per implementation-roadmap Phase 5 (partial)
+- [X] T063 Record the Phase 4 phone (~320px) and desktop (≥1024px) reviewer pass of the full browser flow, plus the live sitting or environment blocker, per FR-018, SC-001, SC-007, and SC-008 (partial)
+- [X] T064 Run the read-only code-review skill over the completed vertical slice and resolve blocking findings per implementation-roadmap Phase 5 and Constitution VI (missing)

@@ -156,10 +156,43 @@ curl -sS -X POST http://localhost:3001/v1/quizzes \
   -d '{"topic":"Nope","sourceUrl":"https://127.0.0.1/README.md"}'
 ```
 
-Gated live README (needs `OPENAI_API_KEY`, `OPENAI_MODEL`, and `PHASE3_LIVE_README=1` for the automated file):
+Gated live README (needs `OPENAI_API_KEY`, `OPENAI_MODEL`, and `PHASE3_LIVE_README=1` for the automated file). The file now covers **two** sources and a full submit; see **Two-source demonstration** below.
 
 ```bash
-curl -sS -X POST http://localhost:3001/v1/quizzes \
-  -H 'content-type: application/json' \
-  -d '{"topic":"Express routing","sourceUrl":"https://github.com/expressjs/express/blob/master/Readme.md","questionCount":5}'
+PHASE3_LIVE_README=1 pnpm --filter @ai-quiz/api exec jest --config jest.e2e.config.cjs test/e2e/quiz-live-readme.spec.ts
 ```
+
+## Two-source demonstration (interview MVP)
+
+Verified **2026-10-11** against two different public README.md URLs (not two topics on one file). Product create fetched each source, generated five grounded questions, stored keys in PostgreSQL, and scored an all-correct submit. Repeat locally with `OPENAI_API_KEY` set.
+
+| Source | Topic | URL | Count | Weighted score (0–4) | Display % |
+| --- | --- | --- | --- | --- | --- |
+| Express | Express routing | `https://github.com/expressjs/express/blob/master/Readme.md` | 5 | 3.12 (`3.123978313213543` stored) | 78.10 |
+| Fastify | Fastify plugins | `https://github.com/fastify/fastify/blob/main/README.md` | 5 | 3.60 (`3.5963866275736684` stored) | 89.91 |
+
+All-correct submit does **not** always yield 4.00: multiple-answer questions award one point per correctly selected option (provisional policy), so two-correct multiples score 2, not 4. Weights remain `1.1 ** index` in quiz order.
+
+### Demo steps
+
+1. `docker compose up -d db`, then `pnpm db:migrate` and `pnpm dev` (or host `pnpm --filter @ai-quiz/api dev` + `pnpm --filter @ai-quiz/web dev`).
+2. Open `http://localhost:3000`. Enter the Express topic and blob URL above, count 5, Generate quiz.
+3. Answer every question, submit, confirm the headline is a **0–4 weighted** score with a secondary percentage, Correct/Incorrect text, and a link to the source URL. The address bar must not contain the attempt token.
+4. Repeat with the Fastify topic and URL. Confirm the questions are about Fastify plugins, not a recycled Express fixture.
+5. Optional DB check (same Postgres as the API): questions, `QuestionOption.isCorrect`, `QuizAttempt.weightedScore`, `AttemptAnswer.rawScore`, and selections for that attempt.
+
+Offline CI proof (no model key): `pnpm test:e2e` includes `quiz-two-sources.spec.ts` (two distinct Markdown bodies, mocked generator, Prisma inspection, hand-calculated `[0,4,4,4,4]` weighted score).
+
+### Source relevance (this run)
+
+Every stored `sourceExcerpt` was a contiguous substring of that source’s snapshot (`groundedExcerpts: true`). Sample prompts:
+
+- Express: “In the example, which Express method registers the route handler?”; “Which items are listed as Express features in the source?”
+- Fastify: “According to the source, through which mechanisms is Fastify fully extensible?”; “Which document is listed as a guide for writing a good Fastify plugin?”
+
+### Known limitations
+
+- Multi-answer scoring is the roadmap’s provisional reading (no invented penalties). Confirm with the interviewer.
+- Live questions vary by model; the gated file asserts shape, grounding, persistence, and scoring, not a golden prompt list.
+- Langfuse, production Dockerfiles, and GitHub Actions remain P1 / later phases.
+

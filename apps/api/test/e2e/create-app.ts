@@ -23,11 +23,12 @@ export async function createApiApp(options: CreateApiAppOptions = {}): Promise<I
   });
 
   if (options.fetchTransport !== undefined) {
-    builder = builder
-      .overrideProvider(FETCH_TRANSPORT)
-      .useValue(options.fetchTransport)
-      .overrideProvider(QUIZ_GENERATION_PORT)
-      .useClass(FixedGenerationAdapter);
+    builder = builder.overrideProvider(FETCH_TRANSPORT).useValue(options.fetchTransport);
+    if (options.generation !== undefined) {
+      builder = builder.overrideProvider(QUIZ_GENERATION_PORT).useValue(options.generation);
+    } else {
+      builder = builder.overrideProvider(QUIZ_GENERATION_PORT).useClass(FixedGenerationAdapter);
+    }
   } else if (options.generation !== undefined) {
     builder = builder
       .overrideProvider(MARKDOWN_SOURCE_PORT)
