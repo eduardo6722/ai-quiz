@@ -1,5 +1,5 @@
 import { applySelections, assertAttemptMatchesQuiz, scoreAttempt } from "./attempt.js";
-import { DomainError } from "../errors.js";
+import { DomainError } from "../shared/errors.js";
 import type { Option, Question, Quiz } from "../quiz/quiz.js";
 import { calculateWeightedScore } from "../scoring/weighted-score.js";
 import { scoreQuestion } from "../scoring/scoring-policy.js";

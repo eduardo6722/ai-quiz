@@ -16,15 +16,15 @@ import {
 import { ArrowLeft, ArrowRight, Check, CircleDot, ListChecks } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getQuiz, isQuizApiError, startAttempt, submitAttempt } from '../shared/api-client';
+import { getQuiz, isQuizApiError, startAttempt, submitAttempt } from '../api/api-client';
 import {
   ensureOpenSitting,
   loadSitting,
   resultsPath,
   saveSitting,
   type AttemptSitting,
-} from '../shared/attempt-session';
-import { learnerMessageForCode } from '../shared/error-copy';
+} from '../session/attempt-session';
+import { learnerMessageForCode } from '../errors/error-copy';
 import { QuizErrorState, QuizLoading } from '../layout/quiz-screen';
 
 function isLegalSelection(type: 'single' | 'multiple', ids: string[] | undefined): boolean {

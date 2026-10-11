@@ -1,4 +1,4 @@
-import { DomainError } from "../errors.js";
+import { DomainError } from "../shared/errors.js";
 import type { Option, Question } from "../quiz/quiz.js";
 import {
   MULTIPLE_CHOICE_POLICY_NOTE,

@@ -1,0 +1,14 @@
+---
+description: Place new code in context-scoped folders; do not dump files into grab-bag directories.
+alwaysApply: true
+---
+
+Before adding or moving source files, read `.agents/skills/folder-architecture/SKILL.md`.
+
+- Group by product context (`quiz` vs `attempt`), then by role inside that folder.
+- Application: create/get in `quiz/`; start/submit/grade/get-result in `attempt/`. Token comparison lives in `util/`. Do not add a `result/` use-case folder.
+- Put new files in the matching folder — not in `helpers/`, `infrastructure/`, or a grab-bag `shared/`.
+- `apps/web` routes stay thin; feature UI lives in `src/features/<feature>/<slice>/`.
+- `packages/ui` stays design-system primitives in `src/components/`.
+- Colocate unit tests with source; API e2e/integration tests go under `apps/api/test/{e2e,integration}/<context>/`.
+- Follow the live tree in that skill, not historical Spec Kit task paths.

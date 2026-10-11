@@ -4,6 +4,7 @@
 
 - `roadmap.md` — source of scope, assessment acceptance and execution order.
 - `.specify/memory/constitution.md` and the relevant feature spec/plan/tasks after Spec Kit initialization.
+- `.agents/skills/folder-architecture/SKILL.md` before creating or moving source files.
 - `.agents/skills/design-system/SKILL.md` and its references for every visual change.
 - `.agents/skills/code-review/SKILL.md` for code-review expectations.
 
@@ -17,11 +18,13 @@
 - Commit feature-complete vertical slices. Do not mark roadmap checkboxes done without verification.
 - Review changes for SSRF, prompt injection, idempotency and Prisma transaction integrity.
 - UI text is English. Use semantic design tokens, Tailwind and shared shadcn/ui primitives.
+- Place code in context-scoped folders (`quiz`, `attempt`, `scoring`, `health`, `platform`). Do not dump unrelated files into `utils/`, `infrastructure/`, or a grab-bag `shared/`.
 
 ## Harness portability
 
 - This repository uses `AGENTS.md` and `.agents/skills/` as the source of truth for shared policies and repeatable workflows.
 - For frontend work, consult `.agents/skills/design-system/SKILL.md` and its references. When using the Claude Code shim, it points to this same canonical skill.
+- For file placement, consult `.agents/skills/folder-architecture/SKILL.md`. Harness adapters under `.cursor/rules/` and `.claude/skills/` must stay thin and point at that skill.
 - For review, consult `.agents/skills/code-review/SKILL.md`. Harness-specific agent wrappers under `.cursor/agents`, `.claude/agents`, and `.codex/agents` delegate to that single checklist.
 - Harness adapters are intentionally thin. Do not copy business rules or create conflicting instructions in them.
 - The Spec Kit CLI creates harness-specific slash commands/skills; switch or install the integration appropriate to the agent in use rather than assuming those generated files are universal.

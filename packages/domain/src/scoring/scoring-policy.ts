@@ -1,4 +1,4 @@
-import { DomainError } from "../errors.js";
+import { DomainError } from "../shared/errors.js";
 import type { Question } from "../quiz/quiz.js";
 
 export const MULTIPLE_CHOICE_POLICY_NOTE = [

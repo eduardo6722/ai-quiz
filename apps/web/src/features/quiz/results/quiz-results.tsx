@@ -14,9 +14,9 @@ import {
   X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { getQuiz, getResult, isQuizApiError } from '../shared/api-client';
-import { loadSitting } from '../shared/attempt-session';
-import { learnerMessageForCode } from '../shared/error-copy';
+import { getQuiz, getResult, isQuizApiError } from '../api/api-client';
+import { loadSitting } from '../session/attempt-session';
+import { learnerMessageForCode } from '../errors/error-copy';
 import { isFullyCorrectQuestion } from './question-outcome';
 import { QuizErrorState, QuizLoading } from '../layout/quiz-screen';
 

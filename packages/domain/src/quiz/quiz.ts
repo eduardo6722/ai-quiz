@@ -1,4 +1,4 @@
-import { DomainError } from "../errors.js";
+import { DomainError } from "../shared/errors.js";
 
 export type QuestionType = "single" | "multiple";
 

@@ -19,12 +19,12 @@ Review the relevant source before changing visuals. After the scaffold exists, t
 
 - `apps/web/src/app/globals.css` — global Tailwind v4 / shadcn theme and browser-level base rules.
 - `apps/web/src/app/page.tsx` — quiz-generation landing/setup.
-- `apps/web/src/app/quiz/[id]/page.tsx` — quiz player and progress.
-- `apps/web/src/app/quiz/[id]/results/page.tsx` — completion state and score.
-- `apps/web/src/features/quiz/` — reusable feature-level composition.
-- `packages/ui/src/` — shadcn/ui primitives, variants, helper `cn`, shared tokens.
+- `apps/web/src/app/quiz/[quizId]/page.tsx` — quiz player and progress.
+- `apps/web/src/app/quiz/[quizId]/results/page.tsx` — completion state and score.
+- `apps/web/src/features/quiz/{setup,player,results,layout}/` — feature composition; keep route files thin.
+- `packages/ui/src/components/` — shadcn/ui primitives, variants, helper `cn`, shared tokens.
 
-These are **proposed paths** for a not-yet-built repository, not a claim that the components already exist. If structure differs, find the actual component owner and preserve its conventions.
+Place new UI in those feature slices (or a new `features/<feature>/` folder). See `.agents/skills/folder-architecture/SKILL.md`. Do not dump screens into `packages/ui`.
 
 ## Implementation rules (non-negotiable)
 

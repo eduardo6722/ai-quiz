@@ -1,5 +1,5 @@
-export { DomainError, isDomainError } from "./errors.js";
-export type { DomainErrorCode } from "./errors.js";
+export { DomainError, isDomainError } from "./shared/errors.js";
+export type { DomainErrorCode } from "./shared/errors.js";
 export { validateQuiz } from "./quiz/quiz.js";
 export type { Option, Question, QuestionType, Quiz } from "./quiz/quiz.js";
 export {
@@ -23,28 +23,28 @@ export type {
   ScoredQuestion,
   ScoredResult,
 } from "./attempt/attempt.js";
-export type { MarkdownSourcePort, SourceSnapshot } from "./ports/markdown-source-port.js";
+export type { MarkdownSourcePort, SourceSnapshot } from "./quiz/markdown-source-port.js";
 export type {
   GenerateQuizInput,
   GeneratedQuiz,
   QuizGenerationPort,
-} from "./ports/quiz-generation-port.js";
+} from "./quiz/quiz-generation-port.js";
 export type {
   InsertQuizInput,
   QuizRecord,
   QuizRepositoryPort,
   QuizStatus,
-} from "./ports/quiz-repository-port.js";
+} from "./quiz/quiz-repository-port.js";
 export type {
   AttemptRecord,
   AttemptRepositoryPort,
   AttemptStatus,
   CreateOpenAttemptInput,
   FinalizeAttemptInput,
-} from "./ports/attempt-repository-port.js";
-export type { UnitOfWorkPort, UnitOfWorkRepos } from "./ports/unit-of-work-port.js";
+} from "./attempt/attempt-repository-port.js";
+export type { UnitOfWorkPort, UnitOfWorkRepos } from "./shared/unit-of-work-port.js";
 export type {
   TelemetryAttributes,
   TelemetryPort,
   TelemetryStageName,
-} from "./ports/telemetry-port.js";
+} from "./shared/telemetry-port.js";

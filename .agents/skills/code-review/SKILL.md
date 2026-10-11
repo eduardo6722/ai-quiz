@@ -62,6 +62,7 @@ Your job is to **analyze and report**. Do not modify files, create commits, merg
 - AI adapters generate/validate candidates, never own scoring policy.
 - Prisma repositories map persistence; avoid database models leaking into UI and domain contracts.
 - Keep functions/cohesive classes appropriately small and responsibilities explicit. Flag unnecessary layers only if they create a demonstrable maintenance or correctness problem.
+- New files should follow `.agents/skills/folder-architecture/SKILL.md` (context folders, no grab-bag `utils/` / `infrastructure/` dumps).
 - Dependencies follow inward flow and use case boundaries; consider testability and failure behavior.
 
 ### 5. OpenAI / Vercel AI SDK and Langfuse

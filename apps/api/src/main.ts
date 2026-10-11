@@ -2,8 +2,8 @@ import "reflect-metadata";
 import { Logger } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { corsOptionsForOrigin } from "./infrastructure/cors-options";
-import { loadApiEnv } from "./infrastructure/env";
+import { corsOptionsForOrigin } from "./platform/config/cors-options";
+import { loadApiEnv } from "./platform/config/env";
 
 async function bootstrap(): Promise<void> {
   const env = loadApiEnv();

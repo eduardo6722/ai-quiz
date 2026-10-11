@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { QuizApiError, createQuiz } from "../shared/api-client";
+import { QuizApiError, createQuiz } from "../api/api-client";
 import { SetupForm } from "./setup-form";
 
 const mockPush = jest.fn();
@@ -9,8 +9,8 @@ jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn() }),
 }));
 
-jest.mock("../shared/api-client", () => {
-  const actual = jest.requireActual("../shared/api-client") as typeof import("../shared/api-client");
+jest.mock("../api/api-client", () => {
+  const actual = jest.requireActual("../api/api-client") as typeof import("../api/api-client");
   return {
     ...actual,
     createQuiz: jest.fn(),

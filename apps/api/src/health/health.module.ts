@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TerminusModule } from "@nestjs/terminus";
-import { PrismaModule } from "../infrastructure/prisma.module";
+import { PrismaModule } from "../platform/persistence/prisma.module";
 import { HealthController } from "./health.controller";
 
 @Module({
