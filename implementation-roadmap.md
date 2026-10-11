@@ -1,6 +1,6 @@
 # AI Quiz Generator — Phase-by-Phase Spec-Driven Implementation Roadmap
 
-> **Status:** Ready for the Phase 0 specification cycle; implementation is not authorized by this document alone.  
+> **Status:** Phase 2 verified; wait for an explicit request before starting Phase 3.  
 > **Audience:** Cursor Agent, Codex or Claude Code  
 > **Product source of truth:** `roadmap.md` and the supplied AI Engineer assessment  
 > **Engineering policy:** `AGENTS.md` and `.specify/memory/constitution.md`  
@@ -8,10 +8,10 @@
 
 ## Current cycle and starting point
 
-**Selected phase:** Phase 0 — project scaffolding.  
-**Next action:** Use the specify prompt in Phase 0 below.  
-**Verified deliveries:** None recorded yet.  
-**Phases 1–7:** Backlog for separate future cycles.
+**Selected phase:** Phase 2 — Prisma model, repositories and deterministic API skeleton (verified).  
+**Next action:** Stop. Start Phase 3 only when explicitly requested.  
+**Verified deliveries:** Phase 0 (`specs/002-phase-0-scaffold/`), Phase 1 (`specs/003-phase-1-domain-scoring/`), Phase 2 (`specs/004-phase-2-persistence-api/`).  
+**Phases 3–7:** Backlog for separate future cycles.
 
 Reading this file or asking to update it does not start implementation. When
 starting a cycle, select one phase and use its specify prompt. If no phase is named
@@ -161,12 +161,12 @@ adapters, quiz REST endpoints, Markdown fetching, AI generation and quiz UI.
 
 ### Scope checklist
 
-- [ ] Define quiz/question/choice/attempt domain types and invariants.
-- [ ] Implement `scoreSingleChoice()` and isolated `scoreMultipleChoice()` policy.
-- [ ] Implement `calculateWeightedScore(scores)` with `weight(i) = 1.1 ** i`.
-- [ ] Add Zod contracts for topic, URL, count (5–8), answers and public result DTOs.
-- [ ] Keep answer keys out of public DTOs.
-- [ ] Add Jest cases for correct/wrong answers, multi-select boundaries, all-correct/all-wrong, floating-point weights, invalid choices and ordering.
+- [x] Define quiz/question/choice/attempt domain types and invariants.
+- [x] Implement `scoreSingleChoice()` and isolated `scoreMultipleChoice()` policy.
+- [x] Implement `calculateWeightedScore(scores)` with `weight(i) = 1.1 ** i`.
+- [x] Add Zod contracts for topic, URL, count (5–8), answers and public result DTOs.
+- [x] Keep answer keys out of public DTOs.
+- [x] Add Jest cases for correct/wrong answers, multi-select boundaries, all-correct/all-wrong, floating-point weights, invalid choices and ordering.
 
 **Formula:** `weightedScore = Σ(questionScore[i] × 1.1^i) / Σ(1.1^i)`; calculate a percentage only for display with `(weightedScore / 4) × 100`.
 
@@ -215,15 +215,17 @@ the inputs needed to verify persistence and the REST flow.
 
 ### Scope checklist
 
-- [ ] Model `SourceDocument`, `Quiz`, `Question`, `QuestionOption`, `QuizAttempt`, `AttemptAnswer` and selected options with migrations and constraints.
-- [ ] Implement repository **ports** in application/domain and Prisma **adapters** in API.
-- [ ] Implement use cases: `CreateQuiz`, `GetQuiz`, `StartAttempt`, `SubmitAttempt`, `GetResult`.
-- [ ] Add `POST /v1/quizzes`, `GET /v1/quizzes/:id`, `POST /v1/quizzes/:id/attempts`, `POST /v1/attempts/:id/submit`, `GET /v1/attempts/:id/result`.
-- [ ] First use an **in-memory/fixed question-generation adapter** to complete the grading flow.
-- [ ] Ensure transactions, question/choice ownership validation, unique answers, private attempt tokens and repeat-submission idempotency.
-- [ ] Add Jest + PostgreSQL integration tests and Jest + Supertest API tests.
+- [x] Model `SourceDocument`, `Quiz`, `Question`, `QuestionOption`, `QuizAttempt`, `AttemptAnswer` and selected options with migrations and constraints.
+- [x] Implement repository **ports** in application/domain and Prisma **adapters** in API.
+- [x] Implement use cases: `CreateQuiz`, `GetQuiz`, `StartAttempt`, `SubmitAttempt`, `GetResult`.
+- [x] Add `POST /v1/quizzes`, `GET /v1/quizzes/:id`, `POST /v1/quizzes/:id/attempts`, `POST /v1/attempts/:id/submit`, `GET /v1/attempts/:id/result`.
+- [x] First use an **in-memory/fixed question-generation adapter** to complete the grading flow.
+- [x] Ensure transactions, question/choice ownership validation, unique answers, private attempt tokens and repeat-submission idempotency.
+- [x] Add Jest + PostgreSQL integration tests and Jest + Supertest API tests.
 
 **Definition of done:** Using fixed questions, REST clients can create a quiz, start an attempt, submit answers and fetch the correct persisted score. `GET quiz` never leaks answer keys.
+
+**Verification evidence (2026-10-10):** Feature directory `specs/004-phase-2-persistence-api/` (tasks T001–T071 complete). Ran `pnpm lint`, `pnpm typecheck`, `pnpm test` (no PostgreSQL), `pnpm test:integration`, `pnpm test:e2e` (against `ai_quiz_test`), and `pnpm build` — all passed. Code review requested an error-code allowlist, unique option labels, and unique-constraint submit reload; those were applied and the suites were re-run. Blocking findings resolved. Deferred to later cycles: remote Markdown fetch, OpenAI generation, quiz UI, Langfuse, production delivery.
 
 ### Specify prompt
 

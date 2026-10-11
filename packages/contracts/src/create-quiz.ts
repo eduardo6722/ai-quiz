@@ -8,6 +8,7 @@ export const createQuizRequestSchema = z.object({
     .url()
     .refine((value) => value.startsWith("https://"), "sourceUrl must be an https URL with a host"),
   questionCount: z.number().int().min(5).max(8).optional().default(5),
+  strategy: z.literal("balanced").optional().default("balanced"),
 });
 
 export type CreateQuizRequest = z.infer<typeof createQuizRequestSchema>;

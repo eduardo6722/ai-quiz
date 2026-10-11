@@ -10,6 +10,8 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "test:integration": "turbo run test:integration",
+    "test:e2e": "turbo run test:e2e",
     "build": "turbo run build",
     "db:generate": "pnpm --filter @ai-quiz/api db:generate",
     "db:migrate": "pnpm --filter @ai-quiz/api db:migrate",

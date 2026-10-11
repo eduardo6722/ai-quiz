@@ -59,8 +59,6 @@ There is **no single guaranteed interoperable native subagent or path-scoped rul
 
 The supplied task leaves multi-answer partial scoring underspecified. The roadmap records a provisional policy (one point per correctly selected option, without adding an unspecified penalty). Confirm this during the interview or in a project ADR before presenting it as an authoritative requirement.
 
-Phase 1 scoring lives in `@ai-quiz/domain` (`scoreSingleChoice`, isolated `scoreMultipleChoice`, `calculateWeightedScore`). It is deterministic and does not need PostgreSQL or a model key — `pnpm --filter @ai-quiz/domain test` is enough to demonstrate grading. Persistence, quiz REST, Markdown fetch and the player UI are later phases.
-
 ## Local development (Phase 0)
 
 Requires **Node.js 24** (Active LTS), **pnpm 12**, and Docker. Do **not** run `specify init --force` or regenerate the Constitution.
@@ -78,7 +76,7 @@ Host-only alternative (Postgres in Compose, apps on the host):
 pnpm install
 docker compose up -d db
 pnpm db:generate
-pnpm db:migrate   # optional; schema has no product tables
+pnpm db:migrate
 pnpm dev
 ```
 
@@ -87,6 +85,8 @@ pnpm dev
 - API readiness (database): http://localhost:3001/ready
 
 Startup does **not** require `OPENAI_API_KEY` or Langfuse keys.
+
+Phase 1 scoring lives in `@ai-quiz/domain` (`scoreSingleChoice`, isolated `scoreMultipleChoice`, `calculateWeightedScore`). It is deterministic and does not need PostgreSQL or a model key — `pnpm --filter @ai-quiz/domain test` is enough to demonstrate grading.
 
 ### Quality commands
 
@@ -98,3 +98,34 @@ pnpm build
 ```
 
 These four succeed without PostgreSQL. Live `/ready` against Compose is a manual check: stop `db` and expect `/health` 200 and `/ready` 503.
+
+## Phase 2 persistence and `/v1` smoke
+
+Phase 2 adds PostgreSQL persistence and a fixture-backed REST quiz flow. It does **not** fetch remote Markdown, call a model, or ship a quiz player.
+
+Create the isolated test database once (same Postgres instance as `ai_quiz`, never the dev data volume):
+
+```bash
+docker compose up -d db
+docker compose exec db psql -U postgres -c "CREATE DATABASE ai_quiz_test;"
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ai_quiz_test?schema=public pnpm db:migrate
+```
+
+Then, with Postgres available:
+
+```bash
+pnpm test:integration
+pnpm test:e2e
+```
+
+Default `pnpm test` still does not require `ai_quiz_test`. Integration and API suites use `postgresql://postgres:postgres@localhost:5432/ai_quiz_test?schema=public` (also documented as a comment in `.env.example`).
+
+Optional manual smoke against `pnpm --filter @ai-quiz/api dev` (migrated `ai_quiz`):
+
+```bash
+curl -sS -X POST http://localhost:3001/v1/quizzes \
+  -H 'content-type: application/json' \
+  -d '{"topic":"Hexagonal architecture","sourceUrl":"https://example.com/README.md","questionCount":5}'
+```
+
+Then `GET /v1/quizzes/:quizId`, `POST /v1/quizzes/:quizId/attempts`, `POST /v1/attempts/:attemptId/submit` with `Authorization: Bearer <token>`, and `GET /v1/attempts/:attemptId/result`. Create returns `{ id, status: "ready" }`. GET quiz has no answer keys. Submit/result scores match Phase 1 for the fixture.

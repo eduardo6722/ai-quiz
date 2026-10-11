@@ -9,8 +9,11 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.cjs",
+    "test:integration": "jest --config jest.integration.config.cjs",
+    "test:e2e": "jest --config jest.e2e.config.cjs",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
     "postinstall": "prisma generate"
   },
   "dependencies": {

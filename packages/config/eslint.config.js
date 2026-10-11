@@ -72,6 +72,8 @@ export default tseslint.config(
         jest: "readonly",
         beforeEach: "readonly",
         afterEach: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
       },
     },
   },

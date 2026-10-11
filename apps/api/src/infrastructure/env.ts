@@ -18,7 +18,7 @@ export type ApiEnv = z.infer<typeof apiEnvSchema>;
 export function loadDotenvFiles(): void {
   for (const candidate of [resolve(process.cwd(), ".env"), resolve(process.cwd(), "../../.env")]) {
     if (existsSync(candidate)) {
-      config({ path: candidate });
+      config({ path: candidate, quiet: true });
       return;
     }
   }

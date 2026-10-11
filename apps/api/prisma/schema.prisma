@@ -6,3 +6,105 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum QuizStatus {
+  generating
+  ready
+  failed
+}
+
+enum QuestionType {
+  single
+  multiple
+}
+
+enum AttemptStatus {
+  open
+  scored
+}
+
+model SourceDocument {
+  id              String   @id @default(uuid())
+  originalUrl     String
+  resolvedUrl     String
+  contentHash     String
+  title           String?
+  fetchedAt       DateTime
+  contentSnapshot String   @db.Text
+  quizzes         Quiz[]
+}
+
+model Quiz {
+  id               String       @id @default(uuid())
+  sourceDocumentId String
+  sourceDocument   SourceDocument @relation(fields: [sourceDocumentId], references: [id])
+  topic            String
+  strategy         String       @default("balanced")
+  status           QuizStatus   @default(ready)
+  modelId          String?
+  createdAt        DateTime     @default(now())
+  questions        Question[]
+  attempts         QuizAttempt[]
+}
+
+model Question {
+  id            String           @id @default(uuid())
+  quizId        String
+  quiz          Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  position      Int
+  type          QuestionType
+  prompt        String
+  sourceExcerpt String?
+  options       QuestionOption[]
+  answers       AttemptAnswer[]
+
+  @@unique([quizId, position])
+}
+
+model QuestionOption {
+  id         String                   @id @default(uuid())
+  questionId String
+  question   Question                 @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  position   Int
+  label      String
+  isCorrect  Boolean
+  selections AttemptAnswerSelection[]
+
+  @@unique([questionId, position])
+  @@unique([questionId, label])
+}
+
+model QuizAttempt {
+  id                   String          @id @default(uuid())
+  quizId               String
+  quiz                 Quiz            @relation(fields: [quizId], references: [id], onDelete: Restrict)
+  publicTokenHash      String          @unique
+  status               AttemptStatus   @default(open)
+  startedAt            DateTime        @default(now())
+  submittedAt          DateTime?
+  weightedScore        Float?
+  weightedScoreDisplay Float?
+  percentageDisplay    Float?
+  answers              AttemptAnswer[]
+}
+
+model AttemptAnswer {
+  id         String                   @id @default(uuid())
+  attemptId  String
+  attempt    QuizAttempt              @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question                 @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  rawScore   Int
+  selections AttemptAnswerSelection[]
+
+  @@unique([attemptId, questionId])
+}
+
+model AttemptAnswerSelection {
+  answerId String
+  answer   AttemptAnswer  @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  optionId String
+  option   QuestionOption @relation(fields: [optionId], references: [id], onDelete: Restrict)
+
+  @@id([answerId, optionId])
+}

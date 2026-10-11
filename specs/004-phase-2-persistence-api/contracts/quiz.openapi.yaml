@@ -1,0 +1,331 @@
+openapi: 3.1.0
+info:
+  title: AI Quiz Generator — Phase 2 quiz HTTP
+  version: "2.0.0"
+  description: >
+    Deterministic fixture-backed quiz flow. Does not fetch Markdown or call a model.
+    Pre-submit quiz representations omit answer keys. Submit and result require a Bearer attempt token.
+servers:
+  - url: http://localhost:3001
+paths:
+  /v1/quizzes:
+    post:
+      summary: Create a ready quiz from fixtures
+      operationId: createQuiz
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuizRequest"
+      responses:
+        "201":
+          description: Quiz persisted and ready
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateQuizResponse"
+        "400":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Error"
+  /v1/quizzes/{quizId}:
+    get:
+      summary: Get sanitized quiz (no answer keys)
+      operationId: getQuiz
+      parameters:
+        - $ref: "#/components/parameters/QuizId"
+      responses:
+        "200":
+          description: Public quiz view
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicQuizView"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+  /v1/quizzes/{quizId}/attempts:
+    post:
+      summary: Start an anonymous attempt
+      operationId: startAttempt
+      parameters:
+        - $ref: "#/components/parameters/QuizId"
+      responses:
+        "201":
+          description: Attempt id and one-time private token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StartAttemptResponse"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+  /v1/attempts/{attemptId}/submit:
+    post:
+      summary: Submit answers and persist scores
+      operationId: submitAttempt
+      security:
+        - attemptBearer: []
+      parameters:
+        - $ref: "#/components/parameters/AttemptId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitAnswersRequest"
+      responses:
+        "200":
+          description: Public result (first submit or stored duplicate)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicResult"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  /v1/attempts/{attemptId}/result:
+    get:
+      summary: Get stored result after submit
+      operationId: getAttemptResult
+      security:
+        - attemptBearer: []
+      parameters:
+        - $ref: "#/components/parameters/AttemptId"
+      responses:
+        "200":
+          description: Stored public result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicResult"
+        "401":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+components:
+  securitySchemes:
+    attemptBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque
+      description: Private attempt token issued by start-attempt. Never logged or stored in plaintext.
+  parameters:
+    QuizId:
+      name: quizId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    AttemptId:
+      name: attemptId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    CreateQuizRequest:
+      type: object
+      additionalProperties: false
+      required: [topic, sourceUrl]
+      properties:
+        topic:
+          type: string
+          minLength: 1
+          maxLength: 200
+        sourceUrl:
+          type: string
+          format: uri
+          pattern: "^https://"
+        questionCount:
+          type: integer
+          minimum: 5
+          maximum: 8
+          default: 5
+        strategy:
+          type: string
+          enum: [balanced]
+          default: balanced
+    CreateQuizResponse:
+      type: object
+      additionalProperties: false
+      required: [id, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [ready]
+    PublicQuizView:
+      type: object
+      additionalProperties: false
+      required: [id, topic, sourceUrl, questions]
+      properties:
+        id:
+          type: string
+        topic:
+          type: string
+        sourceUrl:
+          type: string
+        questions:
+          type: array
+          minItems: 5
+          maxItems: 8
+          items:
+            $ref: "#/components/schemas/PublicQuestion"
+    PublicQuestion:
+      type: object
+      additionalProperties: false
+      required: [id, position, prompt, type, options]
+      properties:
+        id:
+          type: string
+        position:
+          type: integer
+          minimum: 0
+        prompt:
+          type: string
+        type:
+          type: string
+          enum: [single, multiple]
+        options:
+          type: array
+          minItems: 4
+          maxItems: 4
+          items:
+            $ref: "#/components/schemas/PublicOption"
+    PublicOption:
+      type: object
+      additionalProperties: false
+      required: [id, position, label]
+      properties:
+        id:
+          type: string
+        position:
+          type: integer
+          minimum: 0
+          maximum: 3
+        label:
+          type: string
+    StartAttemptResponse:
+      type: object
+      additionalProperties: false
+      required: [attemptId, token]
+      properties:
+        attemptId:
+          type: string
+          format: uuid
+        token:
+          type: string
+          minLength: 32
+    SubmitAnswersRequest:
+      type: object
+      additionalProperties: false
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          minItems: 5
+          maxItems: 8
+          items:
+            type: object
+            additionalProperties: false
+            required: [questionId, selectedOptionIds]
+            properties:
+              questionId:
+                type: string
+                minLength: 1
+              selectedOptionIds:
+                type: array
+                minItems: 1
+                items:
+                  type: string
+                  minLength: 1
+    PublicResult:
+      type: object
+      additionalProperties: false
+      required:
+        [attemptId, quizId, weightedScore, weightedScoreDisplay, percentageDisplay, questions]
+      properties:
+        attemptId:
+          type: string
+        quizId:
+          type: string
+        weightedScore:
+          type: number
+        weightedScoreDisplay:
+          type: number
+        percentageDisplay:
+          type: number
+        questions:
+          type: array
+          minItems: 5
+          maxItems: 8
+          items:
+            $ref: "#/components/schemas/ResultQuestion"
+    ResultQuestion:
+      type: object
+      additionalProperties: false
+      required: [id, position, type, rawScore, selectedOptionIds, options]
+      properties:
+        id:
+          type: string
+        position:
+          type: integer
+        type:
+          type: string
+          enum: [single, multiple]
+        rawScore:
+          type: integer
+          minimum: 0
+          maximum: 4
+        selectedOptionIds:
+          type: array
+          items:
+            type: string
+        options:
+          type: array
+          minItems: 4
+          maxItems: 4
+          items:
+            $ref: "#/components/schemas/ResultOption"
+    ResultOption:
+      type: object
+      additionalProperties: false
+      required: [id, position, label, isCorrect]
+      properties:
+        id:
+          type: string
+        position:
+          type: integer
+        label:
+          type: string
+        isCorrect:
+          type: boolean
+    ErrorBody:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+  responses:
+    Error:
+      description: Stable error payload
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorBody"

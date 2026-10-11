@@ -22,6 +22,7 @@ describe("parseCreateQuizRequest", () => {
       topic: "Hexagonal architecture",
       sourceUrl: "https://example.com/README.md",
       questionCount: 6,
+      strategy: "balanced",
     });
   });
 
@@ -69,6 +70,24 @@ describe("parseCreateQuizRequest", () => {
           topic: "Topic",
           sourceUrl: "https://example.com/a.md",
           questionCount: 9,
+        }),
+      "CREATE_QUIZ_INVALID",
+    );
+  });
+
+  it("defaults strategy to balanced and rejects unknown strategies", () => {
+    expect(
+      parseCreateQuizRequest({
+        topic: "Topic",
+        sourceUrl: "https://example.com/a.md",
+      }).strategy,
+    ).toBe("balanced");
+    expectCode(
+      () =>
+        parseCreateQuizRequest({
+          topic: "Topic",
+          sourceUrl: "https://example.com/a.md",
+          strategy: "comprehension",
         }),
       "CREATE_QUIZ_INVALID",
     );

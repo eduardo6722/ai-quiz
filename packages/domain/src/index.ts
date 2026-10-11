@@ -23,3 +23,19 @@ export type {
   ScoredQuestion,
   ScoredResult,
 } from "./attempt.js";
+export type { MarkdownSourcePort, SourceSnapshot } from "./ports/markdown-source-port.js";
+export type { GenerateQuizInput, QuizGenerationPort } from "./ports/quiz-generation-port.js";
+export type {
+  InsertQuizInput,
+  QuizRecord,
+  QuizRepositoryPort,
+  QuizStatus,
+} from "./ports/quiz-repository-port.js";
+export type {
+  AttemptRecord,
+  AttemptRepositoryPort,
+  AttemptStatus,
+  CreateOpenAttemptInput,
+  FinalizeAttemptInput,
+} from "./ports/attempt-repository-port.js";
+export type { UnitOfWorkPort, UnitOfWorkRepos } from "./ports/unit-of-work-port.js";

@@ -10,7 +10,8 @@ node_modules/
 dist/
 build/
 .next/
-out/
+/out/
+apps/web/out/
 *.tsbuildinfo
 
 # Turbo / test / logs
@@ -29,3 +30,5 @@ Thumbs.db
 *.swp
 .vscode/
 .idea/
+
+.pnpm-store

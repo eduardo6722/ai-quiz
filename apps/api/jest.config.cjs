@@ -19,7 +19,8 @@ module.exports = {
   },
   transformIgnorePatterns: ["node_modules/(?!.*@nestjs/)"],
   setupFiles: ["<rootDir>/test/jest.setup.ts"],
-  testMatch: ["<rootDir>/test/**/*.spec.ts"],
+  testMatch: ["<rootDir>/test/**/*.spec.ts", "<rootDir>/src/**/*.spec.ts"],
+  testPathIgnorePatterns: ["<rootDir>/test/integration/", "<rootDir>/test/e2e/"],
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
     "^@ai-quiz/domain$": "<rootDir>/../../packages/domain/src/index.ts",
