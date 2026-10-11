@@ -1,29 +1,33 @@
-import { createHash } from "node:crypto";
-import { CreateQuizUseCase, toPublicQuizView } from "@ai-quiz/application";
-import type { MarkdownSourcePort, QuizGenerationPort } from "@ai-quiz/domain";
-import { buildFixtureQuestions, FIXTURE_EXCERPT, FIXTURE_SNAPSHOT } from "../../../src/quiz/fixture/fixture-bank";
-import { PrismaUnitOfWork } from "../../../src/quiz/persistence/prisma-unit-of-work";
-import { testPrisma } from "../support/postgres.setup";
+import { createHash } from 'node:crypto';
+import { CreateQuizUseCase, toPublicQuizView } from '@ai-quiz/application';
+import type { MarkdownSourcePort, QuizGenerationPort } from '@ai-quiz/domain';
+import {
+  buildFixtureQuestions,
+  FIXTURE_EXCERPT,
+  FIXTURE_SNAPSHOT,
+} from '../../../src/quiz/fixture/fixture-bank';
+import { PrismaUnitOfWork } from '../../../src/quiz/persistence/prisma-unit-of-work';
+import { testPrisma } from '../support/postgres.setup';
 
-const ORIGINAL_URL = "https://github.com/expressjs/express/blob/master/Readme.md";
-const RESOLVED_URL = "https://raw.githubusercontent.com/expressjs/express/master/Readme.md";
+const ORIGINAL_URL = 'https://github.com/expressjs/express/blob/master/Readme.md';
+const RESOLVED_URL = 'https://raw.githubusercontent.com/expressjs/express/master/Readme.md';
 
-describe("generated quiz persistence", () => {
-  it("stores blob metadata, excerpts, modelId, and a key-free public view", async () => {
+describe('generated quiz persistence', () => {
+  it('stores blob metadata, excerpts, modelId, and a key-free public view', async () => {
     const prisma = testPrisma();
     const source: MarkdownSourcePort = {
       fetch: async () => ({
         originalUrl: ORIGINAL_URL,
         resolvedUrl: RESOLVED_URL,
         contentSnapshot: FIXTURE_SNAPSHOT,
-        contentHash: createHash("sha256").update(FIXTURE_SNAPSHOT, "utf8").digest("hex"),
-        fetchedAt: new Date("2026-10-10T00:00:00Z"),
+        contentHash: createHash('sha256').update(FIXTURE_SNAPSHOT, 'utf8').digest('hex'),
+        fetchedAt: new Date('2026-10-10T00:00:00Z'),
       }),
     };
     const generation: QuizGenerationPort = {
       generate: async ({ count }) => ({
         questions: buildFixtureQuestions(count),
-        modelId: "gpt-4o-mini",
+        modelId: 'gpt-6-luna',
       }),
     };
     const created = await new CreateQuizUseCase(
@@ -31,10 +35,10 @@ describe("generated quiz persistence", () => {
       generation,
       PrismaUnitOfWork.fromClient(prisma),
     ).execute({
-      topic: "Express routing",
+      topic: 'Express routing',
       sourceUrl: ORIGINAL_URL,
       questionCount: 5,
-      strategy: "balanced",
+      strategy: 'balanced',
     });
 
     const quiz = await prisma.quiz.findUnique({
@@ -42,14 +46,16 @@ describe("generated quiz persistence", () => {
       include: { sourceDocument: true, questions: { include: { options: true } } },
     });
     expect(quiz).not.toBeNull();
-    expect(quiz?.status).toBe("ready");
-    expect(quiz?.modelId).toBe("gpt-4o-mini");
+    expect(quiz?.status).toBe('ready');
+    expect(quiz?.modelId).toBe('gpt-6-luna');
     expect(quiz?.sourceDocument.originalUrl).toBe(ORIGINAL_URL);
     expect(quiz?.sourceDocument.resolvedUrl).toBe(RESOLVED_URL);
     expect(quiz?.sourceDocument.originalUrl).not.toBe(quiz?.sourceDocument.resolvedUrl);
     expect(quiz?.sourceDocument.contentSnapshot).toBe(FIXTURE_SNAPSHOT);
     expect(quiz?.sourceDocument.contentHash).toBe(
-      createHash("sha256").update(quiz?.sourceDocument.contentSnapshot ?? "", "utf8").digest("hex"),
+      createHash('sha256')
+        .update(quiz?.sourceDocument.contentSnapshot ?? '', 'utf8')
+        .digest('hex'),
     );
     expect(quiz?.sourceDocument.fetchedAt).toBeInstanceOf(Date);
     expect(quiz?.questions).toHaveLength(5);
@@ -78,9 +84,9 @@ describe("generated quiz persistence", () => {
       })),
     };
     const view = toPublicQuizView(record);
-    expect(JSON.stringify(view)).not.toContain("isCorrect");
-    expect(JSON.stringify(view)).not.toContain("sourceExcerpt");
-    expect(JSON.stringify(view)).not.toContain("modelId");
-    expect(JSON.stringify(view)).not.toContain("gpt-4o-mini");
+    expect(JSON.stringify(view)).not.toContain('isCorrect');
+    expect(JSON.stringify(view)).not.toContain('sourceExcerpt');
+    expect(JSON.stringify(view)).not.toContain('modelId');
+    expect(JSON.stringify(view)).not.toContain('gpt-6-luna');
   });
 });

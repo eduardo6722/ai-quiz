@@ -15,6 +15,7 @@
     "build": "turbo run build",
     "db:generate": "pnpm --filter @ai-quiz/api db:generate",
     "db:migrate": "pnpm --filter @ai-quiz/api db:migrate",
+    "db:migrate:deploy": "pnpm --filter @ai-quiz/api db:migrate:deploy",
     "eval:golden": "pnpm --filter @ai-quiz/api eval:golden",
     "format": "prettier --write ."
   },

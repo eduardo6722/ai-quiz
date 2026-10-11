@@ -1,6 +1,6 @@
 # AI Quiz Generator — Phase-by-Phase Spec-Driven Implementation Roadmap
 
-> **Status:** Phase 7 implemented; human calibration and accepted baseline remain **not run**. Wait for an explicit request before starting Phase 8.
+> **Status:** Phase 8 implemented (`specs/009-phase-8-delivery/` T001–T049). Phase 7 human calibration and accepted baseline remain **not run**. Live image publish and host deploy remain **not_run**.
 
 > **Audience:** Cursor Agent, Codex or Claude Code
 
@@ -12,13 +12,13 @@
 
 ## Current cycle and starting point
 
-**Selected phase:** Phase 7 — LLM evaluation, golden dataset and quality regression (implemented; leftover gaps below).
+**Selected phase:** Phase 8 — GitHub Actions, Docker production and interview walkthrough (implemented).
 
-**Next action:** Stop. Start Phase 8 only when explicitly requested.
+**Next action:** Stop. Do not start Phase 9 / P2 unless explicitly requested. Do not fill Phase 7 human labels or `--accept-baseline`.
 
-**Verified deliveries:** Phase 0 (`specs/002-phase-0-scaffold/`), Phase 1 (`specs/003-phase-1-domain-scoring/`), Phase 2 (`specs/004-phase-2-persistence-api/`), Phase 3 (`specs/005-phase-3-markdown-generation/`). Phases 4–6 were delivered in earlier commits; this cycle did not re-open those gates. Phase 7: `specs/008-phase-7-llm-evals/` (T001–T078), command-verified 2026-10-11.
+**Verified deliveries:** Phase 0 (`specs/002-phase-0-scaffold/`), Phase 1 (`specs/003-phase-1-domain-scoring/`), Phase 2 (`specs/004-phase-2-persistence-api/`), Phase 3 (`specs/005-phase-3-markdown-generation/`). Phases 4–6 were delivered in earlier commits. Phase 7: `specs/008-phase-7-llm-evals/` (T001–T078). Phase 8: `specs/009-phase-8-delivery/` (T001–T049), command-verified 2026-10-11.
 
-**Phase 8:** Backlog for a separate future cycle.
+**Phase 9 / P2:** Backlog for a separate future cycle.
 
 Reading this file or asking to update it does not start implementation. When
 
@@ -771,21 +771,23 @@ the scoring policy, or question-generation strategies.
 
 ### Scope checklist
 
-- [ ] Build GitHub Actions pipeline for pnpm install, lint, typecheck, Jest unit, PostgreSQL integration/API E2E, and production builds.
-- [ ] Add a separate, explicitly gated LLM evaluation workflow (manual/scheduled or trusted environment with secrets) that runs Phase 7 golden-set experiments, compares baselines, and publishes the report; never silently treat skipped live runs as passing.
+- [x] Build GitHub Actions pipeline for pnpm install, lint, typecheck, Jest unit, PostgreSQL integration/API E2E, and production builds.
+- [x] Add a separate, explicitly gated LLM evaluation workflow (manual/scheduled or trusted environment with secrets) that runs Phase 7 golden-set experiments, compares baselines, and publishes the report; never silently treat skipped live runs as passing.
 
-- [ ] Create multi-stage Dockerfiles for NestJS and Next.js; use minimal, non-root runtime stages.
+- [x] Create multi-stage Dockerfiles for NestJS and Next.js; use minimal, non-root runtime stages.
 
-- [ ] Confirm local Compose and production build instructions are reproducible.
+- [x] Confirm local Compose and production build instructions are reproducible.
 
-- [ ] Add architecture/data-flow diagram, Prisma ER model, API examples, environment documentation and known trade-offs.
+- [x] Add architecture/data-flow diagram, Prisma ER model, API examples, environment documentation and known trade-offs.
 
-- [ ] Run code-review agent after meaningful changes and do a 5–10 minute mock walkthrough.
+- [x] Run code-review agent after meaningful changes and do a 5–10 minute mock walkthrough.
 
 **Definition of done:** CI is green, Docker images build, the evaluation baseline
 and any gated evaluation status are documented, and you can explain source ingestion,
 generation, grounded-question quality, adapter boundaries, database design,
 weighted scoring, and the evaluation methodology live.
+
+**Verification evidence (2026-10-11):** Feature directory `specs/009-phase-8-delivery/` (tasks T001–T049). Local `pnpm lint`, `typecheck`, `test`, `build`, `test:integration`, `test:e2e`. `pnpm --filter @ai-quiz/domain test` 5 suites / 33 tests. `docker compose -f compose.prod.yml up --build`: `GET /health` 200 without `OPENAI_API_KEY`, `GET /ready` 200, web `GET /` 200, API and web `uid=1000(node)`. `DEPLOY_TARGET=none ./scripts/deploy.sh` prints `deploy: not_run`. Hosted GitHub Actions on this branch was not observed. Live `llm-evals.yml` dispatch, image publish, and host deploy remain **not_run**. Human calibration and accepted baseline remain **not_run**. Learner 0–4 / `1.1 ** index` scoring unchanged. Code review: approve with suggestions; Langfuse-key artifact leak and release `NEXT_PUBLIC_API_URL` parameterization were fixed in-cycle.
 
 ### Specify prompt
 

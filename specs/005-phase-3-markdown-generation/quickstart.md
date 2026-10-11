@@ -60,7 +60,7 @@ Both MUST use real PostgreSQL. E2E MUST **override** source/generation ports (fi
 
 ## Live README (definition of done; gated)
 
-With migrated `ai_quiz`, `OPENAI_API_KEY` set, `OPENAI_MODEL` set (example `gpt-4o-mini`), and `pnpm --filter @ai-quiz/api dev`:
+With migrated `ai_quiz`, `OPENAI_API_KEY` set, `OPENAI_MODEL` set (example `gpt-6-luna`), and `pnpm --filter @ai-quiz/api dev`:
 
 ```bash
 curl -sS -X POST http://localhost:3001/v1/quizzes \

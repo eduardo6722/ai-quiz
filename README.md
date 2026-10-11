@@ -11,6 +11,12 @@ The source of truth for product behavior remains `roadmap.md`. This repository a
 | `.agents/skills/design-system/SKILL.md` | Canonical light-green/botanical design system |
 | `.agents/skills/design-system/references/` | Art direction and Tailwind/shadcn recipes |
 | `.agents/skills/code-review/SKILL.md` | Canonical read-only review criteria, severity and required report format |
+| `docs/architecture.md` | Data-flow and hexagonal boundaries |
+| `docs/data-model.md` | Prisma ER (`isCorrect` is server-only) |
+| `docs/api-examples.md` | Sanitized `/v1` curl examples |
+| `docs/deployment.md` | CI, production images, rollback, backup |
+| `docs/walkthrough.md` | 5–10 minute interview outline |
+| `docs/delivery-status.md` | Honest P0/P1/P2 passed / failed / **not_run** |
 
 ## Thin harness adapters
 
@@ -68,7 +74,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-This starts PostgreSQL, the NestJS API (`nest start --watch` on port 3001), and the Next.js web shell (`next dev` on port 3000). Compose points the API at the `db` hostname; `.env` `localhost` values stay for host-side `pnpm dev`.
+This starts PostgreSQL, the NestJS API (`nest start --watch` on port 3001), and the Next.js web shell (`next dev` on port 3000). **`compose.yml` and `Dockerfile.dev` are development watch-mode**, not production runtimes. Compose points the API at the `db` hostname; `.env` `localhost` values stay for host-side `pnpm dev`. Production-shaped images use `compose.prod.yml` — see [docs/deployment.md](docs/deployment.md).
 
 Host-only alternative (Postgres in Compose, apps on the host):
 
@@ -152,7 +158,7 @@ Then `GET /v1/quizzes/:quizId`, `POST /v1/quizzes/:quizId/attempts`, `POST /v1/a
 
 Product `POST /v1/quizzes` fetches HTTPS Markdown (SSRF-safe, GitHub blob → raw) and generates a 5–8 question quiz with the Vercel AI SDK / OpenAI adapter. Scoring stays in `@ai-quiz/domain`. This phase does **not** add a quiz player UI, a second live README package, Langfuse, or production delivery.
 
-`OPENAI_API_KEY` and `OPENAI_MODEL` (example `gpt-4o-mini`) are required for **product create** and gated live evidence. They are **not** required to boot the API. Default `pnpm test` and `pnpm test:e2e` override source/generation ports so they stay offline and key-free.
+`OPENAI_API_KEY` and `OPENAI_MODEL` (example `gpt-6-luna`) are required for **product create** and gated live evidence. They are **not** required to boot the API. Default `pnpm test` and `pnpm test:e2e` override source/generation ports so they stay offline and key-free.
 
 Unsafe destination smoke (expect `SOURCE_UNSAFE_DESTINATION`; full steps in `specs/005-phase-3-markdown-generation/quickstart.md`):
 
@@ -200,7 +206,8 @@ Every stored `sourceExcerpt` was a contiguous substring of that source’s snaps
 
 - Multi-answer scoring is the roadmap’s provisional reading (no invented penalties). Confirm with the interviewer.
 - Live questions vary by model; the gated file asserts shape, grounding, persistence, and scoring, not a golden prompt list.
-- Production Dockerfiles and GitHub Actions remain later phases.
+- Human calibration and an accepted frozen evaluation baseline remain **not run**.
+- Image publish and a live host deploy remain **not run** (`DEPLOY_TARGET=none`) unless a workflow log says otherwise. See [docs/delivery-status.md](docs/delivery-status.md).
 
 ## Phase 6 observability and operational controls
 
@@ -251,5 +258,20 @@ pnpm eval:golden --live --repeat
 `--mocked` needs no model key and labels the report mocked. `--live` requires `OPENAI_API_KEY` and `OPENAI_MODEL`; missing keys exit non-zero and mark live work **not run** (no silent mock). Optional `EVAL_JUDGE_MODEL` defaults to `OPENAI_MODEL`. Langfuse Datasets/Experiments/Scores export when both Langfuse keys are set; otherwise the destination is **not run** and the portable report still exists.
 
 Last live run (2026-10-11): Express and Fastify pins, 16 executed cases (two variability repeats). Deterministic, unsupported-keys, leakage and injection gates **passed**. Human relevance/clarity and regression vs a frozen baseline are **not run** until `evals/baselines/human-labels.v1.json` is filled and a reviewer passes `--accept-baseline`. Learner 0–4 scoring is unchanged. See `docs/evals/phase-7-report.md`.
+
+Hosted live evaluation is `.github/workflows/llm-evals.yml` (manual or weekly, Environment `llm-evals`). It is **not** part of pull-request CI. Missing keys record **not run**.
+
+## Phase 8 CI, production images, interview kit
+
+Merge-time gates: `.github/workflows/ci.yml` (`pnpm install --frozen-lockfile`, lint, types, Jest unit/UI, real-PostgreSQL integration/E2E with a mocked model, `pnpm build`, production `docker build` with no push).
+
+Production images: `apps/api/Dockerfile` and `apps/web/Dockerfile` (multi-stage, non-root). Local reproduction:
+
+```bash
+pnpm db:migrate:deploy   # CI/prod schema apply; not migrate dev
+docker compose -f compose.prod.yml up --build
+```
+
+Release path: `.github/workflows/release.yml` with `DEPLOY_TARGET=none` by default (deploy **not run**). Walkthrough: [docs/walkthrough.md](docs/walkthrough.md). Status: [docs/delivery-status.md](docs/delivery-status.md).
 
 

@@ -1,0 +1,71 @@
+name: Release
+
+# Schema apply for a live database is `pnpm db:migrate:deploy` (prisma migrate deploy)
+# of existing files only — never `migrate dev` or `db push`. Order: migrate, then replace API.
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish_images:
+        description: Push API and web images to the configured registry
+        type: boolean
+        default: false
+      deploy_target:
+        description: 'none (default, not_run) | compose (print commands only)'
+        type: string
+        default: none
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  NODE_VERSION: '24'
+
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      REGISTRY: ${{ vars.REGISTRY || 'ghcr.io' }}
+      IMAGE_PREFIX: ${{ vars.IMAGE_PREFIX || format('ghcr.io/{0}', github.repository) }}
+      DEPLOY_TARGET: ${{ inputs.deploy_target || vars.DEPLOY_TARGET || 'none' }}
+      NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL || 'http://localhost:3001' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build production images
+        run: |
+          set -euo pipefail
+          docker build -t "${IMAGE_PREFIX}/api:${GITHUB_SHA}" -f apps/api/Dockerfile .
+          docker build -t "${IMAGE_PREFIX}/web:${GITHUB_SHA}" -f apps/web/Dockerfile \
+            --build-arg NEXT_PUBLIC_API_URL="${NEXT_PUBLIC_API_URL}" .
+      - name: Publish images
+        if: ${{ inputs.publish_images }}
+        run: |
+          set -euo pipefail
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login "${REGISTRY}" -u "${{ github.actor }}" --password-stdin
+          docker push "${IMAGE_PREFIX}/api:${GITHUB_SHA}"
+          docker push "${IMAGE_PREFIX}/web:${GITHUB_SHA}"
+      - name: Skip publish
+        if: ${{ !inputs.publish_images }}
+        run: 'echo publish: not_run'
+      - name: Deploy path
+        env:
+          DEPLOY_TARGET: ${{ env.DEPLOY_TARGET }}
+        run: |
+          set -euo pipefail
+          chmod +x scripts/deploy.sh
+          if [ "${DEPLOY_TARGET}" = "compose" ]; then
+            echo "deploy: not_run until an operator host actually runs:"
+            echo "  docker compose -f compose.prod.yml pull"
+            echo "  docker compose -f compose.prod.yml up -d"
+            echo "Migrate first on that host: DATABASE_URL=... pnpm db:migrate:deploy"
+          else
+            ./scripts/deploy.sh
+          fi
+      - name: Migration reminder
+        run: |
+          echo "When a live DATABASE_URL is configured, apply existing Prisma files with"
+          echo "  pnpm db:migrate:deploy"
+          echo "then replace API containers. Do not run prisma migrate dev or db push against production."

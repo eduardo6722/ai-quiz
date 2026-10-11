@@ -1,8 +1,16 @@
 node_modules
+**/node_modules
+.pnpm-store
 .git
 .specify
+.cursor
+.claude
+.codex
+.agents
 .next
+**/.next
 dist
+**/dist
 coverage
 .turbo
 .env
@@ -14,3 +22,7 @@ Dockerfile*
 .dockerignore
 README.md
 specs
+.github
+docs
+*.md
+!apps/api/prisma/migrations/**

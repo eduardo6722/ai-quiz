@@ -1,6 +1,7 @@
 import { config as loadEnv } from "dotenv";
 import { existsSync } from "node:fs";
-import { resolve } from "node:path";
+import path, { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { NextConfig } from "next";
 
 for (const candidate of [resolve(process.cwd(), ".env"), resolve(process.cwd(), "../../.env")]) {
@@ -10,7 +11,11 @@ for (const candidate of [resolve(process.cwd(), ".env"), resolve(process.cwd(), 
   }
 }
 
+const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
+
 const nextConfig: NextConfig = {
+  output: "standalone",
+  outputFileTracingRoot: repoRoot,
   transpilePackages: ["@ai-quiz/ui", "@ai-quiz/contracts"],
   // Contracts uses NodeNext `.js` specifiers that point at TypeScript sources.
   webpack: (config) => {

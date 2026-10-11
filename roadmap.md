@@ -329,27 +329,27 @@ Quality evaluation is **P1** and does not retroactively block the assessment's P
 
 ### M7 — CI/CD and Docker production delivery (P1)
 
-- [ ] Implement `.github/workflows/ci.yml` with `pnpm install --frozen-lockfile`, ESLint, TypeScript, Jest unit tests, Jest/Supertest integration-E2E, and Turbo builds.
-- [ ] Add **a separate protected/explicitly gated LLM evaluation workflow** (`.github/workflows/llm-evals.yml`, or equivalent) for golden-set experiments against a frozen baseline. Run manually/scheduled or in trusted environments with secrets, publish quality reports, and report skipped live tests as **not run**, never as passed; do not make paid LLM calls on every PR.
-- [ ] Start disposable PostgreSQL in CI; run Prisma migrations before integration/E2E tests.
-- [ ] Cache pnpm and Turbo outputs appropriately; do not cache secrets.
-- [ ] Create development Compose services (at minimum PostgreSQL; optionally API/web with hot reload and bind mounts).
-- [ ] Create **multi-stage production Dockerfiles** for NestJS and Next.js: dependency/install → build → minimal runtime; Next.js standalone output where appropriate.
-- [ ] Run production containers as non-root; use `.dockerignore`; add health checks; configure environment variables at runtime.
+- [x] Implement `.github/workflows/ci.yml` with `pnpm install --frozen-lockfile`, ESLint, TypeScript, Jest unit tests, Jest/Supertest integration-E2E, and Turbo builds.
+- [x] Add **a separate protected/explicitly gated LLM evaluation workflow** (`.github/workflows/llm-evals.yml`, or equivalent) for golden-set experiments against a frozen baseline. Run manually/scheduled or in trusted environments with secrets, publish quality reports, and report skipped live tests as **not run**, never as passed; do not make paid LLM calls on every PR.
+- [x] Start disposable PostgreSQL in CI; run Prisma migrations before integration/E2E tests.
+- [x] Cache pnpm and Turbo outputs appropriately; do not cache secrets.
+- [x] Create development Compose services (at minimum PostgreSQL; optionally API/web with hot reload and bind mounts).
+- [x] Create **multi-stage production Dockerfiles** for NestJS and Next.js: dependency/install → build → minimal runtime; Next.js standalone output where appropriate.
+- [x] Run production containers as non-root; use `.dockerignore`; add health checks; configure environment variables at runtime.
 - [ ] Automate production image build/push and gated deploy on protected `main` (destination/provider intentionally configurable).
-- [ ] Apply `prisma migrate deploy` in a controlled deployment/release job; do not run destructive migration generation at runtime.
-- [ ] Document rollback procedure, backup expectations, environment setup and troubleshooting.
+- [x] Apply `prisma migrate deploy` in a controlled deployment/release job; do not run destructive migration generation at runtime.
+- [x] Document rollback procedure, backup expectations, environment setup and troubleshooting.
 
 **Exit criterion:** a clean pipeline builds/test images, preserves the Phase 7 evaluation baseline, and offers a reproducible production deployment path.
 
 ### M8 — Code review agent and engineering readiness (P1)
 
-- [ ] Enable the portable code-review skill at `.agents/skills/code-review/SKILL.md` and the appropriate harness-native subagent adapter: Cursor `.cursor/agents/code-review.md` (read-only), Codex `.codex/agents/code-review.toml` (read-only) or Claude `.claude/agents/code-review.md` (read-only tool access where supported).
-- [ ] Make the agent review `git diff`/PR scope, correctness, scoring, hexagonal boundaries, SOLID, Zod, Prisma migrations, LLM safety, secret handling, test quality and UI consistency.
-- [ ] Require findings with severity, `file:line`, evidence, impact, suggested fix and blocking status; avoid imaginary findings and unrequested rewrites.
-- [ ] Add code-review invocation to the manual PR checklist; use CI for deterministic gates (never substitute an LLM review for tests).
-- [ ] Prepare an architecture diagram and a 5–10-minute walkthrough of data flow, persistence, deterministic scoring, golden-set evaluation methodology, human calibration and trade-offs.
-- [ ] Document what was implemented before the meeting and what remains planned, with honest P0/P1/P2 labels.
+- [x] Enable the portable code-review skill at `.agents/skills/code-review/SKILL.md` and the appropriate harness-native subagent adapter: Cursor `.cursor/agents/code-review.md` (read-only), Codex `.codex/agents/code-review.toml` (read-only) or Claude `.claude/agents/code-review.md` (read-only tool access where supported).
+- [x] Make the agent review `git diff`/PR scope, correctness, scoring, hexagonal boundaries, SOLID, Zod, Prisma migrations, LLM safety, secret handling, test quality and UI consistency.
+- [x] Require findings with severity, `file:line`, evidence, impact, suggested fix and blocking status; avoid imaginary findings and unrequested rewrites.
+- [x] Add code-review invocation to the manual PR checklist; use CI for deterministic gates (never substitute an LLM review for tests).
+- [x] Prepare an architecture diagram and a 5–10-minute walkthrough of data flow, persistence, deterministic scoring, golden-set evaluation methodology, human calibration and trade-offs.
+- [x] Document what was implemented before the meeting and what remains planned, with honest P0/P1/P2 labels.
 
 **Exit criterion:** reviewer catches regressions in a deliberately seeded scoring or answer-leak bug; interviewer can follow the architecture and data flow.
 
@@ -407,13 +407,13 @@ The complete visual specification lives in [`.agents/skills/design-system/SKILL.
 ## 9. Developer environment and documentation
 
 - [ ] Publish `.env.example`: `DATABASE_URL`, `DIRECT_URL` if needed by Prisma, `OPENAI_API_KEY`, `OPENAI_MODEL`, `NEXT_PUBLIC_API_URL`, `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_BASE_URL`, `PORT`, allowed source policy and timeouts.
-- [ ] Add `README.md` with setup, Docker Compose startup, Prisma migration steps, running tests, API examples, screenshots, and deployment notes.
-- [ ] Add sample request/response payloads and an ER/data-flow diagram.
+- [x] Add `README.md` with setup, Docker Compose startup, Prisma migration steps, running tests, API examples, screenshots, and deployment notes.
+- [x] Add sample request/response payloads and an ER/data-flow diagram.
 - [ ] Publish a test matrix containing the **two actual README sources** demonstrated; do not mark this requirement complete until both have been run.
 - [ ] Include decisions/ADRs: remote Markdown fetch security, multi-select scoring assumption, answer-key storage and exposing results, LLM structured-output strategy, caching/snapshotting.
 - [ ] Add `docs/evals/phase-7-report.md` with golden dataset IDs/versions, pinned source hashes, rubric version, human-reviewed labels, per-case and aggregate results, experiment traces, cost/latency, baseline deltas, failures and confidence/limitations.
 - [ ] Document how to execute `pnpm eval:golden`, where Langfuse datasets/experiments can be inspected, which results used real models vs mocks, and how skipped/failed evaluation runs are represented.
-- [ ] Add an honest delivery-status checklist for the interview.
+- [x] Add an honest delivery-status checklist for the interview.
 
 ## 10. Prioritized execution order (the shortest working vertical slice)
 
@@ -452,8 +452,8 @@ The complete visual specification lives in [`.agents/skills/design-system/SKILL.
 - [ ] The PostgreSQL tables contain questions, options, answers and final scores.
 - [ ] Two **different** README URLs were tested successfully.
 - [ ] Jest unit, integration and API E2E suites pass.
-- [ ] API, data model, scoring policy and trade-offs can be explained live.
-- [ ] Any unfinished P1/P2 item is clearly documented rather than presented as complete.
+- [x] API, data model, scoring policy and trade-offs can be explained live.
+- [x] Any unfinished P1/P2 item is clearly documented rather than presented as complete.
 
 ## 11. Authoritative engineering references
 

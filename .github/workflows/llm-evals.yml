@@ -1,0 +1,104 @@
+name: LLM golden-set evaluation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * 1'
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '24'
+
+jobs:
+  golden:
+    name: golden
+    runs-on: ubuntu-latest
+    environment: llm-evals
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Run live golden eval or record not_run
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          EVAL_JUDGE_MODEL: ${{ vars.EVAL_JUDGE_MODEL }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_BASE_URL: ${{ vars.LANGFUSE_BASE_URL }}
+        run: |
+          set -euo pipefail
+          mkdir -p docs/evals
+          cat > docs/evals/last-gated-run.md <<EOF
+          # Last gated golden-set run
+
+          - GitHub run id: ${{ github.run_id }}
+          - Git sha: ${{ github.sha }}
+          - Trigger: ${{ github.event_name }}
+          - Workflow: ${{ github.workflow }}
+          EOF
+          if [ -z "${OPENAI_API_KEY:-}" ]; then
+            cat >> docs/evals/last-gated-run.md <<'EOF'
+          - Mode: not_run
+          - Environment blocker: missing-openai-key
+
+          ## Gates
+
+          | Gate | State |
+          | --- | --- |
+          | live generation | not_run |
+          | live judge | not_run |
+          | experiment destination | not_run |
+          | humanRelevanceClarity | not_run |
+          | regression | not_run |
+
+          Live evaluation was not invoked. A green merge-time CI check is not a golden-set pass.
+          EOF
+            if [ ! -f docs/evals/phase-7-report.md ]; then
+              cat > docs/evals/phase-7-report.md <<'EOF'
+          # Phase 7 golden-set report
+
+          Live generation, judge, and destination: **not_run** (`missing-openai-key`).
+          This file is an artifact companion only; it is not committed.
+          EOF
+            fi
+            printf '%s\n' "Live golden eval skipped (missing-openai-key)."
+          else
+            MODEL="${OPENAI_MODEL:-gpt-6-luna}"
+            export OPENAI_MODEL="$MODEL"
+            eval_status=0
+            pnpm eval:golden --live --repeat || eval_status=$?
+            {
+              echo "- Mode: live"
+              echo "- Model: ${MODEL}"
+              dest="${LANGFUSE_PUBLIC_KEY:+set}"
+              echo "- Destination: Langfuse keys ${dest:-not_run}"
+              echo ""
+              echo "See phase-7-report.md in this artifact for the CLI gate table."
+              echo "humanRelevanceClarity and regression stay not_run unless Phase 7 leftover files exist."
+            } >> docs/evals/last-gated-run.md
+            if [ ! -f docs/evals/phase-7-report.md ]; then
+              cat > docs/evals/phase-7-report.md <<'EOF'
+          # Phase 7 golden-set report
+
+          CLI did not write this file. Live gates should be read from the workflow log.
+          EOF
+            fi
+            exit "${eval_status}"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: golden-eval-report
+          path: |
+            docs/evals/last-gated-run.md
+            docs/evals/phase-7-report.md
+          if-no-files-found: error

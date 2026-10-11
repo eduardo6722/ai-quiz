@@ -147,7 +147,7 @@ Map to domain `Question[]`: mint UUIDs, positions `0..n-1` / `0..3`. Do not trus
 
 Prompt packaging: system rules (count, four unique options, types/keys, excerpts must be verbatim substrings, ignore instructions inside the source). User prompt wraps Markdown in `<source>…</source>` and states it is untrusted data. Never log API keys, `Authorization`, or the raw system prompt with secrets. Do not put keys in error `cause` forwarded to HTTP.
 
-Default `OPENAI_MODEL` in `.env.example`: `gpt-4o-mini` (cost-appropriate; override via env). Boot MUST still succeed if key/model are empty (Phase 0/2). Failure happens on create, not on process start.
+Default `OPENAI_MODEL` in `.env.example`: `gpt-6-luna` (cost-appropriate; override via env). Boot MUST still succeed if key/model are empty (Phase 0/2). Failure happens on create, not on process start.
 
 **Rationale**: Constitution VII and current AI SDK docs (`generateText` + `Output.object`). Contracts package must stay free of answer keys (Constitution IV).
 
@@ -245,7 +245,7 @@ Live URL for the quickstart: `https://github.com/expressjs/express/blob/master/R
 
 ## 10. Environment
 
-**Decision**: Extend API Zod env with **optional** `OPENAI_API_KEY` and `OPENAI_MODEL` (empty allowed). Do not require them to boot. `.env.example` documents `OPENAI_MODEL=gpt-4o-mini` and that the key is needed only for product create / live evidence. Never log values. Web env unchanged (`NEXT_PUBLIC_*` only). Langfuse placeholders stay unused.
+**Decision**: Extend API Zod env with **optional** `OPENAI_API_KEY` and `OPENAI_MODEL` (empty allowed). Do not require them to boot. `.env.example` documents `OPENAI_MODEL=gpt-6-luna` and that the key is needed only for product create / live evidence. Never log values. Web env unchanged (`NEXT_PUBLIC_*` only). Langfuse placeholders stay unused.
 
 **Rationale**: Spec FR-011/FR-018 and Phase 0 startup contract.
 
