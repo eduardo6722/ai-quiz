@@ -14,6 +14,8 @@ export function buildQuizMessages(input: {
       "Each question must be single or multiple choice with exactly four unique option labels.",
       "Single questions have exactly one correct option. Multiple questions have one to four correct options.",
       "Each question must include sourceExcerpt copied verbatim as a contiguous substring of the source.",
+      "Copy Markdown exactly, including [text](url) links, backticks, and punctuation; do not paraphrase or strip link syntax.",
+      "Prefer a short 20–120 character span that appears verbatim. If a sentence starts with a link, copy the link markup too.",
     ].join(" "),
     prompt: [
       `Topic: ${input.topic}`,

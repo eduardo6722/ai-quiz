@@ -96,6 +96,12 @@ The API allowlists the web origin via optional `WEB_ORIGIN` (default `http://loc
 
 Live **Generate quiz** needs `OPENAI_API_KEY` and a reachable HTTPS README on the API. Missing those is an environment blocker — the UI must not fall back to the Phase 2 fixture bank. Jest UI tests mock the API and do not need a model key.
 
+Example source URLs for local testing:
+
+- Node.js: `https://raw.githubusercontent.com/nodejs/node/main/README.md`
+- TypeScript: `https://raw.githubusercontent.com/microsoft/TypeScript/main/README.md`
+- MDN JavaScript: `https://raw.githubusercontent.com/mdn/content/main/files/en-us/web/javascript/index.md`
+
 Startup does **not** require `OPENAI_API_KEY` or Langfuse keys.
 
 Phase 1 scoring lives in `@ai-quiz/domain` (`scoreSingleChoice`, isolated `scoreMultipleChoice`, `calculateWeightedScore`). It is deterministic and does not need PostgreSQL or a model key — `pnpm --filter @ai-quiz/domain test` is enough to demonstrate grading.

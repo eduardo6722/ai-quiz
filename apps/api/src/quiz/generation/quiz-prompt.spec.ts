@@ -23,6 +23,8 @@ describe("buildQuizMessages", () => {
     expect(messages.system).toMatch(/ignore/i);
     expect(messages.system).toMatch(/API keys/i);
     expect(messages.system).toContain("<source>");
+    expect(messages.system).toMatch(/verbatim/i);
+    expect(messages.system).toMatch(/\[text\]\(url\)/);
     expect(messages.system).not.toContain(SOURCE);
     expect(messages.prompt.startsWith("Topic:")).toBe(true);
   });

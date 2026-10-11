@@ -182,6 +182,27 @@ describe("CreateQuizUseCase", () => {
     });
   });
 
+  it("persists a link-stripped excerpt rewritten to the snapshot span", async () => {
+    const ports = memoryPorts();
+    const linked = "[TypeScript](https://www.typescriptlang.org/) is a language for application-scale JavaScript.";
+    const quiz = sampleQuiz();
+    for (const question of quiz.questions) {
+      question.sourceExcerpt = "TypeScript is a language for application-scale JavaScript";
+    }
+    const generation: QuizGenerationPort = {
+      generate: jest.fn(async () => ({ questions: quiz.questions })),
+    };
+    const result = await execute(
+      sourcePort({ contentSnapshot: `${linked} ${SAMPLE_SNAPSHOT}` }),
+      generation,
+      ports.uow,
+    );
+    const stored = ports.store.quizzes.get(result.id)!.quiz;
+    expect(stored.questions[0]?.sourceExcerpt).toBe(
+      "[TypeScript](https://www.typescriptlang.org/) is a language for application-scale JavaScript",
+    );
+  });
+
   it("does not generate when the snapshot is unusable", async () => {
     const ports = memoryPorts();
     const generation: QuizGenerationPort = { generate: jest.fn() };
