@@ -9,6 +9,8 @@ import {
   BookOpen,
   Check,
   CheckCheck,
+  CircleDot,
+  ListChecks,
   Plus,
   Sprout,
   X,
@@ -17,7 +19,8 @@ import { useEffect, useState } from 'react';
 import { getQuiz, getResult, isQuizApiError } from '../api/api-client';
 import { loadSitting } from '../session/attempt-session';
 import { learnerMessageForCode } from '../errors/error-copy';
-import { isFullyCorrectQuestion } from './question-outcome';
+import { describeAnswerComparison, isFullyCorrectQuestion } from './question-outcome';
+import { ResultOptionRow } from './result-option-row';
 import { QuizErrorState, QuizLoading } from '../layout/quiz-screen';
 
 function messageFromUnknown(error: unknown): string {
@@ -153,7 +156,7 @@ export function QuizResults({ quizId }: { quizId: string }) {
                 See what stuck. Learn what’s next.
               </h2>
               <p className="text-base leading-relaxed text-muted-foreground">
-                Compare your selections with the correct answers below.
+                Filled marks are what you chose. Outlined options are correct answers you missed.
               </p>
             </div>
             {result.questions.map((item) => {
@@ -161,6 +164,7 @@ export function QuizResults({ quizId }: { quizId: string }) {
                 quiz.questions.find((question) => question.id === item.id)?.prompt ??
                 `Question ${item.position + 1}`;
               const correct = isFullyCorrectQuestion(item);
+              const comparison = describeAnswerComparison(item);
               return (
                 <Card key={item.id} className="rounded-3xl p-5 sm:p-7">
                   <CardContent className="space-y-5">
@@ -181,6 +185,14 @@ export function QuizResults({ quizId }: { quizId: string }) {
                             )}
                             {correct ? 'Correct' : 'Incorrect'}
                           </Badge>
+                          <Badge className="gap-2">
+                            {item.type === 'single' ? (
+                              <CircleDot className="size-4" aria-hidden="true" />
+                            ) : (
+                              <ListChecks className="size-4" aria-hidden="true" />
+                            )}
+                            {item.type === 'single' ? 'Single answer' : 'Multiple answers'}
+                          </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {item.rawScore} {item.rawScore === 1 ? 'point' : 'points'}
@@ -189,62 +201,27 @@ export function QuizResults({ quizId }: { quizId: string }) {
                       <h3 className="break-words text-lg font-semibold leading-snug sm:text-xl">
                         {prompt}
                       </h3>
+                      {item.type === 'multiple' ? (
+                        <p className="text-sm text-muted-foreground">
+                          This question had more than one correct answer.
+                        </p>
+                      ) : null}
+                      {comparison ? (
+                        <p className="rounded-xl bg-sage/80 px-4 py-3 text-sm leading-relaxed text-foreground">
+                          {comparison}
+                        </p>
+                      ) : null}
                     </div>
                     <ul className="space-y-3">
-                      {item.options.map((option, index) => {
-                        const picked = item.selectedOptionIds.includes(option.id);
-                        return (
-                          <li
-                            key={option.id}
-                            className={cn(
-                              'flex items-start gap-3 rounded-2xl border p-4 text-base leading-relaxed',
-                              option.isCorrect
-                                ? 'border-primary/25 bg-sage'
-                                : picked
-                                  ? 'border-destructive/25 bg-destructive/5'
-                                  : 'border-border/70 bg-background/40',
-                            )}
-                          >
-                            <span
-                              aria-hidden="true"
-                              className={cn(
-                                'mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg text-sm font-medium',
-                                option.isCorrect
-                                  ? 'bg-mint text-primary'
-                                  : picked
-                                    ? 'bg-destructive/10 text-destructive'
-                                    : 'bg-sage text-muted-foreground',
-                              )}
-                            >
-                              {option.isCorrect ? (
-                                <Check className="size-4" />
-                              ) : picked ? (
-                                <X className="size-4" />
-                              ) : (
-                                ['A', 'B', 'C', 'D'][index]
-                              )}
-                            </span>
-                            <div className="min-w-0 flex-1 break-words">
-                              <p>{option.label}</p>
-                              {picked || option.isCorrect ? (
-                                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-sm">
-                                  {picked ? (
-                                    <span className="font-medium text-foreground">Your answer</span>
-                                  ) : null}
-                                  {option.isCorrect ? (
-                                    <span className="font-medium text-primary">Correct answer</span>
-                                  ) : picked ? (
-                                    <span className="text-destructive">Incorrect answer</span>
-                                  ) : null}
-                                  {option.isCorrect && !picked ? (
-                                    <span className="text-muted-foreground">Not selected</span>
-                                  ) : null}
-                                </div>
-                              ) : null}
-                            </div>
-                          </li>
-                        );
-                      })}
+                      {item.options.map((option, index) => (
+                        <ResultOptionRow
+                          key={option.id}
+                          option={option}
+                          picked={item.selectedOptionIds.includes(option.id)}
+                          index={index}
+                          selectionKind={item.type}
+                        />
+                      ))}
                     </ul>
                   </CardContent>
                 </Card>

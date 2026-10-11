@@ -55,7 +55,8 @@ describe('QuizResults', () => {
     expect(document.getElementById('answer-review')).not.toBeVisible();
     expect(screen.queryByText('Prompt 1?')).not.toBeInTheDocument();
     expect(screen.queryByText('Correct answer')).not.toBeInTheDocument();
-    expect(screen.queryByText('Your answer')).not.toBeInTheDocument();
+    expect(screen.queryByText('You selected this')).not.toBeInTheDocument();
+    expect(screen.queryByText('You missed this')).not.toBeInTheDocument();
     expect(screen.queryByText(/of 5 correct/i)).not.toBeInTheDocument();
     const source = screen.getByRole('link', { name: quiz.sourceUrl });
     expect(source).toHaveAttribute('href', 'https://example.com/README.md');
@@ -70,9 +71,14 @@ describe('QuizResults', () => {
     expect(document.getElementById('answer-review')).toBeVisible();
     expect(screen.getAllByText('Correct').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Incorrect').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('You selected this').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Correct answer').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('You missed this').length).toBeGreaterThan(0);
     await user.click(screen.getByRole('button', { name: 'Hide answers' }));
     expect(screen.queryByText('Prompt 1?')).not.toBeInTheDocument();
     expect(screen.queryByText('Correct answer')).not.toBeInTheDocument();
+    expect(screen.queryByText('You selected this')).not.toBeInTheDocument();
+    expect(screen.queryByText('You missed this')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Show answers' })).toHaveAttribute(
       'aria-expanded',
       'false',
@@ -162,6 +168,51 @@ describe('QuizResults', () => {
     expect(card).not.toBeNull();
     expect(within(card as HTMLElement).getByText('Incorrect')).toBeInTheDocument();
     expect(within(card as HTMLElement).queryByText('Correct')).not.toBeInTheDocument();
+  });
+
+  it('separates selected correct options from missed correct options', async () => {
+    saveSitting('quiz-1', {
+      attemptId: 'attempt-1',
+      token: 'a'.repeat(32),
+      currentIndex: 0,
+      selections: {},
+      status: 'scored',
+    });
+    const multi = makePublicQuiz(5);
+    const scored = makePublicResult(multi);
+    const options = multi.questions[1]!.options;
+    scored.questions[1] = {
+      ...scored.questions[1]!,
+      type: 'multiple',
+      rawScore: 2,
+      selectedOptionIds: [options[0]!.id, options[2]!.id],
+      options: options.map((option) => ({ ...option, isCorrect: true })),
+    };
+    mockedGetQuiz.mockResolvedValue(multi);
+    mockedGetResult.mockResolvedValue(scored);
+    render(<QuizResults quizId="quiz-1" />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Show answers' }));
+    const heading = await screen.findByText('Prompt 2?');
+    const review = heading.parentElement?.parentElement;
+    expect(review).not.toBeNull();
+    const reviewCard = review as HTMLElement;
+    expect(
+      within(reviewCard).getByText('You selected Choice A1 and Choice C1. You missed Choice B1 and Choice D1.'),
+    ).toBeInTheDocument();
+    expect(
+      within(reviewCard).getByText('This question had more than one correct answer.'),
+    ).toBeInTheDocument();
+
+    const selected = within(reviewCard).getByText('Choice A1').closest('li');
+    expect(selected).toHaveAttribute('data-review-state', 'selected-correct');
+    expect(within(selected as HTMLElement).getByText('You selected this')).toBeInTheDocument();
+    expect(within(selected as HTMLElement).queryByText('You missed this')).not.toBeInTheDocument();
+
+    const missed = within(reviewCard).getByText('Choice B1').closest('li');
+    expect(missed).toHaveAttribute('data-review-state', 'missed-correct');
+    expect(within(missed as HTMLElement).getByText('You missed this')).toBeInTheDocument();
+    expect(within(missed as HTMLElement).queryByText('You selected this')).not.toBeInTheDocument();
+    expect(within(missed as HTMLElement).getByText('Correct answer')).toBeInTheDocument();
   });
 
   it('does not show correctness when the attempt is not scored', async () => {

@@ -1,4 +1,9 @@
-import { isFullyCorrectQuestion } from "./question-outcome";
+import {
+  describeAnswerComparison,
+  isFullyCorrectQuestion,
+  joinEnglishList,
+  optionReviewState,
+} from "./question-outcome";
 
 describe("isFullyCorrectQuestion", () => {
   it("is true for a single-answer question with the correct option selected", () => {
@@ -69,5 +74,71 @@ describe("isFullyCorrectQuestion", () => {
         ],
       }),
     ).toBe(false);
+  });
+});
+
+describe("optionReviewState", () => {
+  it("keeps selection and correctness as independent states", () => {
+    expect(optionReviewState(true, true)).toBe("selected-correct");
+    expect(optionReviewState(true, false)).toBe("selected-incorrect");
+    expect(optionReviewState(false, true)).toBe("missed-correct");
+    expect(optionReviewState(false, false)).toBe("unselected");
+  });
+});
+
+describe("joinEnglishList", () => {
+  it("joins two and many labels in readable English", () => {
+    expect(joinEnglishList(["Domain"])).toBe("Domain");
+    expect(joinEnglishList(["Domain", "Contracts"])).toBe("Domain and Contracts");
+    expect(joinEnglishList(["Domain", "Application", "UI"])).toBe(
+      "Domain, Application, and UI",
+    );
+  });
+});
+
+describe("describeAnswerComparison", () => {
+  it("summarizes a partial multi-select with missed correct options", () => {
+    expect(
+      describeAnswerComparison({
+        type: "multiple",
+        selectedOptionIds: ["domain", "contracts"],
+        options: [
+          { id: "domain", label: "Domain", isCorrect: true },
+          { id: "application", label: "Application", isCorrect: true },
+          { id: "contracts", label: "Contracts", isCorrect: true },
+          { id: "ui", label: "UI", isCorrect: true },
+        ],
+      }),
+    ).toBe("You selected Domain and Contracts. You missed Application and UI.");
+  });
+
+  it("names the correct option on a wrong single-select", () => {
+    expect(
+      describeAnswerComparison({
+        type: "single",
+        selectedOptionIds: ["b"],
+        options: [
+          { id: "a", label: "setImmediate", isCorrect: true },
+          { id: "b", label: "setTimeout", isCorrect: false },
+          { id: "c", label: "setInterval", isCorrect: false },
+          { id: "d", label: "process.nextTick", isCorrect: false },
+        ],
+      }),
+    ).toBe("You selected setTimeout. The correct answer is setImmediate.");
+  });
+
+  it("returns null when the selection matches every correct option", () => {
+    expect(
+      describeAnswerComparison({
+        type: "multiple",
+        selectedOptionIds: ["a", "b"],
+        options: [
+          { id: "a", label: "Domain", isCorrect: true },
+          { id: "b", label: "Contracts", isCorrect: true },
+          { id: "c", label: "Helpers", isCorrect: false },
+          { id: "d", label: "Utils", isCorrect: false },
+        ],
+      }),
+    ).toBeNull();
   });
 });
