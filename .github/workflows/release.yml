@@ -25,7 +25,7 @@ env:
 jobs:
   release:
     name: release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: production
     env:
       REGISTRY: ${{ vars.REGISTRY || 'ghcr.io' }}
@@ -33,7 +33,7 @@ jobs:
       DEPLOY_TARGET: ${{ inputs.deploy_target || vars.DEPLOY_TARGET || 'none' }}
       NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL || 'http://localhost:3001' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build production images
         run: |
           set -euo pipefail

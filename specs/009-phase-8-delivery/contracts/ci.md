@@ -71,7 +71,7 @@ Forbidden: caching `.env`, credential files, or evaluation reports that might co
 
 ## Toolchain
 
-Node.js 24, pnpm matching root `packageManager`, `ubuntu-latest`.
+Node.js 24, pnpm matching root `packageManager`, `ubuntu-24.04` (pinned; do not use `ubuntu-latest` while it migrates to Ubuntu 26).
 
 ## Relationship to evaluation
 

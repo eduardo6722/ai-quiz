@@ -18,17 +18,17 @@ env:
 jobs:
   quality:
     name: quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           package_json_file: package.json
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: .turbo
           key: turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -41,7 +41,7 @@ jobs:
 
   integration:
     name: integration
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:16-alpine
@@ -60,15 +60,15 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ai_quiz_test?schema=public
       DIRECT_URL: postgresql://postgres:postgres@localhost:5432/ai_quiz_test?schema=public
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           package_json_file: package.json
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: .turbo
           key: turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -81,20 +81,20 @@ jobs:
 
   build:
     name: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       # Public compile-time origin only. CI does not deploy; Next inlines this at `next build`.
       NEXT_PUBLIC_API_URL: http://localhost:3001
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           package_json_file: package.json
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: .turbo
           key: turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -105,10 +105,10 @@ jobs:
 
   images:
     name: images
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: build
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build API production image
         run: docker build -f apps/api/Dockerfile .
       - name: Build web production image
