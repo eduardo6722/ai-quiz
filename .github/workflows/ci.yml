@@ -82,6 +82,9 @@ jobs:
   build:
     name: build
     runs-on: ubuntu-latest
+    env:
+      # Public compile-time origin only. CI does not deploy; Next inlines this at `next build`.
+      NEXT_PUBLIC_API_URL: http://localhost:3001
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

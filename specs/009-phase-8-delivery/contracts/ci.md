@@ -47,8 +47,11 @@ If the database never becomes healthy, the job **fails** (must not skip-pass).
 
 ```text
 pnpm install --frozen-lockfile
+NEXT_PUBLIC_API_URL=http://localhost:3001
 pnpm build
 ```
+
+`NEXT_PUBLIC_API_URL` is a public origin inlined by Next at build time. CI does not deploy; localhost matches the production image build-arg. Do not set `OPENAI_API_KEY` or `DATABASE_URL` on this job.
 
 ### `images`
 

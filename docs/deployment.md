@@ -38,7 +38,7 @@ Registry and deploy variables (`REGISTRY`, `IMAGE_PREFIX`, `DEPLOY_TARGET`) live
 
 1. `quality` — `pnpm install --frozen-lockfile`, lint, typecheck, `pnpm test` (no Postgres, no model key)
 2. `integration` — disposable `postgres:16-alpine` / `ai_quiz_test`, `pnpm db:migrate:deploy`, `pnpm test:integration`, `pnpm test:e2e`
-3. `build` — `pnpm build`
+3. `build` — `pnpm build` with public `NEXT_PUBLIC_API_URL=http://localhost:3001` (compile-time origin; no deploy)
 4. `images` — `docker build` of both production Dockerfiles, **no push**
 
 Caches: pnpm store and `.turbo` keyed on `pnpm-lock.yaml`. Secrets are not cached. Live `pnpm eval:golden --live` is **not** part of this workflow.
