@@ -37,6 +37,14 @@ function captureHttpLogs() {
   };
 }
 
+function expectHeaderString(value: string | string[] | undefined): string {
+  expect(typeof value).toBe("string");
+  if (typeof value !== "string") {
+    throw new Error("expected a single header string");
+  }
+  return value;
+}
+
 describe("quiz observability", () => {
   let app: INestApplication;
 
@@ -98,8 +106,7 @@ describe("quiz observability", () => {
 
     const omitted = await request(server).post("/v1/quizzes").send(CREATE_BODY);
     expect(omitted.status).toBe(201);
-    const assigned = omitted.headers["x-request-id"];
-    expect(typeof assigned).toBe("string");
+    const assigned = expectHeaderString(omitted.headers["x-request-id"]);
     expect(assigned.length).toBeGreaterThanOrEqual(8);
     const createLog = logs.records().find((record) => record.path === "/v1/quizzes" && record.status === 201);
     expect(createLog?.requestId).toBe(assigned);
@@ -126,8 +133,8 @@ describe("quiz observability", () => {
 
     const health = await request(server).get("/health");
     expect(health.status).toBe(200);
-    expect(typeof health.headers["x-request-id"]).toBe("string");
-    expect(health.headers["x-request-id"].length).toBeGreaterThanOrEqual(8);
+    const healthRequestId = expectHeaderString(health.headers["x-request-id"]);
+    expect(healthRequestId.length).toBeGreaterThanOrEqual(8);
   });
 
   it("logs failed creates with code and warn or error level", async () => {

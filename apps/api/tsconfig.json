@@ -3,14 +3,12 @@
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "noEmit": false,
+    "noEmit": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "types": ["node", "jest"]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["dist", "test", "**/*.spec.ts"]
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["dist"]
 }
