@@ -1,0 +1,25 @@
+{
+  "full_pdf_pages": 53,
+  "opening_pdf_pages": 16,
+  "format": "16:9 landscape, searchable and tagged PDF",
+  "layout_issues": [],
+  "checks": [
+    "all 53 full-deck titles and numbered footers found in PDF text",
+    "all 53 pages rendered for visual contact-sheet inspection",
+    "DOM check: no pseudocode clipping, panel overflow or content/takeaway overlap",
+    "weighted example independently recalculated",
+    "Renamed PDFs re-exported; all titles and footers rechecked; scoring slides 9, 33 and 34 verified"
+  ],
+  "application_checks": "Not rerun; historical evidence explicitly attributed to repository records",
+  "source_commit": "9b6eec0",
+  "files": [
+    {
+      "name": "presentation.pdf",
+      "bytes": 571752
+    },
+    {
+      "name": "presentation-opening.pdf",
+      "bytes": 211117
+    }
+  ]
+}

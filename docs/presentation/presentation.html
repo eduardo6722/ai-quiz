@@ -1,0 +1,1178 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>AI Quiz Generator — Presentation</title><style>
+@font-face{font-family:DeckSans;src:url('file:///usr/share/fonts/liberation-sans-fonts/LiberationSans-Regular.ttf')}
+@font-face{font-family:DeckSans;src:url('file:///usr/share/fonts/liberation-sans-fonts/LiberationSans-Bold.ttf');font-weight:700}
+@font-face{font-family:DeckSerif;src:url('file:///usr/share/fonts/liberation-serif-fonts/LiberationSerif-Regular.ttf')}
+@font-face{font-family:DeckMono;src:url('file:///usr/share/fonts/liberation-mono-fonts/LiberationMono-Regular.ttf')}
+:root{--bg:#F7FBF7;--cream:#FBF8F1;--ink:#173F32;--green:#23624B;--mint:#DFF2E4;--sage:#EAF3E9;--muted:#53695D;--border:#D4E6D8}
+*{box-sizing:border-box}html,body{margin:0;background:#dbe4dc;color:var(--ink);font-family:DeckSans,Arial,sans-serif}
+@page{size:1200px 675px;margin:0}
+.slide{width:1200px;height:675px;position:relative;padding:38px 54px 54px;background:var(--bg);page-break-after:always;overflow:hidden;margin:24px auto}
+.slide:last-child{page-break-after:auto}.slide.cover{background:var(--cream)}
+.top{display:flex;justify-content:space-between;align-items:center;height:20px;color:var(--muted);font-size:13px;letter-spacing:1.8px;font-weight:700}
+.brand{letter-spacing:.3px}.brand:before{content:' ';display:inline-block;width:10px;height:15px;border-radius:10px 0 10px 0;background:var(--green);margin-right:9px}
+h1{font-family:DeckSerif,Georgia,serif;font-weight:400;font-size:47px;line-height:1.08;letter-spacing:-.7px;margin:24px 0 12px}
+.cover h1{font-size:72px;margin-top:36px}.lead{font-size:23px;line-height:1.3;color:var(--muted);margin:0 0 23px;max-width:1070px}
+.content{display:grid;grid-template-columns:repeat(var(--columns,2),minmax(0,1fr));gap:20px;height:317px}
+.panel{border:1px solid var(--border);border-radius:18px;padding:24px;background:white;min-width:0}
+.panel:nth-child(2){background:var(--sage)}.panel h2{font-size:23px;margin:0 0 19px;font-weight:700;line-height:1.2}
+.lines{display:flex;flex-direction:column;gap:15px}.line{font-size:21px;line-height:1.27;position:relative;padding-left:17px}.line:before{content:' ';position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--green)}
+.content.three .panel{padding:22px}.content.three .line{font-size:20px}.content.three .lines{gap:14px}
+.takeaway{position:absolute;bottom:64px;left:54px;right:54px;border-left:4px solid var(--green);padding:11px 17px;background:var(--mint);font-size:19px;line-height:1.25}
+.footer{position:absolute;left:54px;right:54px;bottom:25px;display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:11.5px;line-height:1.2}.sources{max-width:995px}.number{white-space:nowrap;font-weight:700}
+.split .content{grid-template-columns:1.45fr 1fr;height:335px}.split h1{font-size:44px}.split .lead{font-size:22px;margin-bottom:18px}.split .panel{padding:20px}.split .lines{gap:17px}
+pre{font-family:DeckMono,monospace;font-size:16px;line-height:1.32;white-space:pre-wrap;margin:0;color:#eff7ee;background:var(--ink);height:100%;border-radius:18px;padding:20px;overflow:hidden}
+.cover .content{height:260px}.cover .line{font-size:21px}.cover .lines{gap:13px}
+.diagram{width:100%;height:140px;margin-top:10px;display:block}.diagram text{font-family:DeckSans,Arial,sans-serif;fill:var(--ink);font-size:15px}.diagram rect{fill:var(--sage);stroke:var(--border);stroke-width:1.5}.diagram path,.diagram line{stroke:var(--green);stroke-width:2;fill:none}
+.flow .content,.architecture .content,.erd .content{height:264px}.flow .line,.architecture .line,.erd .line{font-size:19px}.flow .lines,.architecture .lines,.erd .lines{gap:12px}.flow .panel,.architecture .panel,.erd .panel{padding:20px}.flow .lead,.architecture .lead,.erd .lead{margin-bottom:16px}.flow .diagram,.architecture .diagram,.erd .diagram{height:82px;margin-top:16px}
+@media print{html,body{background:white}.slide{margin:0;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@media screen{.slide{box-shadow:0 8px 32px #173f3215}}
+</style></head><body>
+<section class="slide cover" id="slide-1"><div class="top"><span>OPENING / 01</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>AI Quiz Generator</h1><p class="lead">A production-oriented TypeScript app: from a README to a grounded quiz and a durable, deterministic result.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>The stack</h2><div class="lines">
+<div class="line">Node.js 24 · TypeScript · pnpm + Turborepo</div>
+<div class="line">NestJS · Next.js / React</div>
+<div class="line">PostgreSQL + Prisma · Zod</div>
+<div class="line">Vercel AI SDK / OpenAI · Langfuse</div>
+</div></article>
+<article class="panel"><h2>The engineering story</h2><div class="lines">
+<div class="line">AI creates the questions. Code grades the learner.</div>
+<div class="line">Shared contracts connect the UI and API.</div>
+<div class="line">Source snapshots make results explainable.</div>
+<div class="line">Tests and evals answer different questions.</div>
+</div></article>
+</div>
+<div class="takeaway">Eduardo • Project presentation • 11 October 2026</div>
+<footer class="footer"><span class="sources">Source: package.json · docs/architecture.md</span><span class="number">01 / 53</span></footer></section>
+<section class="slide cards" id="slide-2"><div class="top"><span>OPENING / STACK</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>One language, clear responsibilities</h1><p class="lead">The stack supports end-to-end feature development while keeping the core independent of frameworks.</p>
+<div class="content three" style="--columns:3">
+<article class="panel"><h2>Product &amp; transport</h2><div class="lines">
+<div class="line">Next.js App Router + React: setup, player, results.</div>
+<div class="line">Tailwind + shared shadcn-style primitives.</div>
+<div class="line">NestJS: REST, dependency injection, HTTP errors.</div>
+</div></article>
+<article class="panel"><h2>Data &amp; intelligence</h2><div class="lines">
+<div class="line">PostgreSQL + Prisma: relational integrity and migrations.</div>
+<div class="line">Zod: validate external inputs and structured output.</div>
+<div class="line">AI SDK + OpenAI: replaceable generation adapter.</div>
+</div></article>
+<article class="panel"><h2>Delivery &amp; confidence</h2><div class="lines">
+<div class="line">pnpm: workspace dependencies and lockfile.</div>
+<div class="line">Turborepo: task graph, caching and orchestration.</div>
+<div class="line">Jest / RTL / Supertest; Langfuse; GitHub Actions; Docker.</div>
+</div></article>
+</div>
+<div class="takeaway">Frameworks live at the edges; business rules stay testable in plain TypeScript.</div>
+<footer class="footer"><span class="sources">Source: apps/api/package.json · apps/web/package.json · turbo.json</span><span class="number">02 / 53</span></footer></section>
+<section class="slide cards" id="slide-3"><div class="top"><span>OPENING / ROADMAP</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Build the reliable path before adding AI</h1><p class="lead">One phase = one specification, a coherent slice, explicit acceptance evidence and a review.</p>
+<div class="content three" style="--columns:3">
+<article class="panel"><h2>0 → 2 · Foundation</h2><div class="lines">
+<div class="line">0: workspace, conventions and app shells.</div>
+<div class="line">1: pure domain, scoring and public contracts.</div>
+<div class="line">2: database + fixture-backed REST lifecycle.</div>
+</div></article>
+<article class="panel"><h2>3 → 5 · Interview MVP</h2><div class="lines">
+<div class="line">3: secure Markdown fetch + real generation.</div>
+<div class="line">4: complete web experience.</div>
+<div class="line">5: two README demonstrations and reliability.</div>
+</div></article>
+<article class="panel"><h2>6 → 8 · Delivery quality</h2><div class="lines">
+<div class="line">6: Langfuse, logs and operational bounds.</div>
+<div class="line">7: golden dataset and evaluation harness.</div>
+<div class="line">8: CI, production images and interview docs.</div>
+</div></article>
+</div>
+<div class="takeaway">P0: a working assessment flow. P1: observability, quality evidence and a repeatable delivery path.</div>
+<footer class="footer"><span class="sources">Source: implementation-roadmap.md · roadmap.md · specs/</span><span class="number">03 / 53</span></footer></section>
+<section class="slide cards" id="slide-4"><div class="top"><span>OPENING / TURBOREPO</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Why a monorepo helps AI-assisted development</h1><p class="lead">My choice: give the assistant access to the full feature path, with explicit package boundaries and shared checks.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>End-to-end context</h2><div class="lines">
+<div class="line">One checkout contains UI, API, contracts, schema, tests and evals.</div>
+<div class="line">An assistant can trace a feature from form to transaction and result.</div>
+<div class="line">A contract change can ship with both consumers.</div>
+</div></article>
+<article class="panel"><h2>What Turborepo contributes</h2><div class="lines">
+<div class="line">pnpm defines the workspaces; Turbo schedules their tasks.</div>
+<div class="line">Build/typecheck respect dependency order.</div>
+<div class="line">Cached deterministic work shortens feedback loops.</div>
+<div class="line">Database suites run without task caching.</div>
+</div></article>
+</div>
+<div class="takeaway">The benefit is my workflow judgment: visibility comes from the monorepo; Turbo makes its checks practical.</div>
+<footer class="footer"><span class="sources">Source: pnpm-workspace.yaml · turbo.json · AGENTS.md</span><span class="number">04 / 53</span></footer></section>
+<section class="slide cards" id="slide-5"><div class="top"><span>OPENING / ORGANIZATION</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Folders follow the product lifecycle</h1><p class="lead">Context first, role second: a quiz document and an attempt are different concepts.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>apps/ · concrete edges</h2><div class="lines">
+<div class="line">api/quiz: source, generation, HTTP, persistence, telemetry.</div>
+<div class="line">api/attempt: submission and persistence.</div>
+<div class="line">api/platform: config, logging, HTTP, Prisma.</div>
+<div class="line">web/features/quiz: setup, player, results.</div>
+</div></article>
+<article class="panel"><h2>packages/ + evals/ · stable boundaries</h2><div class="lines">
+<div class="line">domain: invariants, scoring and port interfaces.</div>
+<div class="line">application: create/get/start/submit/result use cases.</div>
+<div class="line">contracts: public Zod schemas; ui: primitives.</div>
+<div class="line">config: shared tooling; evals/: quality experiments.</div>
+</div></article>
+</div>
+<div class="takeaway">Group code by the reason it changes; avoid a broad infrastructure/ or utils/ dumping ground.</div>
+<footer class="footer"><span class="sources">Source: .agents/skills/folder-architecture/SKILL.md · docs/architecture.md</span><span class="number">05 / 53</span></footer></section>
+<section class="slide architecture" id="slide-6"><div class="top"><span>OPENING / ARCHITECTURE</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Ports and adapters around a pure core</h1><p class="lead">Runtime calls reach outward through ports; imports point inward toward stable rules.</p>
+<div class="content three" style="--columns:3">
+<article class="panel"><h2>Inbound</h2><div class="lines">
+<div class="line">Browser → public REST</div>
+<div class="line">Nest controllers validate and map HTTP.</div>
+<div class="line">Use cases coordinate the workflow.</div>
+</div></article>
+<article class="panel"><h2>Core</h2><div class="lines">
+<div class="line">Application use cases</div>
+<div class="line">Domain entities + invariants</div>
+<div class="line">Deterministic scoring</div>
+<div class="line">Port interfaces</div>
+</div></article>
+<article class="panel"><h2>Outbound</h2><div class="lines">
+<div class="line">MarkdownSourcePort → safe HTTPS</div>
+<div class="line">QuizGenerationPort → AI SDK</div>
+<div class="line">UnitOfWorkPort → Prisma / Postgres</div>
+<div class="line">TelemetryPort → Langfuse or no-op</div>
+</div></article>
+</div><svg class="diagram" viewBox="0 0 1092 82" role="img" aria-label="Next.js / REST → Application → Domain + ports → Adapters → External services"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" style="fill:#23624B;stroke:none"/></marker></defs><rect x="0" y="10" width="198" height="54" rx="12"/><text x="99" y="42" text-anchor="middle">Next.js / REST</text><line x1="200" y1="37" x2="219" y2="37" marker-end="url(#arrow)"/><rect x="221" y="10" width="198" height="54" rx="12"/><text x="320" y="42" text-anchor="middle">Application</text><line x1="421" y1="37" x2="440" y2="37" marker-end="url(#arrow)"/><rect x="442" y="10" width="198" height="54" rx="12"/><text x="541" y="42" text-anchor="middle">Domain + ports</text><line x1="642" y1="37" x2="661" y2="37" marker-end="url(#arrow)"/><rect x="663" y="10" width="198" height="54" rx="12"/><text x="762" y="42" text-anchor="middle">Adapters</text><line x1="863" y1="37" x2="882" y2="37" marker-end="url(#arrow)"/><rect x="884" y="10" width="198" height="54" rx="12"/><text x="983" y="42" text-anchor="middle">External services</text></svg>
+<div class="takeaway">Swapping a model, transport or telemetry provider should not rewrite scoring.</div>
+<footer class="footer"><span class="sources">Source: packages/domain/src/ · packages/application/src/ · apps/api/src/quiz/quiz.module.ts</span><span class="number">06 / 53</span></footer></section>
+<section class="slide flow" id="slide-7"><div class="top"><span>OPENING / DATA FLOW</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Two paths, one durable source of truth</h1><p class="lead">Generation creates an immutable playable quiz; submission records one deterministic result.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Create</h2><div class="lines">
+<div class="line">Topic + URL</div>
+<div class="line">→ validate and fetch safely</div>
+<div class="line">→ normalize + hash + bound context</div>
+<div class="line">→ generate + validate + ground</div>
+<div class="line">→ atomic quiz persistence</div>
+</div></article>
+<article class="panel"><h2>Play &amp; submit</h2><div class="lines">
+<div class="line">Public quiz without keys</div>
+<div class="line">→ start attempt + private bearer token</div>
+<div class="line">→ submit option IDs</div>
+<div class="line">→ authorize, validate, grade, finalize</div>
+<div class="line">→ stored result with answer review</div>
+</div></article>
+</div><svg class="diagram" viewBox="0 0 1092 82" role="img" aria-label="Browser → REST + use cases → Safe Markdown / AI → Validation → PostgreSQL"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" style="fill:#23624B;stroke:none"/></marker></defs><rect x="0" y="10" width="198" height="54" rx="12"/><text x="99" y="42" text-anchor="middle">Browser</text><line x1="200" y1="37" x2="219" y2="37" marker-end="url(#arrow)"/><rect x="221" y="10" width="198" height="54" rx="12"/><text x="320" y="42" text-anchor="middle">REST + use cases</text><line x1="421" y1="37" x2="440" y2="37" marker-end="url(#arrow)"/><rect x="442" y="10" width="198" height="54" rx="12"/><text x="541" y="42" text-anchor="middle">Safe Markdown / AI</text><line x1="642" y1="37" x2="661" y2="37" marker-end="url(#arrow)"/><rect x="663" y="10" width="198" height="54" rx="12"/><text x="762" y="42" text-anchor="middle">Validation</text><line x1="863" y1="37" x2="882" y2="37" marker-end="url(#arrow)"/><rect x="884" y="10" width="198" height="54" rx="12"/><text x="983" y="42" text-anchor="middle">PostgreSQL</text></svg>
+<div class="takeaway">The browser never receives a pre-submit answer key and never supplies an authoritative score.</div>
+<footer class="footer"><span class="sources">Source: packages/application/src/quiz/create-quiz.ts · packages/application/src/attempt/submit-quiz.ts</span><span class="number">07 / 53</span></footer></section>
+<section class="slide erd" id="slide-8"><div class="top"><span>OPENING / DATA MODEL</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Seven tables tell an auditable story</h1><p class="lead">Store the evidence, quiz, key, sitting, selections and calculated result as separate relational records.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Knowledge &amp; quiz</h2><div class="lines">
+<div class="line">SourceDocument → Quiz → Question → QuestionOption</div>
+<div class="line">Snapshot, hash, original/resolved URLs, fetchedAt.</div>
+<div class="line">Ordered questions and options.</div>
+<div class="line">isCorrect remains server-only before submission.</div>
+</div></article>
+<article class="panel"><h2>Attempt &amp; result</h2><div class="lines">
+<div class="line">Quiz → QuizAttempt → AttemptAnswer → Selection</div>
+<div class="line">Token hash, status and timestamps.</div>
+<div class="line">One answer per attempt / question.</div>
+<div class="line">Raw scores + full-precision weighted score.</div>
+</div></article>
+</div><svg class="diagram" viewBox="0 0 1092 82" role="img" aria-label="SourceDocument has quizzes; Quiz has questions and attempts; Question has options and answers; Attempt has answers; Answer and Option link to Selection">
+        <defs><marker id="er-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:#23624B;stroke:none"/></marker></defs>
+        <g style="font-size:13px"><rect x="0" y="24" width="156" height="34" rx="8"/><text x="78" y="46" text-anchor="middle">SourceDocument</text>
+        <rect x="190" y="24" width="135" height="34" rx="8"/><text x="257" y="46" text-anchor="middle">Quiz</text>
+        <rect x="360" y="0" width="145" height="30" rx="8"/><text x="432" y="21" text-anchor="middle">Question</text>
+        <rect x="360" y="51" width="145" height="30" rx="8"/><text x="432" y="72" text-anchor="middle">QuizAttempt</text>
+        <rect x="555" y="0" width="174" height="30" rx="8"/><text x="642" y="21" text-anchor="middle">QuestionOption</text>
+        <rect x="555" y="51" width="174" height="30" rx="8"/><text x="642" y="72" text-anchor="middle">AttemptAnswer</text>
+        <rect x="805" y="24" width="255" height="34" rx="8"/><text x="932" y="46" text-anchor="middle">AttemptAnswerSelection</text></g>
+        <g marker-end="url(#er-arrow)"><path d="M156 41H190"/><path d="M325 41L360 15"/><path d="M325 41L360 66"/>
+        <path d="M505 15H555"/><path d="M505 66H555"/><path d="M505 22L555 57"/>
+        <path d="M729 15L805 35"/><path d="M729 66L805 49"/></g></svg>
+<div class="takeaway">Snapshot + explicit order + stored selections allow the result to be reconstructed and explained.</div>
+<footer class="footer"><span class="sources">Source: apps/api/prisma/schema.prisma · docs/data-model.md</span><span class="number">08 / 53</span></footer></section>
+<section class="slide cards" id="slide-9"><div class="top"><span>OPENING / SCORING</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>The LLM never grades the learner</h1><p class="lead">The assessment formula is implemented as isolated, deterministic TypeScript policy.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Per question</h2><div class="lines">
+<div class="line">Single: correct = 4; wrong = 0.</div>
+<div class="line">Multiple: 1 point per correctly selected option, capped at 4.</div>
+<div class="line">Wrong selections add 0; no deduction.</div>
+<div class="line">Policy is provisional because the task is ambiguous.</div>
+</div></article>
+<article class="panel"><h2>Final score</h2><div class="lines">
+<div class="line">weight(i) = 1.1 ** i, starting at i = 0.</div>
+<div class="line">score = Σ(scoreᵢ × weightᵢ) / Σ(weightᵢ).</div>
+<div class="line">Store on the 0–4 scale.</div>
+<div class="line">Round score and percentage only for display.</div>
+</div></article>
+</div>
+<div class="takeaway">Consequence: an all-correct multi-select sitting may score below 4; selecting every option is not penalized.</div>
+<footer class="footer"><span class="sources">Source: packages/domain/src/scoring/scoring-policy.ts · packages/domain/src/scoring/weighted-score.ts</span><span class="number">09 / 53</span></footer></section>
+<section class="slide cards" id="slide-10"><div class="top"><span>OPENING / TRUST</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Every boundary has a different risk</h1><p class="lead">Runtime validation, network restrictions, public projections and transactions protect different parts of the flow.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Remote content &amp; model</h2><div class="lines">
+<div class="line">HTTPS / public IP / redirect checks.</div>
+<div class="line">512 KiB body cap; bounded timeouts.</div>
+<div class="line">Markdown is untrusted source data.</div>
+<div class="line">Structured output + domain validation + excerpt checks.</div>
+</div></article>
+<article class="panel"><h2>Browser &amp; persistence</h2><div class="lines">
+<div class="line">Public DTOs omit keys and excerpts.</div>
+<div class="line">Random attempt token; only its hash is stored.</div>
+<div class="line">Option ownership checked before grading.</div>
+<div class="line">Atomic, idempotent finalization; sanitized logs.</div>
+</div></article>
+</div>
+<div class="takeaway">Prompt instructions reduce injection risk; they do not prove semantic correctness or complete resistance.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/quiz/source/ · packages/application/src/quiz/to-public-quiz.ts · packages/application/src/attempt/submit-quiz.ts</span><span class="number">10 / 53</span></footer></section>
+<section class="slide cards" id="slide-11"><div class="top"><span>OPENING / TESTS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Four test layers, four kinds of evidence</h1><p class="lead">Fast deterministic checks establish software behavior; live evals measure the uncertain model output.</p>
+<div class="content three" style="--columns:3">
+<article class="panel"><h2>Unit</h2><div class="lines">
+<div class="line">Jest: scoring math, contracts, use cases with fake ports, source boundaries.</div>
+<div class="line">Fast; isolated failures; no paid model needed.</div>
+</div></article>
+<article class="panel"><h2>Integration</h2><div class="lines">
+<div class="line">Jest + real PostgreSQL: mappings, constraints, rollback, concurrent finalization.</div>
+<div class="line">Proves behavior mocks cannot reproduce.</div>
+</div></article>
+<article class="panel"><h2>API E2E &amp; UI</h2><div class="lines">
+<div class="line">Jest + Supertest: REST lifecycle with real DB and mocked model.</div>
+<div class="line">Jest + RTL: user interactions.</div>
+<div class="line">Live generation/evals are separate gated runs.</div>
+</div></article>
+</div>
+<div class="takeaway">Supertest is API E2E. RTL is component/UI integration. Neither is a full real-browser E2E suite.</div>
+<footer class="footer"><span class="sources">Source: apps/api/test/ · apps/web/src/features/quiz/ · evals/README.md</span><span class="number">11 / 53</span></footer></section>
+<section class="slide cards" id="slide-12"><div class="top"><span>OPENING / EVALS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Evaluate content quality separately</h1><p class="lead">A 14-case golden dataset combines pinned sources, deterministic checks, an independent judge and planned human calibration.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>What the harness measures</h2><div class="lines">
+<div class="line">Shape, duplicates, excerpt grounding, key leakage.</div>
+<div class="line">Independent key proposal without generator flags.</div>
+<div class="line">Relevance, clarity, ambiguity, distractors, coverage.</div>
+<div class="line">Insufficient-source and adversarial-source cases.</div>
+</div></article>
+<article class="panel"><h2>What is evidenced today</h2><div class="lines">
+<div class="line">Harness and mocked tests implemented.</div>
+<div class="line">Latest checked-in live report: 14 not_run cases.</div>
+<div class="line">Human calibration: not_run.</div>
+<div class="line">Accepted frozen baseline / regression: not_run.</div>
+</div></article>
+</div>
+<div class="takeaway">A quality score is reviewer evidence. It never overwrites the learner’s 0–4 score.</div>
+<footer class="footer"><span class="sources">Source: evals/datasets/golden-v1.json · docs/evals/phase-7-report.md · evals/baselines/</span><span class="number">12 / 53</span></footer></section>
+<section class="slide cards" id="slide-13"><div class="top"><span>OPENING / LANGFUSE</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Observe the workflow, compare quality runs</h1><p class="lead">Two integrations: request-stage tracing and offline experiment recording.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Runtime telemetry</h2><div class="lines">
+<div class="line">create-quiz → fetch → preprocessing → generation → validation.</div>
+<div class="line">Correlation ID, source hash, strategy, retry and prompt label.</div>
+<div class="line">Token usage on generation; success/error outcome.</div>
+<div class="line">No-op adapter when tracing keys are missing.</div>
+</div></article>
+<article class="panel"><h2>Evaluation experiments</h2><div class="lines">
+<div class="line">Dataset/rubric versions and per-case outcomes.</div>
+<div class="line">Deterministic + semantic scores and run aggregates.</div>
+<div class="line">Portable Markdown report even without a destination.</div>
+<div class="line">Live dashboard inspection remains gated.</div>
+</div></article>
+</div>
+<div class="takeaway">Tracing is best-effort and redacted; it must not rerun completed business work after an error.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/quiz/telemetry/langfuse-telemetry.adapter.ts · apps/api/src/eval/langfuse-experiment.adapter.ts</span><span class="number">13 / 53</span></footer></section>
+<section class="slide cards" id="slide-14"><div class="top"><span>OPENING / CI &amp; CD</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Automate confidence; make deployment explicit</h1><p class="lead">Merge-time CI stays deterministic. Credentialed evaluation and release have separate workflows.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Pull request / main CI</h2><div class="lines">
+<div class="line">Frozen install → lint → types → Jest.</div>
+<div class="line">Real Postgres → migrations → integration/API E2E.</div>
+<div class="line">Application build → production image builds.</div>
+<div class="line">No model keys; no image push.</div>
+</div></article>
+<article class="panel"><h2>Gated paths</h2><div class="lines">
+<div class="line">LLM evals: manual + weekly, report artifacts.</div>
+<div class="line">Release: optional SHA-tagged image publishing.</div>
+<div class="line">Multi-stage, non-root API and web containers.</div>
+<div class="line">Deployment script prints operator commands; no host deployed.</div>
+</div></article>
+</div>
+<div class="takeaway">CI configuration exists; hosted green runs, registry publish and an actual deployment require separate evidence.</div>
+<footer class="footer"><span class="sources">Source: .github/workflows/ci.yml · .github/workflows/llm-evals.yml · .github/workflows/release.yml</span><span class="number">14 / 53</span></footer></section>
+<section class="slide cards" id="slide-15"><div class="top"><span>OPENING / STATUS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Delivery status with the gaps visible</h1><p class="lead">The repository records core acceptance and local packaging; model-quality and hosted-delivery evidence remain incomplete.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Implemented / documented evidence</h2><div class="lines">
+<div class="line">Pure scoring, REST, PostgreSQL and web flow.</div>
+<div class="line">Two live README demonstrations on 11 October.</div>
+<div class="line">Langfuse adapter + limits + health checks.</div>
+<div class="line">Evaluation harness, CI config and local production images.</div>
+</div></article>
+<article class="panel"><h2>Remaining work</h2><div class="lines">
+<div class="line">Credentialed live eval artifact and Langfuse inspection.</div>
+<div class="line">Human calibration and accepted frozen baseline.</div>
+<div class="line">Registry publish and actual hosted deployment.</div>
+<div class="line">Second generation strategy; real-browser E2E.</div>
+</div></article>
+</div>
+<div class="takeaway">Production-oriented implementation with a repeatable deployment path; the deck does not claim a hosted service.</div>
+<footer class="footer"><span class="sources">Source: docs/delivery-status.md · README.md · implementation-roadmap.md</span><span class="number">15 / 53</span></footer></section>
+<section class="slide cards" id="slide-16"><div class="top"><span>OPENING / LIVE DISCUSSION</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Demo the behavior, then follow the questions</h1><p class="lead">A short opening should lead naturally into a code walkthrough and collaborative implementation.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Demo route</h2><div class="lines">
+<div class="line">Express README + routing → generate 5 questions.</div>
+<div class="line">Show four options, type and progress.</div>
+<div class="line">Submit → weighted result + answer review.</div>
+<div class="line">Repeat with Fastify README + plugins.</div>
+</div></article>
+<article class="panel"><h2>Code route</h2><div class="lines">
+<div class="line">CreateQuizUseCase → source adapter → generation.</div>
+<div class="line">Public projection → submit → scoring policy.</div>
+<div class="line">Prisma schema + transaction + row lock.</div>
+<div class="line">Test → evaluation report → telemetry adapter.</div>
+</div></article>
+</div>
+<div class="takeaway">Historical all-correct scores: Express 3.12 / 4; Fastify 3.60 / 4. Future live questions and scores may differ.</div>
+<footer class="footer"><span class="sources">Source: README.md#two-source-demonstration-interview-mvp · docs/walkthrough.md</span><span class="number">16 / 53</span></footer></section>
+<section class="slide cards" id="slide-17"><div class="top"><span>DEEP DIVE / PIPELINE</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>The pipeline, step by step</h1><p class="lead">The following slides expand every trust boundary and show simplified pseudocode derived from the implementation.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Create pipeline</h2><div class="lines">
+<div class="line">1. Validate request</div>
+<div class="line">2. Normalize URL and fetch bytes</div>
+<div class="line">3. Decode, normalize and fingerprint</div>
+<div class="line">4. Bound context and build prompt</div>
+<div class="line">5. Generate, validate and ground</div>
+<div class="line">6. Load the complete quiz transactionally</div>
+</div></article>
+<article class="panel"><h2>Attempt pipeline</h2><div class="lines">
+<div class="line">7. Return the public view</div>
+<div class="line">8. Start a token-authorized sitting</div>
+<div class="line">9. Validate submitted ownership</div>
+<div class="line">10. Grade in question order</div>
+<div class="line">11. Finalize atomically and idempotently</div>
+<div class="line">12. Return the stored result</div>
+</div></article>
+</div>
+<div class="takeaway">Pseudocode is explanatory: it omits transport plumbing and is not a replacement for the real source.</div>
+<footer class="footer"><span class="sources">Source: packages/application/src/quiz/create-quiz.ts · packages/application/src/attempt/submit-quiz.ts</span><span class="number">17 / 53</span></footer></section>
+<section class="slide split" id="slide-18"><div class="top"><span>DEEP DIVE / 1 · INPUT</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Validate before spending model tokens</h1><p class="lead">The HTTP adapter parses public contracts, applies admission limits and delegates to the use case.</p>
+<div class="content " style="--columns:2">
+<pre>request = Zod.parse(body)
+assert 1 &lt;= topic.length &lt;= 200
+assert sourceUrl is an HTTPS URL
+count = request.count ?? 5   // 5..8
+strategy = request.strategy ?? &#x27;balanced&#x27;
+
+permit = limiter.tryAcquire(clientIP)
+if rate limit: return 429
+if concurrency limit: return 503
+try: return createQuiz.execute(request)
+finally: limiter.release()</pre>
+<article class="panel"><h2>Why here?</h2><div class="lines">
+<div class="line">Malformed input never reaches fetch or AI.</div>
+<div class="line">5 attempted creates / client / 60 seconds.</div>
+<div class="line">2 admitted creates in flight / process.</div>
+<div class="line">Stable errors give the UI a recovery path.</div>
+</div></article>
+</div>
+<div class="takeaway">The limits are in-memory and process-local; shared admission control is future work for multiple replicas.</div>
+<footer class="footer"><span class="sources">Source: packages/contracts/src/quiz/create-quiz.ts · apps/api/src/quiz/http/quiz.controller.ts · apps/api/src/quiz/http/create-quiz-limiter.ts</span><span class="number">18 / 53</span></footer></section>
+<section class="slide split" id="slide-19"><div class="top"><span>DEEP DIVE / 2 · INGEST</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Resolve the URL into bounded bytes</h1><p class="lead">The server fetches source content; the browser does not proxy arbitrary URLs or parse returned HTML.</p>
+<div class="content " style="--columns:2">
+<pre>original = inputURL
+current = normalizeGitHubBlob(parseHTTPS(original))
+for each hop, at most 3 redirects:
+  assert HTTPS, no credentials, port 443
+  addresses = DNS.lookupAll(current.host)
+  assert every address is public
+  response = HTTPS.getPinned(addresses[0])
+  if redirect: resolve Location; repeat checks
+  assert 2xx, allowed media type, &lt;= 512 KiB
+  snapshot = normalizeAndHash(response.body)
+  return original, current, snapshot, fetchedAt</pre>
+<article class="panel"><h2>Operational bounds</h2><div class="lines">
+<div class="line">10-second request timeout per fetch hop.</div>
+<div class="line">3 redirects maximum.</div>
+<div class="line">Stream-size enforcement, plus final size check.</div>
+<div class="line">Allow Markdown/plain text; reject HTML responses.</div>
+</div></article>
+</div>
+<div class="takeaway">GitHub blob → raw preserves the source identity while retrieving Markdown rather than a repository web page.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/quiz/source/https-markdown-source.adapter.ts · apps/api/src/quiz/source/github-blob.ts</span><span class="number">19 / 53</span></footer></section>
+<section class="slide split" id="slide-20"><div class="top"><span>DEEP DIVE / SSRF</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Validate DNS and pin the connection</h1><p class="lead">Checking only the URL string leaves room for internal destinations, unsafe redirects and DNS rebinding.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Defense sequence</h2><div class="lines">
+<div class="line">Reject private, loopback and link-local IPs.</div>
+<div class="line">Check IPv4, IPv6 and mapped IPv4 forms.</div>
+<div class="line">Reject a DNS answer set containing any unsafe address.</div>
+<div class="line">Revalidate each redirect before connecting.</div>
+</div></article>
+<pre>checkedIP = publicAddresses[0]
+httpsRequest({
+  host: checkedIP,
+  servername: originalHostname, // TLS / SNI
+  headers: { Host: originalHostname },
+  path: pathname + query, port: 443,
+  timeout: 10_000
+})
+// Stream body; destroy request over byte cap.</pre>
+</div>
+<div class="takeaway">The socket uses the validated IP; TLS and HTTP still use the intended hostname.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/quiz/source/public-ip.ts · apps/api/src/quiz/source/fetch-transport.ts · apps/api/src/quiz/source/public-ip.spec.ts</span><span class="number">20 / 53</span></footer></section>
+<section class="slide split" id="slide-21"><div class="top"><span>DEEP DIVE / 3 · PARSE</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Normalize Markdown without executing it</h1><p class="lead">This is lightweight textual normalization, not an AST parser, crawler or Markdown renderer.</p>
+<div class="content " style="--columns:2">
+<pre>text = UTF8.decode(bytes, fatal=true)
+reject if text contains NUL
+normalized = removeHTMLComments(text).trim()
+title = firstLineMatching(&#x27;# heading&#x27;)
+assert normalized.length &gt;= 200
+hash = SHA256(UTF8(normalized))
+return { contentSnapshot: normalized,
+         contentHash: hash, title,
+         originalUrl, resolvedUrl, fetchedAt }</pre>
+<article class="panel"><h2>What survives</h2><div class="lines">
+<div class="line">Headings, links, code blocks and punctuation.</div>
+<div class="line">No script or embedded code execution.</div>
+<div class="line">No link crawling or dependency downloads.</div>
+<div class="line">The hash fingerprints normalized text, not raw bytes.</div>
+</div></article>
+</div>
+<div class="takeaway">The full normalized snapshot is durable evidence; changing source content yields a different fingerprint.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/quiz/source/normalize-markdown.ts · packages/domain/src/quiz/markdown-source-port.ts</span><span class="number">21 / 53</span></footer></section>
+<section class="slide split" id="slide-22"><div class="top"><span>DEEP DIVE / 4 · CONTEXT</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Keep the snapshot; bound the model input</h1><p class="lead">Storage and prompt context serve different purposes and therefore use different limits.</p>
+<div class="content " style="--columns:2">
+<pre>snapshot = await source.fetch(url)
+assert snapshot.trim().length &gt;= 200
+assert UTF8.byteLength(snapshot) &lt;= 512 * 1024
+
+sourceText = snapshot.slice(0, 32_000)
+// Model sees this prefix.
+// DB stores the full normalized snapshot.
+// Grounding checks the stored snapshot.
+
+messages = buildPrompt(topic, count, sourceText)</pre>
+<article class="panel"><h2>Tradeoff</h2><div class="lines">
+<div class="line">Simple, predictable upper bound.</div>
+<div class="line">Characters are not model tokens.</div>
+<div class="line">Later README sections may be excluded.</div>
+<div class="line">A prefix can end in the middle of a section.</div>
+</div></article>
+</div>
+<div class="takeaway">Next improvement: heading-aware selection under a token budget, retaining source offsets and citations.</div>
+<footer class="footer"><span class="sources">Source: packages/application/src/quiz/create-quiz.ts · packages/application/src/quiz/grounding.ts</span><span class="number">22 / 53</span></footer></section>
+<section class="slide split" id="slide-23"><div class="top"><span>DEEP DIVE / 5 · PROMPT</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>A constrained generation step</h1><p class="lead">The agent workflow is explicit orchestration around a replaceable model adapter, rather than an autonomous tool loop.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>System instructions</h2><div class="lines">
+<div class="line">Use only the source for the chosen topic.</div>
+<div class="line">Treat source material as untrusted data.</div>
+<div class="line">Produce the exact requested count and four labels.</div>
+<div class="line">Include a short verbatim sourceExcerpt.</div>
+<div class="line">Single: one correct option; multiple: one to four.</div>
+</div></article>
+<pre>generateText({
+  model: openai(configuredModel),
+  output: Output.object({ schema }),
+  system: trustedRules,
+  prompt: topic + count + strategy +
+          &#x27;&lt;source&gt;&#x27; + sourceText + &#x27;&lt;/source&gt;&#x27;,
+  abortSignal: timeout(30_000),
+  maxRetries: 0
+})</pre>
+</div>
+<div class="takeaway">The system prompt and delimiters guide behavior; structured validation and evals test the result.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/quiz/generation/quiz-prompt.ts · apps/api/src/quiz/generation/openai-quiz-generation.adapter.ts</span><span class="number">23 / 53</span></footer></section>
+<section class="slide split" id="slide-24"><div class="top"><span>DEEP DIVE / 6 · VALIDATE</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Validate shape, then business invariants</h1><p class="lead">Structured output reduces malformed responses; domain validation still decides whether the quiz is playable.</p>
+<div class="content " style="--columns:2">
+<pre>payload = structuredOutput(ZodSchema(count))
+assert payload exists
+questions = assignServerUUIDsAndPositions(payload)
+
+assert question count is 5..8
+assert each question has exactly 4 options
+assert IDs, positions and labels are valid
+assert type in [&#x27;single&#x27;, &#x27;multiple&#x27;]
+assert single has exactly 1 correct option
+assert multiple has 1..4 correct options
+assert each excerpt is found in snapshot</pre>
+<article class="panel"><h2>Validation layers</h2><div class="lines">
+<div class="line">HTTP Zod: caller input.</div>
+<div class="line">Generation Zod: expected output structure.</div>
+<div class="line">Domain: rules for a valid quiz.</div>
+<div class="line">Grounding: source excerpt location.</div>
+<div class="line">Offline eval: semantic support and usability.</div>
+</div></article>
+</div>
+<div class="takeaway">A schema-valid object can still contain an unsupported answer; semantic quality needs additional evidence.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/quiz/generation/generated-quiz.schema.ts · packages/domain/src/quiz/quiz.ts · packages/application/src/quiz/grounding.ts</span><span class="number">24 / 53</span></footer></section>
+<section class="slide split" id="slide-25"><div class="top"><span>DEEP DIVE / EVIDENCE</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Ground an excerpt back to source text</h1><p class="lead">Tolerant matching handles whitespace and Markdown links while retaining the actual source span.</p>
+<div class="content " style="--columns:2">
+<pre>for question in questions:
+  candidates = [excerpt, stripWrappingQuotes(excerpt)]
+  found = exactSubstring(snapshot, candidates)
+       ?? matchCollapsedWhitespace(snapshot, candidates)
+       ?? matchUnwrappedLinksWithOffsetMap(snapshot)
+  if not found: reject GENERATION_INVALID
+  question.sourceExcerpt = actualSnapshotSpan(found)
+
+// Example: &#x27;Fastify&#x27; can map back to
+// &#x27;[Fastify](https://fastify.dev)&#x27; in the snapshot.</pre>
+<article class="panel"><h2>What this proves</h2><div class="lines">
+<div class="line">Evidence text is present in the snapshot.</div>
+<div class="line">The stored excerpt retains source spelling/markup.</div>
+<div class="line">It does not prove the proposed key is true.</div>
+<div class="line">Independent semantic evaluation addresses that gap.</div>
+</div></article>
+</div>
+<div class="takeaway">Textual traceability and factual entailment are separate quality checks.</div>
+<footer class="footer"><span class="sources">Source: packages/application/src/quiz/grounding.ts · packages/application/src/quiz/grounding.spec.ts</span><span class="number">25 / 53</span></footer></section>
+<section class="slide split" id="slide-26"><div class="top"><span>DEEP DIVE / RETRIES</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Bound uncertainty and fail cleanly</h1><p class="lead">The use case owns retries; the SDK&#x27;s own retries are disabled to avoid multiplying calls.</p>
+<div class="content " style="--columns:2">
+<pre>snapshot = fetchOnce()
+for attempt in 1..3:
+  try:
+    candidate = generate(timeout=30s, sdkRetries=0)
+    groundAndValidate(candidate)
+    return persistReadyQuiz(candidate, snapshot)
+  catch invalidShapeOrDomain: continue
+  catch upstream:
+    if missingConfig / badCredentials / quota: throw
+    if lastAttempt: throw
+    continue
+throw GENERATION_RETRIES_EXHAUSTED</pre>
+<article class="panel"><h2>Failure semantics</h2><div class="lines">
+<div class="line">No partial playable quiz on invalid generation.</div>
+<div class="line">Reuse the same source snapshot across attempts.</div>
+<div class="line">Provider errors mapped to stable client codes.</div>
+<div class="line">No automatic fixture fallback in the product.</div>
+</div></article>
+</div>
+<div class="takeaway">Future work: overall deadline, error-specific backoff and prompt repair based on validation feedback.</div>
+<footer class="footer"><span class="sources">Source: packages/application/src/quiz/create-quiz.ts · apps/api/src/quiz/generation/provider-failure.ts</span><span class="number">26 / 53</span></footer></section>
+<section class="slide split" id="slide-27"><div class="top"><span>DEEP DIVE / 7 · LOAD</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Publish the quiz in one transaction</h1><p class="lead">Loading means relational persistence of the complete validated object graph.</p>
+<div class="content " style="--columns:2">
+<pre>validated = { snapshot, quiz, strategy, modelId }
+
+UnitOfWork.transaction(repos =&gt; {
+  sourceID = insert SourceDocument(snapshot)
+  quizID = insert Quiz(sourceID, status=&#x27;ready&#x27;)
+  for q in orderedQuestions:
+    insert Question(q, quizID, sourceExcerpt)
+    insert four QuestionOptions(q.options)
+  return storedQuiz
+})
+
+return { id: quizID, status: &#x27;ready&#x27; }</pre>
+<article class="panel"><h2>Why atomic?</h2><div class="lines">
+<div class="line">No source-only or half-question playable quiz.</div>
+<div class="line">The source and key correspond to the same creation.</div>
+<div class="line">Nested Prisma writes sit behind repository ports.</div>
+<div class="line">Hash is provenance, not a unique dedup key.</div>
+</div></article>
+</div>
+<div class="takeaway">Current create is synchronous: generating/failed enum values exist, but failed jobs are not persisted here.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/quiz/persistence/quiz.prisma-repository.ts · apps/api/src/quiz/persistence/prisma-unit-of-work.ts</span><span class="number">27 / 53</span></footer></section>
+<section class="slide erd" id="slide-28"><div class="top"><span>DEEP DIVE / RELATIONS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>The relational model preserves ownership</h1><p class="lead">IDs and foreign keys identify entities; explicit positions define order and scoring weights.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>SourceDocument / Quiz / Question / Option</h2><div class="lines">
+<div class="line">SourceDocument: text snapshot + provenance.</div>
+<div class="line">Quiz: source FK, topic, strategy, status, modelId.</div>
+<div class="line">Question: quiz FK, position, type, prompt, excerpt.</div>
+<div class="line">Option: question FK, position, label, isCorrect.</div>
+</div></article>
+<article class="panel"><h2>QuizAttempt / Answer / Selection</h2><div class="lines">
+<div class="line">Attempt: quiz FK, unique token hash, status, dates, score.</div>
+<div class="line">Answer: attempt FK, question FK, rawScore.</div>
+<div class="line">Selection: answer FK + option FK composite PK.</div>
+<div class="line">DB uniqueness: positions, option labels, attempt/question.</div>
+</div></article>
+</div><svg class="diagram" viewBox="0 0 1092 82" role="img" aria-label="SourceDocument has quizzes; Quiz has questions and attempts; Question has options and answers; Attempt has answers; Answer and Option link to Selection">
+        <defs><marker id="er-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:#23624B;stroke:none"/></marker></defs>
+        <g style="font-size:13px"><rect x="0" y="24" width="156" height="34" rx="8"/><text x="78" y="46" text-anchor="middle">SourceDocument</text>
+        <rect x="190" y="24" width="135" height="34" rx="8"/><text x="257" y="46" text-anchor="middle">Quiz</text>
+        <rect x="360" y="0" width="145" height="30" rx="8"/><text x="432" y="21" text-anchor="middle">Question</text>
+        <rect x="360" y="51" width="145" height="30" rx="8"/><text x="432" y="72" text-anchor="middle">QuizAttempt</text>
+        <rect x="555" y="0" width="174" height="30" rx="8"/><text x="642" y="21" text-anchor="middle">QuestionOption</text>
+        <rect x="555" y="51" width="174" height="30" rx="8"/><text x="642" y="72" text-anchor="middle">AttemptAnswer</text>
+        <rect x="805" y="24" width="255" height="34" rx="8"/><text x="932" y="46" text-anchor="middle">AttemptAnswerSelection</text></g>
+        <g marker-end="url(#er-arrow)"><path d="M156 41H190"/><path d="M325 41L360 15"/><path d="M325 41L360 66"/>
+        <path d="M505 15H555"/><path d="M505 66H555"/><path d="M505 22L555 57"/>
+        <path d="M729 15L805 35"/><path d="M729 66L805 49"/></g></svg>
+<div class="takeaway">Foreign keys ensure referenced rows exist; the application also ensures each selected option belongs to its question.</div>
+<footer class="footer"><span class="sources">Source: apps/api/prisma/schema.prisma · apps/api/prisma/migrations/ · docs/data-model.md</span><span class="number">28 / 53</span></footer></section>
+<section class="slide split" id="slide-29"><div class="top"><span>DEEP DIVE / PUBLIC REST</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>A public contract for each lifecycle step</h1><p class="lead">Only attempt-specific operations require the private bearer token in the anonymous MVP.</p>
+<div class="content " style="--columns:2">
+<pre>POST /v1/quizzes
+  { topic, sourceUrl, questionCount?, strategy? }
+  -&gt; { id, status: &#x27;ready&#x27; }
+GET /v1/quizzes/:quizId
+  -&gt; prompts + option IDs/labels; no keys
+POST /v1/quizzes/:quizId/attempts
+  -&gt; { attemptId, token }
+POST /v1/attempts/:attemptId/submit   [Bearer]
+  { answers: [{ questionId, selectedOptionIds }] }
+GET /v1/attempts/:attemptId/result   [Bearer]
+  -&gt; stored score + post-submit correctness</pre>
+<article class="panel"><h2>Projection is deliberate</h2><div class="lines">
+<div class="line">Build public DTOs field by field.</div>
+<div class="line">Omit isCorrect and sourceExcerpt before submit.</div>
+<div class="line">Do not return Prisma entities directly.</div>
+<div class="line">Require a scored attempt for result access.</div>
+</div></article>
+</div>
+<div class="takeaway">Public quiz IDs identify documents; bearer tokens authorize a learner’s sitting and result.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/quiz/http/quiz.controller.ts · apps/api/src/attempt/http/attempt.controller.ts · packages/application/src/quiz/to-public-quiz.ts</span><span class="number">29 / 53</span></footer></section>
+<section class="slide cards" id="slide-30"><div class="top"><span>DEEP DIVE / WEB</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Setup → player → results</h1><p class="lead">Thin Next routes compose the quiz feature; public schemas keep API responses and UI expectations aligned.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Setup &amp; play</h2><div class="lines">
+<div class="line">React Hook Form + Zod: topic, URL, count.</div>
+<div class="line">Generate, fetch the public quiz, start a sitting.</div>
+<div class="line">Radio for single; checkboxes for multiple.</div>
+<div class="line">Back/Next preserve choices and progress.</div>
+</div></article>
+<article class="panel"><h2>Recovery &amp; review</h2><div class="lines">
+<div class="line">sessionStorage: attempt ID, token and selections.</div>
+<div class="line">Token never goes into a link/query parameter.</div>
+<div class="line">Pending-start map avoids duplicate starts in one runtime.</div>
+<div class="line">Submit → persisted result; recover errors visibly.</div>
+</div></article>
+</div>
+<div class="takeaway">Accessible labels and explicit correctness text matter as much as visual polish.</div>
+<footer class="footer"><span class="sources">Source: apps/web/src/features/quiz/ · apps/web/src/features/quiz/session/attempt-session.ts · packages/ui/</span><span class="number">30 / 53</span></footer></section>
+<section class="slide split" id="slide-31"><div class="top"><span>DEEP DIVE / 8 · START</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Issue a capability for one sitting</h1><p class="lead">Anonymous ownership is based on possession of a high-entropy attempt token.</p>
+<div class="content " style="--columns:2">
+<pre>quiz = quizzes.findById(quizID)
+assert quiz exists and status == &#x27;ready&#x27;
+attemptID = randomUUID()
+rawToken = secureRandomToken()
+tokenHash = SHA256(rawToken)
+
+transaction:
+  insert open QuizAttempt(attemptID, quizID, tokenHash)
+
+return { attemptId: attemptID, token: rawToken }
+// Persist hash only; browser keeps token in sessionStorage.</pre>
+<article class="panel"><h2>Authorization boundary</h2><div class="lines">
+<div class="line">Hash supplied bearer token on API receipt.</div>
+<div class="line">Compare with stored token hash.</div>
+<div class="line">Reject missing/wrong token on submit/result.</div>
+<div class="line">No account registration required for MVP.</div>
+</div></article>
+</div>
+<div class="takeaway">The start response issues the raw token once; there is no token recovery endpoint.</div>
+<footer class="footer"><span class="sources">Source: packages/application/src/attempt/start-attempt.ts · apps/api/src/attempt/http/attempt-token.ts · packages/application/src/util/token-hash.ts</span><span class="number">31 / 53</span></footer></section>
+<section class="slide split" id="slide-32"><div class="top"><span>DEEP DIVE / 9 · SUBMIT</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Validate ownership before calculating</h1><p class="lead">Question and option IDs are caller input; server-owned keys remain the authority.</p>
+<div class="content " style="--columns:2">
+<pre>transaction:
+  attempt = loadAndLock(attemptID)
+  assert tokenHash matches
+  quiz = loadReadyQuiz(attempt.quizID)
+  if attempt.scored: return storedResult
+
+  assert exactly one answer per quiz question
+  assert no duplicate question/option IDs
+  assert every option belongs to its question
+  assert single has 1 selection; multiple &gt;= 1
+  graded = scoreInQuestionOrder(quiz, answers)
+  finalizeIfOpen(attempt, graded)</pre>
+<article class="panel"><h2>Rejected inputs</h2><div class="lines">
+<div class="line">Cross-quiz question/option IDs.</div>
+<div class="line">Duplicate or missing answers.</div>
+<div class="line">Illegal selection cardinality.</div>
+<div class="line">Caller-supplied correctness or scores are never authority.</div>
+</div></article>
+</div>
+<div class="takeaway">An authenticated repeat after finalization returns the original result instead of overwriting it.</div>
+<footer class="footer"><span class="sources">Source: packages/application/src/attempt/submit-quiz.ts · packages/domain/src/attempt/attempt.ts · packages/domain/src/scoring/scoring-policy.ts</span><span class="number">32 / 53</span></footer></section>
+<section class="slide split" id="slide-33"><div class="top"><span>DEEP DIVE / 10 · GRADE</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Make the score policy explicit</h1><p class="lead">Small pure functions expose the ambiguous part of the task and keep it easy to change after clarification.</p>
+<div class="content " style="--columns:2">
+<pre>scoreSingle(question, selected):
+  assert selected.length == 1 and owned(selected)
+  return correct(selected[0]) ? 4 : 0
+
+scoreMultiple(question, selected):
+  assert selected.length &gt;= 1 and uniqueOwned(selected)
+  count = selected.filter(isCorrect).length
+  return clamp(count, 0, 4)
+
+rawScores = quiz.questionsInOrder.map(scoreQuestion)
+final = weightedAverage(rawScores, ratio=1.1)</pre>
+<article class="panel"><h2>Example</h2><div class="lines">
+<div class="line">Correct set: A + C.</div>
+<div class="line">Select A → 1 point.</div>
+<div class="line">Select A + C → 2 points.</div>
+<div class="line">Select A + B + C + D → 2 points.</div>
+<div class="line">No normalization or wrong-choice penalty.</div>
+</div></article>
+</div>
+<div class="takeaway">This provisional policy matches the documented interpretation, but permits select-all gaming on multiple questions.</div>
+<footer class="footer"><span class="sources">Source: packages/domain/src/scoring/scoring-policy.ts · roadmap.md#scoring-formula-must-be-unit-tested</span><span class="number">33 / 53</span></footer></section>
+<section class="slide split" id="slide-34"><div class="top"><span>DEEP DIVE / WEIGHTING</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>A hand-checkable weighted average</h1><p class="lead">Illustrative five-question example: later positions have 10% more weight than the preceding position.</p>
+<div class="content " style="--columns:2">
+<pre>position i:    0       1       2       3       4
+weight:        1.0     1.1     1.21    1.331   1.4641
+raw score:     0       4       4       4       4
+
+weighted sum = 4 × (1.1 + 1.21 + 1.331 + 1.4641)
+             = 20.4204
+weight sum   = 6.1051
+score        = 20.4204 / 6.1051
+             ≈ 3.34481008 / 4
+display      = 3.34 / 4; 83.62%</pre>
+<article class="panel"><h2>Invariants</h2><div class="lines">
+<div class="line">Weight starts at 1.0, not 1.1.</div>
+<div class="line">Divide by the sum of weights.</div>
+<div class="line">Keep quiz order independent of request order.</div>
+<div class="line">Do not round intermediate results.</div>
+<div class="line">All-4 raw scores give exactly 4.</div>
+</div></article>
+</div>
+<div class="takeaway">This example is deterministic teaching evidence, not a live-model result.</div>
+<footer class="footer"><span class="sources">Source: packages/domain/src/scoring/weighted-score.ts · packages/domain/src/scoring/weighted-score.spec.ts</span><span class="number">34 / 53</span></footer></section>
+<section class="slide split" id="slide-35"><div class="top"><span>DEEP DIVE / 11 · FINALIZE</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>One result even under concurrent submits</h1><p class="lead">PostgreSQL row locking serializes competing writers for the same attempt.</p>
+<div class="content " style="--columns:2">
+<pre>BEGIN
+SELECT id FROM QuizAttempt WHERE id = ? FOR UPDATE
+load attempt + quiz; verify token
+if scored: return persisted result
+for gradedQuestion:
+  INSERT AttemptAnswer(rawScore)
+  INSERT selections(answerID, optionID)
+UPDATE QuizAttempt WHERE id = ? AND status = &#x27;open&#x27;
+  SET status=&#x27;scored&#x27;, score=?, submittedAt=now()
+COMMIT
+// Unique conflict: rollback, then reload authorized result.</pre>
+<article class="panel"><h2>Integrity layers</h2><div class="lines">
+<div class="line">Shared transaction client across repositories.</div>
+<div class="line">Unique attempt/question answer rows.</div>
+<div class="line">Composite selection key.</div>
+<div class="line">Conditional final state transition.</div>
+<div class="line">Rollback leaves no partial answers.</div>
+</div></article>
+</div>
+<div class="takeaway">Submission is idempotent; creation and starting a new attempt are not equivalent idempotency guarantees.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/attempt/persistence/attempt.prisma-repository.ts · apps/api/src/quiz/persistence/prisma-unit-of-work.ts · packages/application/src/attempt/submit-quiz.ts</span><span class="number">35 / 53</span></footer></section>
+<section class="slide split" id="slide-36"><div class="top"><span>DEEP DIVE / UNIT TESTS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Unit tests pin down deterministic behavior</h1><p class="lead">Known inputs, explicit outputs and fake ports make failures local and inexpensive to diagnose.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Domain examples</h2><div class="lines">
+<div class="line">Single right/wrong → 4/0.</div>
+<div class="line">Multiple partial/all-selected → literal count.</div>
+<div class="line">Wrong ownership and duplicate IDs rejected.</div>
+<div class="line">Weighted math, index boundaries, display rounding.</div>
+<div class="line">Request order cannot alter weights.</div>
+</div></article>
+<pre>test(&#x27;weights use quiz position&#x27;, () =&gt; {
+  const scores = [0, 4, 4, 4, 4]
+  expect(calculateWeightedScore(scores))
+    .toBeCloseTo(20.4204 / 6.1051)
+})
+
+// Application tests inject in-memory source,
+// generator, repository/UoW and recording telemetry.
+// Assert retries, projections and no invalid writes.</pre>
+</div>
+<div class="takeaway">Mock a port to control uncertainty; assert observable behavior rather than mirroring implementation details.</div>
+<footer class="footer"><span class="sources">Source: packages/domain/src/scoring/*.spec.ts · packages/application/src/quiz/create-quiz.spec.ts · packages/application/src/attempt/submit-quiz.spec.ts</span><span class="number">36 / 53</span></footer></section>
+<section class="slide split" id="slide-37"><div class="top"><span>DEEP DIVE / INTEGRATION TESTS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Use a real database for database claims</h1><p class="lead">Jest exercises Prisma against isolated PostgreSQL, including migrations and concurrency semantics.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>What is integrated</h2><div class="lines">
+<div class="line">Repository mappings and nested quiz writes.</div>
+<div class="line">Unique positions, labels and answers.</div>
+<div class="line">Token hash persistence.</div>
+<div class="line">Submission rollback and concurrent finalization.</div>
+<div class="line">Application-supported quiz immutability.</div>
+</div></article>
+<pre>migrate isolated ai_quiz_test database
+quiz = persistKnownFixture()
+attempt = createOpenAttempt(quiz)
+
+results = await Promise.all([
+  submit(attempt, sameValidAnswers),
+  submit(attempt, sameValidAnswers)
+])
+assert results match
+assert DB has one answer per question
+assert stored score matches hand-calculated value</pre>
+</div>
+<div class="takeaway">A fake repository cannot prove PostgreSQL locking, transaction rollback or uniqueness behavior.</div>
+<footer class="footer"><span class="sources">Source: apps/api/test/integration/ · apps/api/jest.integration.config.cjs · .github/workflows/ci.yml</span><span class="number">37 / 53</span></footer></section>
+<section class="slide split" id="slide-38"><div class="top"><span>DEEP DIVE / API E2E</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Exercise the public REST lifecycle</h1><p class="lead">NestJS + Supertest + real PostgreSQL verify that transport, contracts, use cases and persistence work together.</p>
+<div class="content " style="--columns:2">
+<pre>quiz = POST /v1/quizzes      // mocked model
+public = GET /v1/quizzes/:id
+assert no isCorrect or sourceExcerpt
+sitting = POST /v1/quizzes/:id/attempts
+result = POST /v1/attempts/:id/submit [Bearer]
+assert weighted result + persisted answers
+assert repeat submit returns same result
+assert wrong token and cross-quiz IDs fail
+GET /v1/attempts/:id/result [Bearer]
+// Two distinct source fixtures test two-source flow.</pre>
+<article class="panel"><h2>Coverage &amp; limits</h2><div class="lines">
+<div class="line">Real HTTP through the Nest test server.</div>
+<div class="line">No paid provider calls in standard CI.</div>
+<div class="line">Failure, auth, key hiding, limits and request IDs.</div>
+<div class="line">Gated live README tests use product adapters.</div>
+<div class="line">No browser rendering in Supertest.</div>
+</div></article>
+</div>
+<div class="takeaway">Mocked API E2E proves application wiring; gated live tests separately prove source/provider connectivity.</div>
+<footer class="footer"><span class="sources">Source: apps/api/test/e2e/quiz/ · apps/api/test/e2e/support/create-app.ts · apps/api/test/e2e/quiz/quiz-two-sources.spec.ts</span><span class="number">38 / 53</span></footer></section>
+<section class="slide cards" id="slide-39"><div class="top"><span>DEEP DIVE / UI TESTS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Test the learner’s interactions</h1><p class="lead">React Testing Library checks behavior through accessible labels, roles and user events.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Existing behavior checks</h2><div class="lines">
+<div class="line">Form validation and failed generation recovery.</div>
+<div class="line">Single vs multiple selection semantics.</div>
+<div class="line">Back/Next preserving answers.</div>
+<div class="line">Pending/double-submit protections.</div>
+<div class="line">Results, partial-credit text and error copy.</div>
+</div></article>
+<article class="panel"><h2>What remains outside jsdom</h2><div class="lines">
+<div class="line">Actual browser routing and storage behavior.</div>
+<div class="line">Layout at narrow viewports.</div>
+<div class="line">Real frontend-to-API connectivity.</div>
+<div class="line">Browser-specific keyboard/focus behavior.</div>
+<div class="line">A full-screen live acceptance recording.</div>
+</div></article>
+</div>
+<div class="takeaway">A real-browser suite should complement RTL; it should not replace pure scoring and API tests.</div>
+<footer class="footer"><span class="sources">Source: apps/web/src/features/quiz/setup/setup-form.test.tsx · apps/web/src/features/quiz/player/quiz-player.test.tsx · apps/web/src/features/quiz/results/quiz-results.test.tsx</span><span class="number">39 / 53</span></footer></section>
+<section class="slide cards" id="slide-40"><div class="top"><span>DEEP DIVE / GOLDEN DATASET</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Pin the evidence before comparing models</h1><p class="lead">Fourteen cases cover normal README topics, unsupported topics and hostile source instructions.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Case anatomy</h2><div class="lines">
+<div class="line">Stable case ID and version.</div>
+<div class="line">Pinned sourceFile + SHA-256 checksum.</div>
+<div class="line">Topic, count, reference facts and excerpts.</div>
+<div class="line">Expected behavior and tags.</div>
+<div class="line">Optional repeats for variability.</div>
+</div></article>
+<article class="panel"><h2>Coverage</h2><div class="lines">
+<div class="line">Express routing, middleware, features, installation, methods, views.</div>
+<div class="line">Fastify plugins, hooks, logging, schema, getting started, TypeScript.</div>
+<div class="line">Synthetic insufficient-source and injection cases.</div>
+<div class="line">Counts include 5, 6 and 8.</div>
+</div></article>
+</div>
+<div class="takeaway">A pinned source controls one source of variation; model outputs can still vary across runs.</div>
+<footer class="footer"><span class="sources">Source: evals/datasets/golden-v1.json · evals/sources/ · evals/src/dataset/schema.ts</span><span class="number">40 / 53</span></footer></section>
+<section class="slide split" id="slide-41"><div class="top"><span>DEEP DIVE / INDEPENDENT JUDGE</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Hide the generator’s key from the judge</h1><p class="lead">The judge proposes its own answer set, then deterministic code compares keys and evidence.</p>
+<div class="content " style="--columns:2">
+<pre>judgeInput = { topic, snapshot, questions: [
+  { position, prompt, type,
+    options: [{ position, label }] }
+]}   // no isCorrect or generator sourceExcerpt
+
+verdict = JudgePort.evaluate(judgeInput)
+Zod.parse(verdict)
+for each question:
+  compare generated key vs proposedCorrectPositions
+  inspect per-option support, evidence, uncertainty
+  flag unsupported or wrong correct-answer key</pre>
+<article class="panel"><h2>Rubric dimensions</h2><div class="lines">
+<div class="line">Relevance · clarity · ambiguity.</div>
+<div class="line">Distractor quality · coverage contribution.</div>
+<div class="line">Set coverage and reviewer notes.</div>
+<div class="line">Per-option support + uncertainty.</div>
+<div class="line">Human review remains the calibration authority.</div>
+</div></article>
+</div>
+<div class="takeaway">Independent input reduces anchoring; a judge model can still share biases and make mistakes.</div>
+<footer class="footer"><span class="sources">Source: evals/src/judge/strip-key.ts · apps/api/src/eval/openai-judge.adapter.ts · evals/src/judge/output-schema.ts · evals/src/evaluators/compare-keys.ts</span><span class="number">41 / 53</span></footer></section>
+<section class="slide split" id="slide-42"><div class="top"><span>DEEP DIVE / EVAL EXECUTION</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Run experiments outside learner grading</h1><p class="lead">Mocked mode proves the harness; live mode generates and judges new content from pinned snapshots.</p>
+<div class="content " style="--columns:2">
+<pre>dataset = loadAndValidateGoldenDataset()
+for case in dataset (+ configured repeats):
+  verify sourceChecksum; load pinned snapshot
+  generate via existing production generation port
+  run schema / duplicates / grounding / leakage checks
+  judge independently; compare keys and support
+  record passed | failed | not_run + latency + tokens
+aggregate gates, variability and calibration
+record experiment if destination configured
+write portable Markdown report
+// Never write a learner&#x27;s score from judge output.</pre>
+<article class="panel"><h2>Commands</h2><div class="lines">
+<div class="line">pnpm eval:golden --mocked</div>
+<div class="line">pnpm eval:golden --live</div>
+<div class="line">pnpm eval:golden --live --repeat</div>
+<div class="line">Live calls require credentials.</div>
+<div class="line">Missing services produce explicit not_run evidence.</div>
+</div></article>
+</div>
+<div class="takeaway">One shared generation boundary avoids evaluating a different generator than the application uses.</div>
+<footer class="footer"><span class="sources">Source: evals/src/experiment/run-golden.ts · apps/api/src/eval/cli.ts · evals/src/experiment/report.ts</span><span class="number">42 / 53</span></footer></section>
+<section class="slide cards" id="slide-43"><div class="top"><span>DEEP DIVE / QUALITY GATES</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Calibrate before freezing a baseline</h1><p class="lead">Planned gates are explicit; the current report does not establish a live pass.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Gate targets</h2><div class="lines">
+<div class="line">100% of executed deterministic checks.</div>
+<div class="line">Zero confirmed wrong/unsupported correct keys.</div>
+<div class="line">Zero leakage and injection-following failures.</div>
+<div class="line">≥90% human relevance/clarity acceptance.</div>
+<div class="line">No material regression versus frozen baseline.</div>
+</div></article>
+<article class="panel"><h2>Close the evidence gap</h2><div class="lines">
+<div class="line">Run credentialed live generation + judge.</div>
+<div class="line">Review a sample and add real human labels.</div>
+<div class="line">Measure judge agreement and disagreements.</div>
+<div class="line">Accept a reviewed baseline deliberately.</div>
+<div class="line">Compare prompt/model versions with repeats.</div>
+</div></article>
+</div>
+<div class="takeaway">Latest committed report: 0 passed, 0 failed, 14 not_run; human sample size 0; no accepted baseline.</div>
+<footer class="footer"><span class="sources">Source: docs/evals/phase-7-report.md · evals/baselines/gates.v1.json · evals/baselines/human-labels.v1.json</span><span class="number">43 / 53</span></footer></section>
+<section class="slide split" id="slide-44"><div class="top"><span>DEEP DIVE / RUNTIME LANGFUSE</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Stage traces explain latency and failure</h1><p class="lead">Request context connects API logs to nested Langfuse observations without exporting the raw learner payload.</p>
+<div class="content " style="--columns:2">
+<pre>trace create-quiz { strategy, correlationId, promptVersion }
+  span fetch
+  span preprocessing { sourceHash, sourceChars, topicChars }
+  generation { attempt, strategy }
+    -&gt; usageDetails { input, output }, outcome
+  span validation
+  event quiz-ready { quizId }
+
+if tracing cannot start: execute business callback once
+if business callback already ran and failed: rethrow
+on shutdown: forceFlush + exporter shutdown</pre>
+<article class="panel"><h2>Privacy &amp; usefulness</h2><div class="lines">
+<div class="line">Metadata redaction + exporter string masking.</div>
+<div class="line">No raw token, keys, prompts or answers by default.</div>
+<div class="line">PROMPT_VERSION is an observability label.</div>
+<div class="line">Add model ID to emitted metadata next.</div>
+<div class="line">Persistence is not yet its own timed stage.</div>
+</div></article>
+</div>
+<div class="takeaway">Observability failure should not become a quiz failure or cause duplicate generation/persistence.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/quiz/telemetry/langfuse-telemetry.adapter.ts · packages/domain/src/shared/telemetry-port.ts · apps/api/src/platform/http/request-context.ts</span><span class="number">44 / 53</span></footer></section>
+<section class="slide cards" id="slide-45"><div class="top"><span>DEEP DIVE / LANGFUSE EXPERIMENTS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Record reviewer outcomes as experiments</h1><p class="lead">The offline recorder exports completed case results and aggregate scores to an optional Langfuse destination.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>What it records</h2><div class="lines">
+<div class="line">Case ID, checksum, expected behavior, mode.</div>
+<div class="line">Dataset/rubric version and run name.</div>
+<div class="line">Deterministic pass and blocking semantic failure.</div>
+<div class="line">Selected semantic dimensions and run aggregates.</div>
+<div class="line">Destination ID when available.</div>
+</div></article>
+<article class="panel"><h2>Current limits</h2><div class="lines">
+<div class="line">experiment.run replays recorded results.</div>
+<div class="line">Semantic item scores use the first judged question.</div>
+<div class="line">Portable report contains fuller per-case evidence.</div>
+<div class="line">Export is best-effort with one retry.</div>
+<div class="line">Live dashboard evidence is not yet recorded.</div>
+</div></article>
+</div>
+<div class="takeaway">Future: all-question aggregation, linked trace/model/prompt provenance and reliable experiment item identity.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/eval/langfuse-experiment.adapter.ts · evals/src/experiment/experiment-recorder-port.ts</span><span class="number">45 / 53</span></footer></section>
+<section class="slide cards" id="slide-46"><div class="top"><span>DEEP DIVE / OPERATIONS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Know what is alive and what is ready</h1><p class="lead">Health, request IDs and admission bounds keep operational behavior explainable.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Process vs dependency</h2><div class="lines">
+<div class="line">GET /health: process liveness.</div>
+<div class="line">GET /ready: PostgreSQL dependency readiness.</div>
+<div class="line">Neither calls OpenAI or Langfuse.</div>
+<div class="line">DB failure can yield ready=503 while health=200.</div>
+<div class="line">Model availability is checked by live creation.</div>
+</div></article>
+<article class="panel"><h2>Correlate &amp; bound</h2><div class="lines">
+<div class="line">x-request-id echoed on responses.</div>
+<div class="line">JSON logs: method, path, status, duration, error code.</div>
+<div class="line">Redact credentials, bearer tokens and key material.</div>
+<div class="line">Rate/concurrency gate limits costly creation.</div>
+<div class="line">Structured errors support retry and recovery.</div>
+</div></article>
+</div>
+<div class="takeaway">Current bounds suit one small process; horizontal scale needs shared limits, deadlines and measured SLOs.</div>
+<footer class="footer"><span class="sources">Source: apps/api/src/health/health.controller.ts · apps/api/src/platform/http/ · apps/api/src/platform/logging/</span><span class="number">46 / 53</span></footer></section>
+<section class="slide split" id="slide-47"><div class="top"><span>DEEP DIVE / TURBO TASK GRAPH</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Cache reproducible work, rerun stateful work</h1><p class="lead">The repository defines task dependencies and outputs explicitly in turbo.json.</p>
+<div class="content " style="--columns:2">
+<pre>build:
+  dependsOn: [&#x27;^build&#x27;]
+  outputs: [&#x27;dist/**&#x27;, &#x27;.next/**&#x27;,
+            &#x27;!.next/cache/**&#x27;, &#x27;!.next/dev/**&#x27;]
+typecheck:
+  dependsOn: [&#x27;^typecheck&#x27;]
+lint: {}
+test: {}
+test:integration / test:e2e:
+  cache: false; env: [&#x27;DATABASE_URL&#x27;]
+dev:
+  cache: false; persistent: true</pre>
+<article class="panel"><h2>Why it matters</h2><div class="lines">
+<div class="line">^build schedules dependency package builds first.</div>
+<div class="line">Cache fingerprints known task inputs.</div>
+<div class="line">Correct outputs can be restored for unchanged work.</div>
+<div class="line">CI caches pnpm store and .turbo.</div>
+<div class="line">No configured Turbo Remote Cache claim.</div>
+</div></article>
+</div>
+<div class="takeaway">Cache correctness depends on complete inputs, especially build-time public environment variables.</div>
+<footer class="footer"><span class="sources">Source: turbo.json · node_modules/turbo/docs/ · .github/workflows/ci.yml</span><span class="number">47 / 53</span></footer></section>
+<section class="slide cards" id="slide-48"><div class="top"><span>DEEP DIVE / CI JOBS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>CI checks the product from multiple angles</h1><p class="lead">Four jobs separate pure checks, database behavior, application compilation and packaging.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>quality + integration</h2><div class="lines">
+<div class="line">quality: frozen install, lint, types, unit/UI/eval harness tests.</div>
+<div class="line">integration: Postgres 16-alpine service; migrate deploy; integration and API E2E.</div>
+<div class="line">No model key needed for either lane.</div>
+</div></article>
+<article class="panel"><h2>build + images</h2><div class="lines">
+<div class="line">build: compile with a public localhost API origin.</div>
+<div class="line">images: build API and web Dockerfiles after build.</div>
+<div class="line">PR/main triggers, least-privilege contents read.</div>
+<div class="line">No image publish in merge-time CI.</div>
+</div></article>
+</div>
+<div class="takeaway">A green deterministic workflow is valuable evidence; it is not a live model-quality or deployment verdict.</div>
+<footer class="footer"><span class="sources">Source: .github/workflows/ci.yml · docs/deployment.md</span><span class="number">48 / 53</span></footer></section>
+<section class="slide cards" id="slide-49"><div class="top"><span>DEEP DIVE / CONTAINERS &amp; RELEASE</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>A production-shaped packaging path</h1><p class="lead">Multi-stage images, non-root runtimes and an explicit migration job keep release responsibilities separate.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Container design</h2><div class="lines">
+<div class="line">Node 24 slim runtime; production dependencies.</div>
+<div class="line">API emits JS for TS-exporting workspace packages.</div>
+<div class="line">Web runs Next standalone output.</div>
+<div class="line">USER node; health checks; no source bind mounts.</div>
+<div class="line">Secrets supplied at runtime, not as build arguments.</div>
+</div></article>
+<article class="panel"><h2>Release &amp; rollback</h2><div class="lines">
+<div class="line">Optional registry push with :git-sha tags.</div>
+<div class="line">Migration before replacing API containers.</div>
+<div class="line">Compose migration service gates API startup.</div>
+<div class="line">Deploy stub prints commands; host execution pending.</div>
+<div class="line">Rollback images; schema rollback needs backup/plan.</div>
+</div></article>
+</div>
+<div class="takeaway">Only NEXT_PUBLIC_API_URL is a permitted public web build argument; provider and database secrets stay out of images.</div>
+<footer class="footer"><span class="sources">Source: apps/api/Dockerfile · apps/web/Dockerfile · compose.prod.yml · .github/workflows/release.yml</span><span class="number">49 / 53</span></footer></section>
+<section class="slide cards" id="slide-50"><div class="top"><span>DEEP DIVE / TRADEOFFS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>The choices I would defend and revisit</h1><p class="lead">Each simplification serves the assessment; each also has a clear condition for change.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Defend today</h2><div class="lines">
+<div class="line">Monorepo: coherent contracts and AI context.</div>
+<div class="line">Modular monolith: simpler transactions and operations.</div>
+<div class="line">Explicit pipeline: bounded cost and clear failures.</div>
+<div class="line">Relational snapshots: reproducible evidence.</div>
+<div class="line">Mocked CI: stable, fast correctness checks.</div>
+</div></article>
+<article class="panel"><h2>Revisit when needed</h2><div class="lines">
+<div class="line">Prefix context → heading/token-aware retrieval.</div>
+<div class="line">Sync create → queue with progress/cancellation.</div>
+<div class="line">Anonymous token → account/expiry/retention policy.</div>
+<div class="line">Process limits → shared distributed controls.</div>
+<div class="line">One strategy → measured strategy experiments.</div>
+</div></article>
+</div>
+<div class="takeaway">Add complexity when a measured failure or product requirement justifies it.</div>
+<footer class="footer"><span class="sources">Source: roadmap.md · docs/delivery-status.md · packages/application/src/quiz/create-quiz.ts</span><span class="number">50 / 53</span></footer></section>
+<section class="slide cards" id="slide-51"><div class="top"><span>DEEP DIVE / NEXT STEPS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Improve evidence before expanding features</h1><p class="lead">Priority follows the most consequential unknowns, then user-visible reliability and scaling.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>1 · Close quality and delivery gaps</h2><div class="lines">
+<div class="line">Credentialed live experiment + trace inspection.</div>
+<div class="line">Human labels, calibration and frozen baseline.</div>
+<div class="line">CI-required SHA release gate + hosted smoke test.</div>
+<div class="line">Registry/host deployment and backup evidence.</div>
+</div></article>
+<article class="panel"><h2>2 · Targeted product improvements</h2><div class="lines">
+<div class="line">Clarify multi-select scoring with stakeholders.</div>
+<div class="line">Topic-aware context and source-support checks.</div>
+<div class="line">Creation idempotency + global deadline/cancellation.</div>
+<div class="line">Browser E2E, token lifecycle and distributed limits.</div>
+<div class="line">Second strategy judged against the same dataset.</div>
+</div></article>
+</div>
+<div class="takeaway">The next roadmap should be driven by evaluation failures and operational measurements.</div>
+<footer class="footer"><span class="sources">Source: docs/delivery-status.md · implementation-roadmap.md · roadmap.md</span><span class="number">51 / 53</span></footer></section>
+<section class="slide cards" id="slide-52"><div class="top"><span>DEEP DIVE / INTERVIEW QUESTIONS</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>Be ready to explain the edges</h1><p class="lead">Short answers should connect the decision, evidence and limitation.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Why these choices?</h2><div class="lines">
+<div class="line">Why Turbo? Whole-feature visibility + coordinated checks.</div>
+<div class="line">Why no agent framework? One bounded generation step suffices.</div>
+<div class="line">Why no RAG? Short README, prefix MVP; improve if coverage fails.</div>
+<div class="line">Why no LLM grading? Exact reproducible scoring rules.</div>
+</div></article>
+<article class="panel"><h2>Where could it fail?</h2><div class="lines">
+<div class="line">Wrong key with valid excerpt? Semantic eval + human review.</div>
+<div class="line">Double submit? Transaction, row lock, stored-result reuse.</div>
+<div class="line">Private URL? Public-IP policy + pinned socket.</div>
+<div class="line">Green CI, poor questions? Separate live quality lane.</div>
+</div></article>
+</div>
+<div class="takeaway">Show the relevant function and test; avoid claims broader than the evidence.</div>
+<footer class="footer"><span class="sources">Source: docs/walkthrough.md · docs/architecture.md · docs/evals/phase-7-report.md</span><span class="number">52 / 53</span></footer></section>
+<section class="slide cards" id="slide-53"><div class="top"><span>DEEP DIVE / EVIDENCE MAP</span><span class="brand">AI QUIZ GENERATOR</span></div>
+<h1>A code map for the interview</h1><p class="lead">Source references on every slide point to the implementation or its recorded acceptance evidence.</p>
+<div class="content " style="--columns:2">
+<article class="panel"><h2>Product &amp; implementation</h2><div class="lines">
+<div class="line">Scope: roadmap.md</div>
+<div class="line">Execution: implementation-roadmap.md + specs/</div>
+<div class="line">Boundaries: docs/architecture.md</div>
+<div class="line">Schema: apps/api/prisma/schema.prisma</div>
+<div class="line">Flow: packages/application/src/{quiz,attempt}/</div>
+</div></article>
+<article class="panel"><h2>Verification &amp; delivery</h2><div class="lines">
+<div class="line">Status: docs/delivery-status.md</div>
+<div class="line">Two-source demo: README.md</div>
+<div class="line">Evals: docs/evals/phase-7-report.md + evals/</div>
+<div class="line">Tracing: apps/api/src/quiz/telemetry/</div>
+<div class="line">Delivery: .github/workflows/ + docs/deployment.md</div>
+</div></article>
+</div>
+<div class="takeaway">Prepared from commit 9b6eec0 and repository state on 11 October 2026; no credentials or raw learner data included.</div>
+<footer class="footer"><span class="sources">Source: docs/presentation/build_presentation.py · docs/presentation/speaker-notes.md</span><span class="number">53 / 53</span></footer></section>
+<script>
+    window.addEventListener('load', async () => {
+      await document.fonts.ready;
+      const issues=[];
+      document.querySelectorAll('.slide').forEach((slide,i) => {
+        const limit=slide.querySelector('.takeaway').getBoundingClientRect().top;
+        const content=slide.querySelector('.content');
+        const diagram=slide.querySelector('.diagram');
+        if ((diagram || content).getBoundingClientRect().bottom > limit-8)
+          issues.push({slide:i+1,problem:'content/takeaway overlap'});
+        slide.querySelectorAll('.panel').forEach(panel=>{
+          if(panel.lastElementChild.getBoundingClientRect().bottom > panel.getBoundingClientRect().bottom-15)
+            issues.push({slide:i+1,problem:'panel text overflow',panel:panel.querySelector('h2').textContent});
+        });
+        slide.querySelectorAll('pre').forEach(pre=>{
+          if(pre.scrollHeight > pre.clientHeight || pre.scrollWidth > pre.clientWidth)
+            issues.push({slide:i+1,problem:'pseudocode overflow'});
+        });
+      });
+      document.documentElement.setAttribute('data-layout-issues',JSON.stringify(issues));
+    });
+    </script></body></html>
