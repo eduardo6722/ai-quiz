@@ -1,18 +1,19 @@
-import { randomUUID } from "node:crypto";
+import { randomUUID } from 'node:crypto';
 import {
   isDomainError,
+  mixQuizOptionOrder,
   validateQuiz,
   type MarkdownSourcePort,
   type QuizGenerationPort,
   type TelemetryPort,
   type UnitOfWorkPort,
-} from "@ai-quiz/domain";
-import type { CreateQuizRequest, CreateQuizResponse } from "@ai-quiz/contracts";
-import { ApplicationError, isApplicationError } from "../errors.js";
-import { assertGrounded } from "./grounding.js";
+} from '@ai-quiz/domain';
+import type { CreateQuizRequest, CreateQuizResponse } from '@ai-quiz/contracts';
+import { ApplicationError, isApplicationError } from '../errors.js';
+import { assertGrounded } from './grounding.js';
+import { assertSourceSufficient } from './source-sufficiency.js';
 
 const MAX_SNAPSHOT_BYTES = 512 * 1024;
-const MIN_USABLE_CHARS = 200;
 const GENERATION_WINDOW_CHARS = 32_000;
 const MAX_GENERATION_ATTEMPTS = 3;
 
@@ -31,15 +32,15 @@ export class CreateQuizUseCase {
 
   async execute(request: CreateQuizRequest): Promise<CreateQuizResponse> {
     return this.telemetry.runStage(
-      { name: "create-quiz", attributes: { strategy: request.strategy } },
+      { name: 'create-quiz', attributes: { strategy: request.strategy } },
       async () => {
-        const snapshot = await this.telemetry.runStage({ name: "fetch" }, () =>
+        const snapshot = await this.telemetry.runStage({ name: 'fetch' }, () =>
           this.source.fetch(request.sourceUrl),
         );
 
         const sourceText = await this.telemetry.runStage(
           {
-            name: "preprocessing",
+            name: 'preprocessing',
             attributes: {
               topicChars: request.topic.length,
               sourceChars: snapshot.contentSnapshot.length,
@@ -47,12 +48,10 @@ export class CreateQuizUseCase {
             },
           },
           async () => {
-            if (snapshot.contentSnapshot.trim().length < MIN_USABLE_CHARS) {
-              throw new ApplicationError("SOURCE_UNUSABLE", "source is too short");
+            if (Buffer.byteLength(snapshot.contentSnapshot, 'utf8') > MAX_SNAPSHOT_BYTES) {
+              throw new ApplicationError('SOURCE_TOO_LARGE', 'source snapshot exceeds 512 KiB');
             }
-            if (Buffer.byteLength(snapshot.contentSnapshot, "utf8") > MAX_SNAPSHOT_BYTES) {
-              throw new ApplicationError("SOURCE_TOO_LARGE", "source snapshot exceeds 512 KiB");
-            }
+            assertSourceSufficient(snapshot.contentSnapshot, request.questionCount);
             return snapshot.contentSnapshot.slice(0, GENERATION_WINDOW_CHARS);
           },
         );
@@ -63,7 +62,7 @@ export class CreateQuizUseCase {
           try {
             const generated = await this.telemetry.runStage(
               {
-                name: "generation",
+                name: 'generation',
                 attributes: { attempt, strategy: request.strategy },
               },
               async () => {
@@ -90,48 +89,53 @@ export class CreateQuizUseCase {
               sourceUrl: snapshot.originalUrl,
               questions: generated.questions,
             };
-            await this.telemetry.runStage({ name: "validation" }, async () => {
+            await this.telemetry.runStage({ name: 'validation' }, async () => {
               assertGrounded(generated.questions, snapshot.contentSnapshot);
               validateQuiz(quiz);
             });
+            const mixed = mixQuizOptionOrder(quiz);
+            validateQuiz(mixed);
             const record = await this.uow.transaction((repos) =>
               repos.quizzes.insert({
                 source: snapshot,
-                quiz,
+                quiz: mixed,
                 strategy: request.strategy,
-                status: "ready",
+                status: 'ready',
                 modelId: generated.modelId,
               }),
             );
             this.telemetry.recordEvent({
-              name: "quiz-ready",
+              name: 'quiz-ready',
               attributes: { quizId: record.quiz.id },
             });
-            return { id: record.quiz.id, status: "ready" };
+            return { id: record.quiz.id, status: 'ready' };
           } catch (error) {
-            if (isApplicationError(error) && error.code === "GENERATION_UPSTREAM_FAILED") {
-              if (isImmediateUpstreamFailure(error.message) || attempt === MAX_GENERATION_ATTEMPTS) {
+            if (isApplicationError(error) && error.code === 'GENERATION_UPSTREAM_FAILED') {
+              if (
+                isImmediateUpstreamFailure(error.message) ||
+                attempt === MAX_GENERATION_ATTEMPTS
+              ) {
                 throw error;
               }
               lastInvalid = error;
               continue;
             }
-            if (isApplicationError(error) && error.code === "GENERATION_INVALID") {
+            if (isApplicationError(error) && error.code === 'GENERATION_INVALID') {
               lastInvalid = error;
               continue;
             }
-            if (isDomainError(error) && error.code === "QUIZ_INVALID") {
-              lastInvalid = new ApplicationError("GENERATION_INVALID", error.message);
+            if (isDomainError(error) && error.code === 'QUIZ_INVALID') {
+              lastInvalid = new ApplicationError('GENERATION_INVALID', error.message);
               continue;
             }
             throw error;
           }
         }
 
-        if (lastInvalid?.code === "GENERATION_UPSTREAM_FAILED") {
+        if (lastInvalid?.code === 'GENERATION_UPSTREAM_FAILED') {
           throw lastInvalid;
         }
-        throw new ApplicationError("GENERATION_RETRIES_EXHAUSTED", "generation retries exhausted");
+        throw new ApplicationError('GENERATION_RETRIES_EXHAUSTED', 'generation retries exhausted');
       },
     );
   }

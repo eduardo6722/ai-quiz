@@ -13,14 +13,22 @@ export const EXPRESS_MARKDOWN = `# Express
 ${EXPRESS_EXCERPT}
 A router binds a path to a callback. Middleware runs before the handler.
 This fixture snapshot is long enough to pass the usable-length policy for tests.
-`.repeat(2);
+Route parameters capture dynamic segments from the request path.
+Error-handling middleware receives four arguments including next.
+Static files can be served from a configured public directory.
+Query strings are parsed into a plain object on the request.
+`;
 
 export const NEST_MARKDOWN = `# NestJS
 
 ${NEST_EXCERPT}
 Providers are injectable classes. Controllers handle inbound HTTP.
 This fixture snapshot is long enough to pass the usable-length policy for tests.
-`.repeat(2);
+Dependency injection resolves providers through annotated constructors.
+Guards decide whether a given request is allowed to proceed.
+Pipes transform and validate inbound payload values before handlers.
+Interceptors wrap the request pipeline for cross-cutting behavior.
+`;
 
 function fourOptions(prefix: string, correctPosition = 0): Question["options"] {
   return [0, 1, 2, 3].map((position) => ({

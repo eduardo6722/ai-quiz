@@ -1,6 +1,7 @@
 export { DomainError, isDomainError } from "./shared/errors.js";
 export type { DomainErrorCode } from "./shared/errors.js";
 export { validateQuiz } from "./quiz/quiz.js";
+export { mixQuizOptionOrder } from "./quiz/mix-option-order.js";
 export type { Option, Question, QuestionType, Quiz } from "./quiz/quiz.js";
 export {
   MULTIPLE_CHOICE_POLICY_NOTE,

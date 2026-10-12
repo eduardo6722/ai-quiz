@@ -6,7 +6,7 @@ const expected: Record<string, string> = {
   [ErrorCodes.SOURCE_UNSAFE_DESTINATION]: "That address cannot be used as a quiz source.",
   [ErrorCodes.SOURCE_UNSUPPORTED_TYPE]: "That source is not usable Markdown.",
   [ErrorCodes.SOURCE_TOO_LARGE]: "That source is too large to use.",
-  [ErrorCodes.SOURCE_UNUSABLE]: "That source is not usable Markdown.",
+  [ErrorCodes.SOURCE_UNUSABLE]: "That source does not have enough information to generate a quiz.",
   [ErrorCodes.SOURCE_TIMEOUT]: "Could not read the Markdown source. Try again.",
   [ErrorCodes.SOURCE_FETCH_FAILED]: "Could not read the Markdown source. Try again.",
   [ErrorCodes.GENERATION_INVALID]: "Could not prepare questions from that source. Try again.",

@@ -11,6 +11,10 @@ Ports are interfaces the core depends on. Adapters implement those ports.
 A quiz has 5 to 8 questions. Scoring is deterministic and never decided by a model.
 The application core stays free of HTTP clients, databases, and provider SDKs.
 This fixture snapshot is long enough to pass the usable-length policy for tests.
+Ready quizzes never expose answer keys before the learner submits.
+Each question must offer exactly four distinct option labels.
+Weighted scoring uses geometric weights in quiz order.
+Attempt tokens stay hashed on the server and are issued once.
 `;
 
 export const FIXTURE_EXCERPT = "Ports are interfaces the core depends on";
@@ -94,6 +98,18 @@ const PROMPTS: { type: "single" | "multiple"; prompt: string; labels: [string, s
     labels: ["Option labels", "Correctness flags", "The topic", "Answer keys"],
   },
 ];
+
+export function isFixtureOptionCorrect(questionPosition: number, label: string): boolean {
+  const item = PROMPTS[questionPosition];
+  if (item === undefined) {
+    return false;
+  }
+  const optionIndex = item.labels.indexOf(label);
+  if (optionIndex < 0) {
+    return false;
+  }
+  return FIXTURE_CORRECT[questionPosition]?.[optionIndex] === true;
+}
 
 function optionsFor(index: number, labels: [string, string, string, string]): Option[] {
   return labels.map((label, position) => ({

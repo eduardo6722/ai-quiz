@@ -6,5 +6,9 @@
     "rootDir": "./src"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"],
+  "watchOptions": {
+    "excludeDirectories": ["**/node_modules", "src/generated", "dist"],
+    "excludeFiles": ["src/generated/**"]
+  }
 }

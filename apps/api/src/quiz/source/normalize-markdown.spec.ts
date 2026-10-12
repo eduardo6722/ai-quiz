@@ -35,9 +35,11 @@ describe("normalizeMarkdown", () => {
     expect(sha256Hex(first)).toMatch(/^[0-9a-f]{64}$/);
   });
 
-  it("treats 199 characters as below the usable minimum and 200 as usable", () => {
-    expect(MIN_USABLE_CHARS).toBe(200);
-    expect(normalizeMarkdown("a".repeat(199)).text).toHaveLength(199);
-    expect(normalizeMarkdown("a".repeat(200)).text).toHaveLength(200);
+  it("treats empty-after-normalize as below the usable minimum and keeps heading-only text", () => {
+    expect(MIN_USABLE_CHARS).toBe(1);
+    expect(normalizeMarkdown("   ").text).toHaveLength(0);
+    expect(normalizeMarkdown("<!-- chrome -->").text).toHaveLength(0);
+    expect(normalizeMarkdown("# Notes").text).toBe("# Notes");
+    expect(normalizeMarkdown("# Notes").text.length).toBeGreaterThanOrEqual(MIN_USABLE_CHARS);
   });
 });

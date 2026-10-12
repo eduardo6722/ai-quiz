@@ -6,6 +6,10 @@ export const SAMPLE_SNAPSHOT = `${SAMPLE_EXCERPT}. Adapters implement those port
 A quiz has 5 to 8 questions. Scoring is deterministic and never decided by a model.
 The application core stays free of HTTP clients, databases, and provider SDKs.
 This snapshot is long enough to pass the usable-length policy for tests.
+Ready quizzes never expose answer keys before the learner submits.
+Each question must offer exactly four distinct option labels.
+Weighted scoring uses geometric weights in quiz order.
+Attempt tokens stay hashed on the server and are issued once.
 `;
 
 export function sampleQuiz(id = "quiz-1", questionCount = 5): Quiz {

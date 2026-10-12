@@ -5,12 +5,29 @@ import { ApplicationError } from "@ai-quiz/application";
 import type { QuizGenerationPort } from "@ai-quiz/domain";
 import { CREATE_BODY, createApiApp } from "../support/create-app";
 import { testPrisma } from "../../integration/support/postgres.setup";
+import { buildFixtureQuestions } from "../../../src/quiz/fixture/fixture-bank";
 
 describe("quiz generation errors", () => {
   let app: INestApplication;
 
   afterEach(async () => {
     await app?.close();
+  });
+
+  it("maps duplicate prompts to 422 GENERATION_RETRIES_EXHAUSTED and stores no ready quiz", async () => {
+    const generation: QuizGenerationPort = {
+      generate: async () => {
+        const questions = buildFixtureQuestions(5);
+        questions[1]!.prompt = questions[0]!.prompt;
+        return { questions };
+      },
+    };
+    app = await createApiApp({ generation });
+    const response = await request(app.getHttpServer()).post("/v1/quizzes").send(CREATE_BODY);
+    expect(response.status).toBe(422);
+    expect(response.body).toMatchObject({ code: "GENERATION_RETRIES_EXHAUSTED" });
+    expect(JSON.stringify(response.body)).not.toContain("sk-");
+    expect(await testPrisma().quiz.count({ where: { status: "ready" } })).toBe(0);
   });
 
   it("maps always-invalid generation to 422 GENERATION_RETRIES_EXHAUSTED and stores no ready quiz", async () => {

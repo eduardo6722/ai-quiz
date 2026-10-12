@@ -1,4 +1,4 @@
-import { scoreSingleChoice, validateQuiz } from "./index.js";
+import { mixQuizOptionOrder, scoreSingleChoice, validateQuiz } from "./index.js";
 import type { Quiz } from "./index.js";
 
 describe("domain public API", () => {
@@ -22,5 +22,7 @@ describe("domain public API", () => {
     };
     expect(() => validateQuiz(quiz)).not.toThrow();
     expect(scoreSingleChoice(quiz.questions[0]!, ["q0-0"])).toBe(4);
+    const mixed = mixQuizOptionOrder(quiz);
+    expect(mixed.questions[0]?.options.map((option) => option.position)).toEqual([0, 1, 2, 3]);
   });
 });

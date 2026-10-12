@@ -1,11 +1,25 @@
 import { parseCreateQuizRequest } from '@ai-quiz/contracts';
-import type { MarkdownSourcePort, QuizGenerationPort, Question } from '@ai-quiz/domain';
+import {
+  scoreQuestion,
+  validateQuiz,
+  type MarkdownSourcePort,
+  type Quiz,
+  type QuizGenerationPort,
+  type Question,
+} from '@ai-quiz/domain';
 import { ApplicationError } from '../errors.js';
 import { gradeAttempt } from '../attempt/grade-attempt.js';
 import { CreateQuizUseCase } from './create-quiz.js';
 import { RecordingTelemetryPort } from '../testing/recording-telemetry.js';
 import { memoryPorts } from '../testing/test-memory-ports.js';
 import { SAMPLE_SNAPSHOT, sampleQuiz } from '../testing/quiz-fixture.js';
+import {
+  COMMENTS_ONLY,
+  HEADING_ONLY,
+  ONE_SECTION,
+  REPEATED_SENTENCE,
+  SIX_CLAIM_BODY,
+} from './source-sufficiency.spec.js';
 
 const snapshot = {
   originalUrl: 'https://example.com/README.md',
@@ -17,6 +31,26 @@ const snapshot = {
 
 function sourcePort(override: Partial<typeof snapshot> = {}): MarkdownSourcePort {
   return { fetch: jest.fn(async () => ({ ...snapshot, ...override })) };
+}
+
+function alwaysFirstAnswers(quiz: Quiz) {
+  return quiz.questions.map((question) => {
+    const correctCount = question.options.filter((option) => option.isCorrect).length;
+    const take = question.type === 'single' ? 1 : correctCount;
+    return {
+      questionId: question.id,
+      selectedOptionIds: question.options
+        .filter((option) => option.position < take)
+        .map((option) => option.id),
+    };
+  });
+}
+
+function trueKeyAnswers(quiz: Quiz) {
+  return quiz.questions.map((question) => ({
+    questionId: question.id,
+    selectedOptionIds: question.options.filter((option) => option.isCorrect).map((option) => option.id),
+  }));
 }
 
 function execute(
@@ -80,7 +114,23 @@ describe('CreateQuizUseCase', () => {
       generate: jest.fn(async ({ count }) => ({ questions: sampleQuiz('g', count).questions })),
     };
     const result = await execute(sourcePort(), generation, ports.uow, 8);
-    expect(ports.store.quizzes.get(result.id)?.quiz.questions).toHaveLength(8);
+    const questions = ports.store.quizzes.get(result.id)?.quiz.questions ?? [];
+    expect(questions).toHaveLength(8);
+    const keys = questions.map((question) => question.prompt.trim().toLocaleLowerCase('en-US'));
+    expect(new Set(keys).size).toBe(8);
+  });
+
+  it('persists unique prompts for a five-question quiz from a rich snapshot', async () => {
+    const ports = memoryPorts();
+    const generation: QuizGenerationPort = {
+      generate: jest.fn(async ({ count }) => ({ questions: sampleQuiz('rich', count).questions })),
+    };
+    const result = await execute(sourcePort(), generation, ports.uow, 5);
+    expect(result.status).toBe('ready');
+    const questions = ports.store.quizzes.get(result.id)?.quiz.questions ?? [];
+    expect(questions).toHaveLength(5);
+    const keys = questions.map((question) => question.prompt.trim().toLocaleLowerCase('en-US'));
+    expect(new Set(keys).size).toBe(5);
   });
 
   it('retries invalid generation and persists the first valid attempt', async () => {
@@ -215,6 +265,84 @@ describe('CreateQuizUseCase', () => {
       code: 'SOURCE_UNUSABLE',
     });
     expect(generation.generate).not.toHaveBeenCalled();
+    expect(ports.store.quizzes.size).toBe(0);
+  });
+
+  it('does not generate when the snapshot is empty', async () => {
+    const ports = memoryPorts();
+    const generation: QuizGenerationPort = { generate: jest.fn() };
+    await expect(
+      execute(sourcePort({ contentSnapshot: '' }), generation, ports.uow),
+    ).rejects.toMatchObject({ code: 'SOURCE_UNUSABLE' });
+    expect(generation.generate).not.toHaveBeenCalled();
+    expect(ports.store.quizzes.size).toBe(0);
+  });
+
+  it('does not generate from whitespace-only Markdown including tabs and newlines', async () => {
+    const ports = memoryPorts();
+    const generation: QuizGenerationPort = { generate: jest.fn() };
+    await expect(
+      execute(sourcePort({ contentSnapshot: '   \n\t  ' }), generation, ports.uow),
+    ).rejects.toMatchObject({ code: 'SOURCE_UNUSABLE' });
+    expect(generation.generate).not.toHaveBeenCalled();
+    expect(ports.store.quizzes.size).toBe(0);
+  });
+
+  it.each([
+    ['heading-only', HEADING_ONLY],
+    ['comments-only', COMMENTS_ONLY],
+    ['repeated-sentence', REPEATED_SENTENCE],
+  ])('does not generate from %s Markdown', async (_name, contentSnapshot) => {
+    const ports = memoryPorts();
+    const generation: QuizGenerationPort = { generate: jest.fn() };
+    await expect(
+      execute(sourcePort({ contentSnapshot }), generation, ports.uow),
+    ).rejects.toMatchObject({ code: 'SOURCE_UNUSABLE' });
+    expect(generation.generate).not.toHaveBeenCalled();
+    expect(ports.store.quizzes.size).toBe(0);
+  });
+
+  it('rejects a one-section source at count 8 without calling generate', async () => {
+    const ports = memoryPorts();
+    const generation: QuizGenerationPort = { generate: jest.fn() };
+    await expect(
+      execute(sourcePort({ contentSnapshot: ONE_SECTION }), generation, ports.uow, 8),
+    ).rejects.toMatchObject({ code: 'SOURCE_UNUSABLE' });
+    expect(generation.generate).not.toHaveBeenCalled();
+    expect(ports.store.quizzes.size).toBe(0);
+  });
+
+  it('rejects a six-claim body at count 8 and generates at count 5', async () => {
+    const insufficient = memoryPorts();
+    const blocked: QuizGenerationPort = { generate: jest.fn() };
+    await expect(
+      execute(sourcePort({ contentSnapshot: SIX_CLAIM_BODY }), blocked, insufficient.uow, 8),
+    ).rejects.toMatchObject({ code: 'SOURCE_UNUSABLE' });
+    expect(blocked.generate).not.toHaveBeenCalled();
+
+    const sufficient = memoryPorts();
+    const generation: QuizGenerationPort = {
+      generate: jest.fn(async ({ count }) => ({ questions: sampleQuiz('six', count).questions })),
+    };
+    await execute(sourcePort({ contentSnapshot: SIX_CLAIM_BODY }), generation, sufficient.uow, 5);
+    expect(generation.generate).toHaveBeenCalled();
+    expect(sufficient.store.quizzes.size).toBe(1);
+  });
+
+  it('retries duplicate prompts then stores nothing playable', async () => {
+    const ports = memoryPorts();
+    const duplicated = sampleQuiz('dup', 5);
+    duplicated.questions[1] = {
+      ...duplicated.questions[1]!,
+      prompt: `  ${duplicated.questions[0]!.prompt.toUpperCase()}  `,
+    };
+    const generation: QuizGenerationPort = {
+      generate: jest.fn(async () => ({ questions: duplicated.questions })),
+    };
+    await expect(execute(sourcePort(), generation, ports.uow)).rejects.toMatchObject({
+      code: 'GENERATION_RETRIES_EXHAUSTED',
+    });
+    expect(generation.generate).toHaveBeenCalledTimes(3);
     expect(ports.store.quizzes.size).toBe(0);
   });
 
@@ -410,5 +538,68 @@ describe('CreateQuizUseCase', () => {
     expect(
       telemetry.stages.find((stage) => stage.name === 'preprocessing')?.attributes?.sourceHash,
     ).toBe('abc');
+  });
+
+  it('persists mixed options so always-first scores less than the true key', async () => {
+    const ports = memoryPorts();
+    const generation: QuizGenerationPort = {
+      generate: jest.fn(async () => ({ questions: sampleQuiz('g', 5).questions })),
+    };
+    const result = await execute(sourcePort(), generation, ports.uow);
+    const stored = ports.store.quizzes.get(result.id)!.quiz;
+    const alwaysFirst = gradeAttempt({ quiz: stored, answers: alwaysFirstAnswers(stored) });
+    const trueKey = gradeAttempt({ quiz: stored, answers: trueKeyAnswers(stored) });
+    expect(alwaysFirst.result.weightedScore).toBeLessThan(trueKey.result.weightedScore);
+  });
+
+  it('still awards existing true-key scores after mixing option order', async () => {
+    const ports = memoryPorts();
+    const generation: QuizGenerationPort = {
+      generate: jest.fn(async () => ({ questions: sampleQuiz('g', 5).questions })),
+    };
+    const result = await execute(sourcePort(), generation, ports.uow);
+    const stored = ports.store.quizzes.get(result.id)!.quiz;
+    const trueKey = gradeAttempt({ quiz: stored, answers: trueKeyAnswers(stored) });
+    expect(trueKey.result.questions.map((question) => question.rawScore)).toEqual([4, 2, 4, 4, 4]);
+
+    const firstSingle = stored.questions[0]!;
+    const correct = firstSingle.options.find((option) => option.isCorrect)!;
+    const distractor = firstSingle.options.find((option) => !option.isCorrect)!;
+    expect(scoreQuestion(firstSingle, [correct.id])).toBe(4);
+    expect(scoreQuestion(firstSingle, [distractor.id])).toBe(0);
+  });
+
+  it('freezes mixed option order on the stored quiz', async () => {
+    const ports = memoryPorts();
+    const generation: QuizGenerationPort = {
+      generate: jest.fn(async () => ({ questions: sampleQuiz('g', 5).questions })),
+    };
+    const result = await execute(sourcePort(), generation, ports.uow);
+    const first = ports.store.quizzes.get(result.id)!.quiz;
+    const second = ports.store.quizzes.get(result.id)!.quiz;
+    expect(
+      second.questions.map((question) =>
+        question.options.map((option) => ({ id: option.id, label: option.label, position: option.position })),
+      ),
+    ).toEqual(
+      first.questions.map((question) =>
+        question.options.map((option) => ({ id: option.id, label: option.label, position: option.position })),
+      ),
+    );
+  });
+
+  it('still persists a ready five-question quiz with four unique labels after mix', async () => {
+    const ports = memoryPorts();
+    const generation: QuizGenerationPort = {
+      generate: jest.fn(async () => ({ questions: sampleQuiz('g', 5).questions })),
+    };
+    const result = await execute(sourcePort(), generation, ports.uow);
+    expect(result.status).toBe('ready');
+    const stored = ports.store.quizzes.get(result.id)!.quiz;
+    expect(stored.questions).toHaveLength(5);
+    expect(stored.questions.every((question) => new Set(question.options.map((option) => option.label)).size === 4)).toBe(
+      true,
+    );
+    expect(() => validateQuiz(stored)).not.toThrow();
   });
 });

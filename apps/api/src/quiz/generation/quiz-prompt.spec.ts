@@ -25,6 +25,9 @@ describe("buildQuizMessages", () => {
     expect(messages.system).toContain("<source>");
     expect(messages.system).toMatch(/verbatim/i);
     expect(messages.system).toMatch(/\[text\]\(url\)/);
+    expect(messages.system).toMatch(/different fact/i);
+    expect(messages.system).toMatch(/repeat|rephrase/i);
+    expect(messages.system).toMatch(/do not list every correct option first/i);
     expect(messages.system).not.toContain(SOURCE);
     expect(messages.prompt.startsWith("Topic:")).toBe(true);
   });

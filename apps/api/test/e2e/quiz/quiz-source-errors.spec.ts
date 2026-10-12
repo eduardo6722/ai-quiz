@@ -17,15 +17,27 @@ function transport(get: FetchTransport["get"]): FetchTransport {
 }
 
 describe("quiz source errors", () => {
-  async function postWith(fetchTransport: FetchTransport, sourceUrl = CREATE_BODY.sourceUrl) {
+  async function postWith(
+    fetchTransport: FetchTransport,
+    sourceUrl = CREATE_BODY.sourceUrl,
+    extra: Record<string, unknown> = {},
+  ) {
     const app = await createApiApp({ fetchTransport });
     try {
       return await request(app.getHttpServer())
         .post("/v1/quizzes")
-        .send({ ...CREATE_BODY, sourceUrl });
+        .send({ ...CREATE_BODY, sourceUrl, ...extra });
     } finally {
       await app.close();
     }
+  }
+
+  function plainText(body: string): FetchTransport {
+    return transport(async () => ({
+      status: 200,
+      headers: { "content-type": "text/plain; charset=utf-8" },
+      body: Buffer.from(body, "utf8"),
+    }));
   }
 
   it("maps an unsafe destination to 400 SOURCE_UNSAFE_DESTINATION", async () => {
@@ -76,13 +88,46 @@ describe("quiz source errors", () => {
   });
 
   it("maps unusable Markdown to 422 SOURCE_UNUSABLE and stores no ready quiz", async () => {
-    const response = await postWith(
-      transport(async () => ({
-        status: 200,
-        headers: { "content-type": "text/plain; charset=utf-8" },
-        body: Buffer.from("   too short   ", "utf8"),
-      })),
-    );
+    const response = await postWith(plainText("   too short   "));
+    expect(response.status).toBe(422);
+    expect(response.body).toMatchObject({ code: "SOURCE_UNUSABLE" });
+    expect(JSON.stringify(response.body)).not.toContain("sk-");
+    expect(await testPrisma().quiz.count({ where: { status: "ready" } })).toBe(0);
+  });
+
+  it("maps an empty Markdown body to 422 SOURCE_UNUSABLE", async () => {
+    const response = await postWith(plainText(""));
+    expect(response.status).toBe(422);
+    expect(response.body).toMatchObject({ code: "SOURCE_UNUSABLE" });
+    expect(JSON.stringify(response.body)).not.toContain("sk-");
+    expect(await testPrisma().quiz.count({ where: { status: "ready" } })).toBe(0);
+  });
+
+  it("maps whitespace-only Markdown to 422 SOURCE_UNUSABLE", async () => {
+    const response = await postWith(plainText("   \n\t  "));
+    expect(response.status).toBe(422);
+    expect(response.body).toMatchObject({ code: "SOURCE_UNUSABLE" });
+    expect(JSON.stringify(response.body)).not.toContain("sk-");
+    expect(await testPrisma().quiz.count({ where: { status: "ready" } })).toBe(0);
+  });
+
+  it("maps a long repeated-sentence body to 422 SOURCE_UNUSABLE", async () => {
+    const repeated = "Ports are interfaces the core depends on. ".repeat(12);
+    const response = await postWith(plainText(repeated));
+    expect(repeated.length).toBeGreaterThan(200);
+    expect(response.status).toBe(422);
+    expect(response.body).toMatchObject({ code: "SOURCE_UNUSABLE" });
+    expect(await testPrisma().quiz.count({ where: { status: "ready" } })).toBe(0);
+  });
+
+  it("maps a one-section source at count 8 to 422 SOURCE_UNUSABLE", async () => {
+    const oneSection = `# Setup
+
+Install the widget with npm to add routing helpers to your application.
+`;
+    const response = await postWith(plainText(oneSection), CREATE_BODY.sourceUrl, {
+      questionCount: 8,
+    });
     expect(response.status).toBe(422);
     expect(response.body).toMatchObject({ code: "SOURCE_UNUSABLE" });
     expect(await testPrisma().quiz.count({ where: { status: "ready" } })).toBe(0);

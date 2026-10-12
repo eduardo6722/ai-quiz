@@ -101,4 +101,22 @@ describe("validateQuiz", () => {
     emptyLabel.questions[0]!.options[0]!.label = " ";
     expectCode(() => validateQuiz(emptyLabel), "QUIZ_INVALID");
   });
+
+  it("rejects duplicate prompts after trim and letter-case folding", () => {
+    const same = validQuiz();
+    same.questions[1]!.prompt = same.questions[0]!.prompt;
+    expectCode(() => validateQuiz(same), "QUIZ_INVALID");
+
+    const spaced = validQuiz();
+    spaced.questions[1]!.prompt = `  ${spaced.questions[0]!.prompt}  `;
+    expectCode(() => validateQuiz(spaced), "QUIZ_INVALID");
+
+    const cased = validQuiz();
+    cased.questions[1]!.prompt = cased.questions[0]!.prompt.toUpperCase();
+    expectCode(() => validateQuiz(cased), "QUIZ_INVALID");
+  });
+
+  it("accepts distinct prompts", () => {
+    expect(() => validateQuiz(validQuiz(5))).not.toThrow();
+  });
 });

@@ -1,11 +1,16 @@
-import { randomUUID } from "node:crypto";
-import { Logger } from "@nestjs/common";
-import { ApplicationError } from "@ai-quiz/application";
-import type { GenerateQuizInput, GeneratedQuiz, Question, QuizGenerationPort } from "@ai-quiz/domain";
-import { sanitizeLogText } from "../../platform/logging/sanitize-log";
-import { generatedQuizSchema, type GeneratedQuizPayload } from "./generated-quiz.schema";
-import { summarizeProviderFailure } from "./provider-failure";
-import { buildQuizMessages } from "./quiz-prompt";
+import { randomUUID } from 'node:crypto';
+import { Logger } from '@nestjs/common';
+import { ApplicationError } from '@ai-quiz/application';
+import type {
+  GenerateQuizInput,
+  GeneratedQuiz,
+  Question,
+  QuizGenerationPort,
+} from '@ai-quiz/domain';
+import { sanitizeLogText } from '../../platform/logging/sanitize-log';
+import { generatedQuizSchema, type GeneratedQuizPayload } from './generated-quiz.schema';
+import { summarizeProviderFailure } from './provider-failure';
+import { buildQuizMessages } from './quiz-prompt';
 
 export type QuizGenerateTextFn = (options: {
   model: unknown;
@@ -39,13 +44,13 @@ export class OpenAiQuizGenerationAdapter implements QuizGenerationPort {
   }
 
   async generate(input: GenerateQuizInput): Promise<GeneratedQuiz> {
-    const apiKey = this.options.apiKey?.trim() ?? "";
-    const modelId = this.options.modelId?.trim() ?? "";
+    const apiKey = this.options.apiKey?.trim() ?? '';
+    const modelId = this.options.modelId?.trim() ?? '';
     if (apiKey.length === 0 || modelId.length === 0) {
       this.logger.warn(
-        `generation skipped: ${modelId.length === 0 ? "model id missing" : "api key missing"}`,
+        `generation skipped: ${modelId.length === 0 ? 'model id missing' : 'api key missing'}`,
       );
-      throw new ApplicationError("GENERATION_UPSTREAM_FAILED", "generation is not configured");
+      throw new ApplicationError('GENERATION_UPSTREAM_FAILED', 'generation is not configured');
     }
 
     const started = Date.now();
@@ -54,7 +59,7 @@ export class OpenAiQuizGenerationAdapter implements QuizGenerationPort {
     );
 
     try {
-      const [{ createOpenAI }, ai] = await Promise.all([import("@ai-sdk/openai"), import("ai")]);
+      const [{ createOpenAI }, ai] = await Promise.all([import('@ai-sdk/openai'), import('ai')]);
       const generate = this.options.generateTextFn ?? (ai.generateText as QuizGenerateTextFn);
       const messages = buildQuizMessages({
         topic: input.topic,
@@ -73,8 +78,10 @@ export class OpenAiQuizGenerationAdapter implements QuizGenerationPort {
       });
       const payload = result.output;
       if (payload === undefined) {
-        this.logger.warn(`generation invalid model=${modelId} reason=empty-output ${Date.now() - started}ms`);
-        throw new ApplicationError("GENERATION_INVALID", "model did not return structured output");
+        this.logger.warn(
+          `generation invalid model=${modelId} reason=empty-output ${Date.now() - started}ms`,
+        );
+        throw new ApplicationError('GENERATION_INVALID', 'model did not return structured output');
       }
       this.logger.log(
         `generation ok model=${modelId} questions=${payload.questions.length} ${Date.now() - started}ms`,
@@ -92,16 +99,18 @@ export class OpenAiQuizGenerationAdapter implements QuizGenerationPort {
         throw error;
       }
       if (isNoObjectGenerated(error)) {
-        this.logger.warn(`generation invalid model=${modelId} reason=schema ${Date.now() - started}ms`);
-        throw new ApplicationError("GENERATION_INVALID", "model output failed schema validation");
+        this.logger.warn(
+          `generation invalid model=${modelId} reason=schema ${Date.now() - started}ms`,
+        );
+        throw new ApplicationError('GENERATION_INVALID', 'model output failed schema validation');
       }
       const summary = summarizeProviderFailure(error);
       this.logger.warn(
         sanitizeLogText(
-          `generation failed model=${modelId} kind=${summary.kind} name=${summary.name} status=${summary.statusCode ?? "n/a"} ${summary.message} ${Date.now() - started}ms`,
+          `generation failed model=${modelId} kind=${summary.kind} name=${summary.name} status=${summary.statusCode ?? 'n/a'} ${summary.message} ${Date.now() - started}ms`,
         ),
       );
-      throw new ApplicationError("GENERATION_UPSTREAM_FAILED", summary.clientMessage);
+      throw new ApplicationError('GENERATION_UPSTREAM_FAILED', summary.clientMessage);
     }
   }
 
@@ -128,9 +137,9 @@ function isApplicationErrorCode(error: unknown): error is ApplicationError {
 
 function isNoObjectGenerated(error: unknown): boolean {
   return (
-    typeof error === "object" &&
+    typeof error === 'object' &&
     error !== null &&
-    "name" in error &&
-    (error as { name: string }).name === "AI_NoObjectGeneratedError"
+    'name' in error &&
+    (error as { name: string }).name === 'AI_NoObjectGeneratedError'
   );
 }

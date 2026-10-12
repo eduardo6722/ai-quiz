@@ -10,6 +10,7 @@ export {
 } from "./errors.js";
 export type { ApplicationErrorCode } from "./errors.js";
 export { assertGrounded } from "./quiz/grounding.js";
+export { assertSourceSufficient, countUniqueClaims } from "./quiz/source-sufficiency.js";
 export { CreateQuizUseCase } from "./quiz/create-quiz.js";
 export { GetQuizUseCase } from "./quiz/get-quiz.js";
 export { StartAttemptUseCase } from "./attempt/start-attempt.js";

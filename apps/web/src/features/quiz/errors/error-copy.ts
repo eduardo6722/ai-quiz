@@ -3,7 +3,7 @@ const LEARNER_COPY: Record<string, string> = {
   SOURCE_UNSAFE_DESTINATION: "That address cannot be used as a quiz source.",
   SOURCE_UNSUPPORTED_TYPE: "That source is not usable Markdown.",
   SOURCE_TOO_LARGE: "That source is too large to use.",
-  SOURCE_UNUSABLE: "That source is not usable Markdown.",
+  SOURCE_UNUSABLE: "That source does not have enough information to generate a quiz.",
   SOURCE_TIMEOUT: "Could not read the Markdown source. Try again.",
   SOURCE_FETCH_FAILED: "Could not read the Markdown source. Try again.",
   GENERATION_INVALID: "Could not prepare questions from that source. Try again.",

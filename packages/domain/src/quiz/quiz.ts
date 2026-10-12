@@ -94,6 +94,7 @@ export function validateQuiz(quiz: Quiz): void {
   }
 
   const questionIds = new Set<string>();
+  const promptKeys = new Set<string>();
   for (const [index, question] of quiz.questions.entries()) {
     if (question.id.trim().length === 0) {
       throw new DomainError("QUIZ_INVALID", "question id must be non-empty");
@@ -107,7 +108,12 @@ export function validateQuiz(quiz: Quiz): void {
       throw new DomainError("QUIZ_INVALID", "question positions must be unique, contiguous, and zero-based");
     }
 
-    requireNonEmpty(question.prompt, "prompt");
+    const prompt = requireNonEmpty(question.prompt, "prompt");
+    const promptKey = prompt.toLocaleLowerCase("en-US");
+    if (promptKeys.has(promptKey)) {
+      throw new DomainError("QUIZ_INVALID", "question prompts must be unique within a quiz");
+    }
+    promptKeys.add(promptKey);
 
     if (question.type !== "single" && question.type !== "multiple") {
       throw new DomainError("QUIZ_INVALID", "question type must be single or multiple");
